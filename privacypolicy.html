@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Kamaaikendra 'KIMI'</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YR8SBMEQY"></script>
+
+    <style>
+        /* Base Variables & Reset */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #cbd5e1;
+            --text-heading: #f8fafc;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border-color: #334155;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--accent);
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height:50px;
+            width:50px;
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidwNM6d568W4RtXYkC4V3TlzjO7QKiM2U9JqIqnqjC-QyBvfmx7AOWSO5djKHZZqUciA1rsd1x01ARz0rVI-p1a4YgGVbDYOaYVCc0yh5KnP7mMpV7ruSW-sHqZCvqSTxp0NqDoVYnyuzFPK__EoG5NUnenRDf_H4VuS_vK8P8qMbzbg3YrvCg9-IpXKQ/s500/1000112034.png");
+            background-size: 100% 100%;
+            border-radius: 50px;
+            border:1px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin:-5px;
+        }
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 10px 5px;
+            background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-size: 35px;
+            color: var(--text-heading);
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        /* Layout Grid */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: max-content;
+            background-color: var(--bg-card);
+            padding: 10px;
+            margin:5px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar h4 {
+            color: var(--text-heading);
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar ul li a {
+            color: var(--text-main);
+            font-size: 14px;
+            display: block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            padding-left: 10px;
+        }
+
+        /* Content Area */
+        .content-area section {
+            background-color: var(--bg-card);
+            padding: 10px;
+            border-radius: 12px;
+            margin:5px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-area section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .content-area h2 {
+            color: var(--text-heading);
+            font-size: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .content-area h2 i {
+            color: var(--accent);
+        }
+
+        .content-area p {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .content-area ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content-area ul li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* Important Alerts */
+        .alert {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .alert p {
+            margin: 0;
+            color: #fca5a5;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0 20px;
+            margin-top: 10px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-dark);
+            border-radius: 50%;
+            color: var(--text-main);
+            font-size: 18px;
+            border: 1px solid var(--border-color);
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.6;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: relative;
+                top: 0;
+                margin-bottom: 0px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+         <div class="container header-content">
+             <div>
+                <a href="home.html" style="color: var(--text-main); font-weight: 600;">Back to Game</a>
+            </div>
+            <div class="logo"></div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Privacy Policy</h1>
+            <p>Your privacy is important to us. Please read our policy carefully to understand how we collect, use, and protect your data on the Kamaaikendra 'KIMI' platform.</p>
+        </div>
+    </section>
+
+    <div class="container main-layout">
+        
+        <aside class="sidebar">
+            <h4>Table of Contents</h4>
+            <ul>
+                <li><a href="#introduction" class="nav-link active">Introduction & Eligibility</a></li>
+                <li><a href="#objective" class="nav-link">1. Objective of Policy</a></li>
+                <li><a href="#personal-data" class="nav-link">2. Personal Data Included</a></li>
+                <li><a href="#consent" class="nav-link">3. Users' Consent</a></li>
+                <li><a href="#security" class="nav-link">4. Data Security</a></li>
+                <li><a href="#minors" class="nav-link">5. Privacy for Minors</a></li>
+                <li><a href="#exclusions" class="nav-link">6. Exclusions</a></li>
+                <li><a href="#liability" class="nav-link">7. Limitation of Liability</a></li>
+                <li><a href="#area-restrict" class="nav-link">8. Area Restrictions</a></li>
+                <li><a href="#refund" class="nav-link">9. Refund Policy</a></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            
+            <section id="introduction">
+                <div class="alert">
+                    <p><i class="fa-solid fa-triangle-exclamation"></i> <strong>Age & Location Restriction:</strong> Forbid 18 years old and below. This product is for India except restricted regions (Telangana, Assam, Odisha, Gujarat, Maharashtra, Delhi, Andhra Pradesh, Tamil Nadu, Nagaland, Sikkim).</p>
+                </div>
+                <p>This Privacy Policy forms part of Kamaaikendra 'KIMI's Terms of Service. By accepting the Terms of Service and Privacy Policy on our platform, you consent to share your sensitive personal data or personal information and are aware of the purpose of sharing such information.</p>
+                <p>Please read this Privacy Policy carefully before using Kamaaikendra 'KIMI's services. Please do not register if you do not wish to share with our platform (hereinafter referred to as “KIMI”, “we”, “us”, or “our”) the mandatory personal information requested at the time of registration. Registration procedure cannot be completed until information sought in the non-optional fields is provided. Certain additional personal information may be requested by KIMI for permitting you access to any Cash Games hosted by us.</p>
+            </section>
+
+            <section id="objective">
+                <h2><i class="fa-solid fa-bullseye"></i> 1. Objectives of this Privacy Policy?</h2>
+                <p>KIMI respects your privacy and assures you that any information provided by you to this platform is protected and shall be dealt with according to this Privacy Policy and the applicable laws. To avail yourself of the services offered on our platform, you may have to provide certain information to us.</p>
+                <p>This Policy delineates the procedure followed by KIMI to gather, use, store, disclose and manage users' personal data. KIMI collects personal data only for the purpose of verifying user accounts, maintaining the accounts of users, completing transactions initiated by users and for analyzing user behavior and requirements. Along with providing users with the most enjoyable online gaming experience, we also build a relationship of trust with our users. Our commitment to protecting user data is based on the principles of transparency, fairness, accuracy, data minimization, integrity and confidentiality.</p>
+            </section>
+
+            <section id="personal-data">
+                <h2><i class="fa-solid fa-id-card"></i> 2. What is included in personal data?</h2>
+                <p>Users' personal data includes the following types of personal data or information:</p>
+                <ul>
+                    <li><strong>Sensitive Personal Data:</strong> Account password, financial information such as Bank Account, Credit Card, Debit Card or other payment instrument details.</li>
+                    <li><strong>Other Personal Information:</strong> Name, Date of birth, Telephone number, Postal/Contact address, PAN (as applicable).</li>
+                    <li><strong>Technical Information:</strong> The IP address of your computer, browser type and language, the date and the time of your accessing the site, the address of the App that you may have used to link to KIMI.</li>
+                    <li><strong>Promotional Information:</strong> Your photograph for the purpose of testimonials and other promotions.</li>
+                    <li>Any other information that is defined as “sensitive personal data or information” in law.</li>
+                </ul>
+            </section>
+
+            <section id="consent">
+                <h2><i class="fa-solid fa-handshake"></i> 3. Users' Consent</h2>
+                <p><strong>Consent to the use of Data:</strong> All users of KIMI consent to the use of their Sensitive Personal Data and Other Personal Information by KIMI for the purposes stated in this policy. We restrict access to personal user information to our employees, contractors and agents and only allow access to those who need to know such information in order to process it on our behalf.</p>
+                <p><strong>Withdrawal of Consent:</strong> Users are entitled to withdraw consent to the use of their data by emailing a specific request to KIMI. Withdrawal of consent may result in immediate withdrawal of any right provided to the user to use the services provided by KIMI. We reserve the right to use non-personally identifiable data for analysis even after withdrawal.</p>
+                <p><strong>Marketing & Communications:</strong> Providing photographs for marketing gives KIMI irrevocable rights to use them. When you register your email, you agree to receive communication from KIMI and authorized entities. Telephonic communication with Customer Support may be recorded for training, quality management, and resolution purposes.</p>
+            </section>
+
+            <section id="security">
+                <h2><i class="fa-solid fa-shield-halved"></i> 4. Data Security</h2>
+                <p>We take appropriate security measures to protect user data from unauthorized access, alteration, disclosure, or destruction. These include internal reviews of our data collection, storage, processing practices, and physical security measures. KIMI employs comprehensive information security policies including firewalls and encryption.</p>
+                <p>However, security is always relative and data transmitted over the Internet is inherently exposed to security risks. KIMI cannot guarantee absolute security during transmission. You are responsible for keeping your login credentials confidential. If you suspect any breach, you must notify KIMI immediately.</p>
+                <p><strong>Third-Party Links:</strong> The platform may contain links to third-party sites. KIMI is not responsible for their privacy policies, and you are advised to exercise caution when navigating away from our platform.</p>
+            </section>
+
+            <section id="minors">
+                <h2><i class="fa-solid fa-child-reaching"></i> 5. Privacy measures for minors</h2>
+                <p>Our platform and contests are strictly meant only for persons aged 18 or above. If you are under 18 years of age, you are not permitted to use KIMI. If you are a parent and/or guardian and believe that we may have inadvertently collected personal information from your child, notify us immediately via our customer service email.</p>
+            </section>
+
+            <section id="exclusions">
+                <h2><i class="fa-solid fa-file-contract"></i> 6. Exclusions</h2>
+                <p>KIMI may share Sensitive Personal Data and Other Personal Information if sharing of such information is necessary:</p>
+                <ul>
+                    <li>To comply with legal processes or governmental requests;</li>
+                    <li>To enforce our Terms of Service and this Privacy Policy;</li>
+                    <li>For the prevention of fraud;</li>
+                    <li>For issues involving information security;</li>
+                    <li>To protect your rights, the rights of KIMI, or the rights of the general public.</li>
+                </ul>
+            </section>
+
+            <section id="liability">
+                <h2><i class="fa-solid fa-scale-balanced"></i> 7. Limitation of Liability</h2>
+                <p>This Privacy Policy is a description of operations regarding user information and does not create legal rights in your favor. KIMI reserves the right to change this Privacy Policy at any time without prior notice. The aggregate liability of KIMI for all claims pursuant to the provisions of services, including violations of this Policy, shall be limited to the maximum liability provided in the Terms of Service. Continued use of the platform constitutes agreement to this Policy and any amendments.</p>
+            </section>
+
+            <section id="area-restrict">
+                <h2><i class="fa-solid fa-map-location-dot"></i> 8. Area Restrictions</h2>
+                <p>You are prohibited from playing cash games on Kamaaikendra 'KIMI' if you are not legally competent to perform transactions in Indian rupees through banking channels in India, or if you access KIMI from a jurisdiction where playing online cash games is not legally permitted.</p>
+                <p>Any violation is a breach of our Terms. Consequently, your KIMI account will be locked immediately, and you will not be entitled to receive prizes or refunds. You acknowledge that state laws of <strong>Andhra Pradesh, Assam, Odisha, Sikkim, Nagaland, and Telangana</strong> (Restricted Territories) do not permit residents to play cash games. You undertake to abide by these laws and shall not use KIMI's Services while residing in these states.</p>
+            </section>
+
+            <section id="refund">
+                <h2><i class="fa-solid fa-money-bill-transfer"></i> 9. Refund Policy</h2>
+                <p><strong>Conditions for Refund:</strong></p>
+                <ul>
+                    <li>The payment is successful but not received by the player.</li>
+                    <li>Due to technical app problems, game services cannot be provided for a long time.</li>
+                    <li>Due to payment loopholes, players pay repeatedly.</li>
+                </ul>
+                <p><strong>How to request a Refund:</strong></p>
+                <ul>
+                    <li>Contact customer service via WhatsApp or email to describe the problem.</li>
+                    <li>The customer service staff will reply as soon as possible to assist.</li>
+                    <li>If the problem is not resolved, we will initiate a refund.</li>
+                    <li>Usually, funds will be returned to your account within 5 working days.</li>
+                </ul>
+                <p><strong>Scenarios where refunds are not applicable:</strong></p>
+                <ul>
+                    <li>Recharge has arrived, and you have consumed part of it.</li>
+                    <li>Payment time is over 3 days.</li>
+                    <li>There is clear evidence of cheating or harming other players, leading to trading limits.</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3 style="color: var(--text-heading); font-size: 20px; margin-bottom: 10px;">Connect with KIMI</h3>
+                    <p style="font-size: 14px; opacity: 0.7;">Join our community and stay updated.</p>
+                </div>
+                
+                <ul class="social-links">
+                    <li><a target="_blank" rel="noreferrer nofollow" href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
+                    <li><a target="_blank" rel="noreferrer nofollow" href="https://www.instagram.com/kamaaikendra_kimi?igsh=MTRzd2J4MHBhbm5ydg==" title="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+                    <li><a target="_blank" rel="noreferrer nofollow" href="#" title="Twitter"><i class="fa-brands fa-twitter"></i></a></li>
+                    <li><a target="_blank" rel="noreferrer nofollow" href="#" title="Youtube"><i class="fa-brands fa-youtube"></i></a></li>
+                    <li><a target="_blank" rel="noreferrer nofollow" href="https://t.me/kamaaikendra777i" title="Telegram"><i class="fa-brands fa-telegram"></i></a></li>
+                </ul>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Kamaaikendra 'KIMI'. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-area section');
+            const navLinks = document.querySelectorAll('.sidebar ul li a');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    // Adjusted for fixed header
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

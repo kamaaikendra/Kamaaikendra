@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chicken Road</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: auto;
+            min-height: 100vh;
+            width: 100%;
+            background-color: #121418;
+            overflow-x: hidden;
+            overflow-y: auto;
+            display: block;
+            color: #ffffff;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav1 {
+            display: flex;
+            position: fixed;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            width: 100vw;
+            height: 40px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+            z-index: 1000000000001;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-icons-left1, .nav-icons-right1 {
+            display: flex;
+            align-items: center;
+            color: #fdbd02;
+            font-size: 25px;
+        }
+        .nav-icons-left1 i:active, .nav-icons-right1 i:active {
+            opacity: 0.6;
+        }
+        .deposit-btn {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .deposit-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            position: fixed;
+            top:40px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            height: 40px;
+            width:100%;
+            background: #3b3b3b;
+            border-bottom: 1px solid #2a2b2e;
+            z-index: 100000000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: 16px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        .logo span {
+            color: #e42c42;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-display {
+            font-size: 12px;
+            font-weight: 500;
+            background: #555;
+            padding: 5px 15px;
+            border-radius: 4px;
+            color: rgba(255,255,255,1);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .balance-display span {
+            color: rgba(12,255,14,1);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .menu-hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 5px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger span {
+            width: 22px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        /* Game Stage */
+        .game-stage-container {
+            min-height: 50vh;
+            max-height: 55vh;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #757575;
+            border-bottom: 2px solid #333;
+            cursor: grab;
+        }
+        .game-stage-container:active {
+            cursor: grabbing;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        .live-wins-overlay {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 10;
+            font-size: 13px;
+            font-weight: 700;
+            color:rgba(255,255,255,0.85);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            padding:4px 10px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.01) 100%);
+            pointer-events: none;
+        }
+        .live-wins-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            height: 6px;
+            width: 6px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 5px #28a745;
+        }
+        .live-win-feed {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.01) 100%);
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-top: 5px;
+            animation: slideUpFade 3s forwards;
+            opacity: 0;
+        }
+        .live-win-feed img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .live-win-feed span {
+            color: #4caf50;
+        }
+
+        @keyframes slideUpFade {
+            0% { transform: translateY(10px); opacity: 0; }
+            10% { transform: translateY(0); opacity: 1; }
+            80% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-10px); opacity: 0; }
+        }
+
+        /* -------------------------------------
+           UPDATED: Bet Controls Area (Exactly matched to images)
+           ------------------------------------- */
+        .controls-area {
+            background: #333333;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 5px;
+            border: 1px solid #444444;
+            border-radius: 12px;
+        }
+
+        .controls-top {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: opacity 0.3s;
+        }
+
+        /* Dimmed state when game is active */
+        .controls-top.disabled-state {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .bet-input-row {
+            display: flex;
+            background: #424242;
+            border-radius: 5px;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+            padding: 8px 6px;
+            align-items: center;
+        }
+
+        .bet-input-row button {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.01);
+        }
+        .bet-input-row button:active { 
+            background: rgba(255, 255, 255, 0.15); 
+        }
+
+        .bet-input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .quick-bet-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quick-bet-row button {
+            flex: 1;
+            background: #424242;
+            border: none;
+            color: #fff;
+            padding: 8px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+        }
+        .quick-bet-row button:active { background: #555; }
+
+        .coin-icon {
+            background: #fff;
+            color: #424242;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+            user-select: none;
+            transition: opacity 0.3s;
+        }
+        .dropdown-selected {
+            background: #424242;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight:600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+        }
+        .dropdown-options {
+            position: absolute;
+            bottom: calc(100% + 3px);
+            left: 0;
+            width: 100%;
+            background: #404143;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+        }
+        .dropdown-option {
+            padding: 5px 15px;
+            color: #ddd;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown-option:hover { background: #4a4b4d; color: #fff; }
+        .dropdown-option .checkmark { display: none; color: #fdbd02; }
+        .dropdown-option.selected { color: #fff; }
+        .dropdown-option.selected .checkmark { display: inline-block; }
+
+        .play-btn {
+            width: 100%;
+            background: #3ecc5e;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            height:45px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+        }
+        .play-btn:active {
+            transform:scale(1.01);
+            box-shadow: 0 0 #32a34a;
+        }
+
+        .game-actions {
+            display: none;
+            gap: 12px;
+            height: 75px;
+        }
+
+        .cashout-btn {
+            flex: 1;
+            background: #ffce4b;
+            color: #111;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px #d9a532;
+            transition: transform 0.1s, box-shadow 0.1s;
+            line-height: 1.2;
+        }
+        .cashout-btn .cashout-lbl { font-size: 17px; }
+        .cashout-btn #cashout-amt { font-size: 17px; }
+        
+        .cashout-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 #d9a532;
+        }
+
+        .go-btn {
+            flex: 1;
+            background: #3ecc5e;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 0 5px #32a34a;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .go-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 #32a34a;
+        }
+
+        /* ------------------------------------- */
+
+        /* List Layouts for Modal History */
+        .list-header {
+            display: flex; padding: 5px 15px; color: #888; font-size: 11px; align-items: center; background: #1b1c1d; margin-top: 5px;
+        }
+        .list-row {
+            display: flex; padding: 8px 15px; align-items: center; font-size: 12px; border-bottom: 1px solid #1b1c1d; color: #ddd;
+        }
+        .list-row.win {
+            background: rgba(40, 167, 69, 0.15); border: 1px solid #28a745; border-radius: 6px; margin: 4px;
+        }
+        .list-row.win .col-date { color: #fff; }
+        .list-row.lose {
+            background: rgba(167,69,40,0.15); border-radius: 6px; margin: 4px; border: 1px solid rgba(280,20,10,1);
+        }
+
+        .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 10px; color: #888; }
+        .col-bet { flex: 1.5; text-align: left; }
+        .col-x { flex: 1; text-align: center; }
+        .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+
+        .x-pill {
+            background: rgba(255,255,255,0.1); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold;
+        }
+        .x-pill.blue-bg { background: #1a425c; color: #4db8ff; }
+        
+        .load-more-btn {
+            background: #2b2b2c; color: #aaa; border: none; padding: 8px 16px; border-radius: 15px; font-size: 12px; cursor: pointer; margin: 10px; display: inline-block;
+        }
+        .action-icons { display: flex; gap: 5px; color: #28a745; font-size: 12px; margin-left: auto; }
+        .action-icons i { opacity: 0.8; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 10000000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        
+        .modal-content {
+            background: #2b2b2c; width: 90%; max-width: 350px; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-header {
+            padding: 12px 15px; background: #1b1c1d; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333;
+        }
+        .modal-title { font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase;}
+        .modal-close { background: transparent; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
+        .modal-body { padding: 15px; color: #ccc; font-size: 13px; max-height: 70vh; overflow-y: auto; }
+
+        /* Menu Modal */
+        .menu-list { list-style: none; }
+        .menu-list li {
+            padding: 12px 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #ddd;
+        }
+        .menu-list li:hover { background: #3a3b3c; }
+        .menu-list li i { width: 20px; text-align: center; color: #888; }
+        
+        .menu-header-profile { 
+            display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; background: #242526;
+        }
+        .profile-info-left { display: flex; align-items: center; gap: 12px; }
+        .avatar-circle-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: #333;}
+        .user-id-text { color: #fff; font-weight: 700; font-size: 5px; }
+        .Email-id-text{ font-size: 12px; font-weight: 700; }
+        .change-avatar-btn {
+            background: transparent; border: 1px solid #555; color: #aaa; border-radius: 20px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; font-size: 11px; cursor: pointer; transition: 0.2s;
+        }
+        .change-avatar-btn i { font-size: 18px; }
+
+        /* Toast */
+        .message-toast {
+            position: fixed;
+            top: 50px; 
+            left: 50%;
+            width: 95%; 
+            transform: translateX(-50%); 
+            background:rgba(55,85,55,1);
+            border:1.5px solid rgba(35,305,35,1);
+            color: rgba(0,280,0,1); 
+            padding: 5px 16px; 
+            border-radius:8px; 
+            text-align: center; 
+            font-size: 13px; 
+            font-weight: 700; 
+            z-index: 1000000000; 
+            backdrop-filter: blur(5px);
+            opacity: 0; 
+            transition: opacity 0.3s; pointer-events: none; 
+        }
+        .message-toast.show { opacity: 1; }
+        .message-toast.error { 
+            background: rgba(128,86,66,1);
+            border-color:rgba(398,122,22,1);
+            color: rgba(398,122,22,1);
+        }
+
+        /* Auth & Balance Modals */
+        .auth-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .auth-popup-content { background: #222428; padding: 25px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; border: 1px solid #e42c42; }
+        .auth-popup h2 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+        .auth-popup p { color: #e42c42; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+        .auth-popup-btn { background: linear-gradient(180deg, #e42c42 0%, #a81123 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; width: 100%; cursor: pointer; }
+
+        /* Toggles */
+        .toggle-switch {
+            position: relative; width: 34px; height: 18px; background: #141516; border-radius: 10px; cursor: pointer; border: 1px solid #444; transition: 0.2s;
+        }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 1px; left: 1px; width: 14px; height: 14px; background: #888; border-radius: 50%; transition: 0.2s;
+        }
+        .toggle-switch.active { background: #28a745; border-color: #28a745; }
+        .toggle-switch.active::after { left: 17px; background: #fff; }
+        
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px; justify-items: center; }
+        .avatar-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; object-fit: cover; border: 4px solid transparent; background: #333;}
+        .avatar-option.selected { border-color: #28a745; }
+    </style>
+</head>
+<body>
+    <div id="site-loader-wrapper">
+  <div id="site-loader-container" class="site-loader-container">
+    <div class="site-loader-brand site-loader-brand-img"></div>
+    
+    <div class="site-loader-spinner-wrapper">
+      <div class="site-loader-ring"></div>
+      <span class="site-loader-text">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  #site-loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Matched the dark blue/slate background from your image */
+    background-color: rgba(14,22,35,1); 
+    z-index: 99999999999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .site-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-loader-brand-img {
+    background-image: url('https://chicken-road-two.inout.games/static/svg/logo-vendor.2ec2a0c2.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .site-loader-brand {
+    position: relative; /* Essential: creates positioning context for the glow */
+    display: block;
+    width: 150px;
+    height: 55px;
+    background-size: contain;
+    margin-bottom: 35px; /* Spacing between logo and loader */
+    z-index: 1; /* Ensures logo sits on top of the glowing aura */
+  }
+
+  /* --- NEW: The Pulsating Shadow/Glow Animation Behind Logo --- */
+  .site-loader-brand::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 5%;
+    border-radius: 60%;
+    /* Soft white/blue spotlight gradient */
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 5%);
+    box-shadow: 0 0 80px 40px rgba(255, 255, 255, 0.08);
+    transform: translate(-50%, -50%);
+    z-index: -1; /* Tucks the shadow behind the actual logo */
+    -webkit-animation: pulse-glow 2.5s ease-in-out infinite;
+    animation: pulse-glow 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Flex container to align the spinner and text horizontally */
+  .site-loader-spinner-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  /* The spinning circle */
+  .site-loader-ring {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #ffffff;
+    border-right-color: transparent; /* Creates the gap in the circle */
+    border-radius: 50%;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+  }
+
+  /* The Loading... text */
+  .site-loader-text {
+    color: #f1f1f1;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  /* --- Keyframes --- */
+  
+  /* Halo Pulsating Animation */
+  @-webkit-keyframes pulse-glow {
+    0% {
+      -webkit-transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0.5;
+    }
+    50% {
+      -webkit-transform: translate(-50%, -50%) scale(1.35);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0% {
+      transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.35);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0.5;
+    }
+  }
+
+  /* Ring Spinning Animation */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Function to show the loading overlay
+  function displaySiteLoader() {
+    const loaderElement = document.getElementById('site-loader-wrapper');
+    if (loaderElement) {
+      loaderElement.style.display = 'flex';
+    }
+  }
+  
+  // Function to hide the loading overlay
+  function removeSiteLoader() {
+    const loaderElement = document.getElementById('site-loader-wrapper');
+    if (loaderElement) {
+      loaderElement.style.display = 'none';
+    }
+  }
+  
+  // Show the loading overlay when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    displaySiteLoader();
+    
+    // Generate a random delay between 3-5 seconds
+    const dynamicWaitTime = Math.floor(Math.random() * 3000) + 3000; // 3000-5000ms
+    
+    // Hide the overlay after the random delay
+    setTimeout(removeSiteLoader, dynamicWaitTime);
+  });
+</script>
+
+    <div class="top-nav1">
+        <div class="nav-icons-left1">
+            <i class="fas fa-reply" onclick="window.location.href='home.html'"></i>
+        </div>
+        <div class="nav-icons-right1">
+            <button class="deposit-btn" onclick="window.location.href='deposit.html'">Deposit</button>
+        </div>
+    </div>
+
+    <div class="top-nav">
+        <div class="nav-left">
+            <div class="logo">CHICKEN <span>ROAD</span></div>
+        </div>
+        <div class="nav-right">
+            <div class="balance-display"><span id="balance">0.00</span>INR</div>
+            <div class="menu-hamburger" id="menu-btn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-stage-container" id="game-stage">
+        <div class="live-wins-overlay">
+            <div class="live-wins-header">Live wins <span class="dot"></span> Online: <span id="online-count">1</span></div>
+            <div class="live-win-feed" id="live-win-feed" style="display:none;">
+                <img id="live-feed-img" src="" alt="avatar">
+                <div id="live-feed-name">Name</div>
+                <span id="live-feed-amt">+ ₹0.00</span>
+            </div>
+        </div>
+        <canvas id="game-canvas"></canvas>
+    </div>
+
+    <div class="controls-area">
+        <div class="controls-top" id="controls-top">
+            <div class="bet-input-row">
+                <button onclick="setBet('min')">MIN</button>
+                <input type="number" id="bet-input" value="10" step="10">
+                <button onclick="setBet('max')">MAX</button>
+            </div>
+            <div class="quick-bet-row">
+                <button onclick="setBetAmount(10)">10<div class="coin-icon">₹</div></button>
+                <button onclick="setBetAmount(50)">50<div class="coin-icon">₹</div></button>
+                <button onclick="setBetAmount(100)">100<div class="coin-icon">₹</div></button>
+                <button onclick="setBetAmount(500)">500<div class="coin-icon">₹</div></button>
+            </div>
+            
+            <div class="custom-dropdown" id="diff-dropdown">
+                <div class="dropdown-selected" onclick="toggleDropdown(event)">
+                    <span id="dropdown-selected-text">Easy</span>
+                    <i class="fas fa-chevron-down" id="dropdown-icon"></i>
+                </div>
+                <div class="dropdown-options" id="dropdown-options">
+                    <div class="dropdown-option selected" onclick="selectDifficulty(event, 'easy', 'Easy')">Easy <i class="fas fa-check checkmark"></i></div>
+                    <div class="dropdown-option" onclick="selectDifficulty(event, 'medium', 'Medium')">Medium <i class="fas fa-check checkmark"></i></div>
+                    <div class="dropdown-option" onclick="selectDifficulty(event, 'hard', 'Hard')">Hard <i class="fas fa-check checkmark"></i></div>
+                    <div class="dropdown-option" onclick="selectDifficulty(event, 'hardcore', 'Hardcore')">Hardcore <i class="fas fa-check checkmark"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="play-btn" class="play-btn" onclick="startGame()">Play</button>
+        
+        <div id="game-actions" class="game-actions">
+            <button id="cashout-btn" class="cashout-btn" onclick="cashOut()">
+                <div class="cashout-lbl">CASH OUT</div>
+                <div id="cashout-amt">0.00 INR</div>
+            </button>
+            <button id="go-btn" class="go-btn" onclick="nextStep()">GO</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menu-modal" onclick="closeModalOnBG(event, 'menu-modal')">
+        <div class="modal-content" style="position: absolute; top: 80px; right: 0; height: 100%; border-radius: 0; max-width: 300px; animation: slideLeft 0.3s ease;">
+            <style>@keyframes slideLeft { from{transform:translateX(100%);} to{transform:translateX(0);} }</style>
+            
+            <div class="menu-header-profile">
+                <div class="profile-info-left">
+                    <img id="current-avatar-dp" src="https://api.dicebear.com/8.x/avataaars/svg?seed=Jude" class="avatar-circle-img" alt="Avatar">
+                    <div class="Email-id-text">User :<br><div id="display-Email-id">Email Id:</div></div>
+                </div>
+                <button class="change-avatar-btn" onclick="openAvatarModal()">
+                    <i class="far fa-user-circle"></i>
+                    <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
+                        <span>Change</span><span>Avatar</span>
+                    </div>
+                </button>
+            </div>
+            <ul class="menu-list">
+                <li><i class="fas fa-volume-up"></i> Sound <div id="toggle-sound" class="toggle-switch active" style="margin-left:auto" onclick="toggleMenuSetting('sound', event)"></div></li>
+                <li><i class="fas fa-music"></i> Music <div id="toggle-music" class="toggle-switch active" style="margin-left:auto" onclick="toggleMenuSetting('music', event)"></div></li>
+                <li style="border-top: 10px solid #1b1c1d;"><i class="fas fa-shield-alt"></i> Provably fair settings</li>
+                <li onclick="openModal('rules-modal'); closeModal('menu-modal');"><i class="fas fa-book"></i> Game rules</li>
+                <li onclick="openModal('my-bet-history-modal'); closeModal('menu-modal');"><i class="fas fa-history"></i>Bet history</li>
+                <li onclick="openModal('how-to-play-modal'); closeModal('menu-modal');"><i class="far fa-question-circle"></i> How to play?</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="how-to-play-modal" onclick="closeModalOnBG(event, 'how-to-play-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" style="text-transform: none;">How to play?</div>
+                <button class="modal-close" onclick="closeModal('how-to-play-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="background: #4a4b4d; color: #fff; padding: 20px;">
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div>1.</div>
+                    <div>Specify the amount of your bet.</div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div>2.</div>
+                    <div>Choose a difficulty level in a game. The number of road lines and the chance to be hit car hard varies depending on the level of difficulty.<br><br>
+                    There are 4 difficulty levels in the game:<br><br>
+                    • Easy – there are 30 lines at this level.<br>
+                    • Medium – there are 25 lines at this level.<br>
+                    • Hard – there are 22 lines at this level.<br>
+                    • Hardcore – at the level of 18 lines.
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div>3.</div>
+                    <div>Press "Play" button.</div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div>4.</div>
+                    <div>Your goal is to step as many road lines as possible without getting hit by a car. You can withdraw your winnings at any stage of the game.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rules-modal" onclick="closeModalOnBG(event, 'rules-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME RULES</div>
+                <button class="modal-close" onclick="closeModal('rules-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Chicken Road is built on a provably fair system, which is currently the only real guarantee of honesty in the gambling industry.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="avatar-modal" onclick="closeModalOnBG(event, 'avatar-modal')">
+        <div class="modal-content" style="max-width: 350px; background: #1b1c1d;">
+            <div class="modal-header" style="background: transparent; border-bottom: none; padding-bottom: 5px;">
+                <div class="modal-title" style="color: #fff; font-size: 14px;">CHOOSE GAME AVATAR</div>
+                <button class="modal-close" onclick="closeModal('avatar-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 10px 20px 30px; overflow-y: auto; max-height: 70vh;">
+                <div class="avatar-grid" id="avatar-grid-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="my-bet-history-modal" onclick="closeModalOnBG(event, 'my-bet-history-modal')">
+        <div class="modal-content" style="max-width: 400px; height: 80vh; display: flex; flex-direction: column; background: #121418;">
+            <div class="modal-header">
+                <div class="modal-title">BET HISTORY</div>
+                <button class="modal-close" onclick="closeModal('my-bet-history-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="list-header" style="background: #1b1c1d;">
+                <div class="col-date">Date</div>
+                <div class="col-bet">Bet INR</div>
+                <div class="col-x">X</div>
+                <div class="col-cashout">Cash out INR</div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div class="bets-list" id="modal-my-bets-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 10px; background: #1b1c1d; margin-top: auto;">
+                    <button class="load-more-btn" onclick="loadMoreHistory()">Load more</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-popup" id="auth-popup">
+        <div class="auth-popup-content">
+            <h2>Authentication Required !!</h2>
+            <p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p>
+            <button class="auth-popup-btn" id="sign-in-btn">Sign In to Play</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="insufficient-balance-modal" onclick="closeModalOnBG(event, 'insufficient-balance-modal')">
+        <div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #ff9800; background: #2b2b2c;">
+            <div class="modal-header" style="border-bottom: none; background: transparent;">
+                <div class="modal-title" style="color: #ff9800;"><i class="fas fa-wallet"></i> LOW BALANCE</div>
+                <button class="modal-close" onclick="closeModal('insufficient-balance-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-coins" style="font-size: 50px; color: #ffc107; margin-bottom: 15px;"></i>
+                <p style="color: #fff; font-size: 16px; margin-bottom: 10px;">Insufficient Balance</p>
+                <p style="color: #ccc; font-size: 13px; margin-bottom: 20px;">Please add cash to your wallet to place this bet.</p>
+                <button onclick="window.location.href='deposit.html'" style="background: #ff9800; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer;">Add Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-toast" id="message-toast"></div>
+
+    <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const uid = localStorage.getItem('uid');
+
+        // --- Core Variables ---
+        let balance = 0.00;
+        let soundEnabled = true;
+        let musicEnabled = true;
+        
+        // --- HYBRID SYSTEM UPDATE: Tracking variables ---
+        let lifetimeWagered = 0; 
+        let lifetimeWon = 0;
+        let globalMode = 'NORMAL';
+
+        // ====================== SOUND EFFECTS SYSTEM ====================== //
+        class SoundPool {
+            constructor(maxSize = 10) {
+                this.pool = [];
+                this.maxSize = maxSize;
+                this.sounds = {};
+                this.activeSources = [];
+                this.init();
+            }
+
+            async init() {
+                this.soundUrls = {
+                    playBtn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Gobtnclicksfx.mp3',
+                    goBtn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Gobtnclicksfx.mp3',
+                    cashoutBtn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/cashoutbtn.mp3',
+                    crash: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/chickenCrashed.mp3',
+                    speedyCar: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Speedingcar.mp3'
+                };
+                await this.preloadSounds();
+            }
+
+            async preloadSounds() {
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        this.sounds[key] = { audioContext, audioBuffer, url };
+                    } catch (error) {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+                        this.sounds[key] = { audioContext, audioBuffer: buffer, url: null };
+                    }
+                }
+            }
+
+            play(soundName, volume = 0.5, loop = false) {
+                if (!this.sounds[soundName]) return;
+                let audioContext = this.sounds[soundName].audioContext;
+                if (audioContext.state === 'suspended') audioContext.resume();
+                const source = audioContext.createBufferSource();
+                source.buffer = this.sounds[soundName].audioBuffer;
+                source.loop = loop;
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = volume;
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                source.start(0);
+                
+                this.activeSources.push(source);
+                
+                source.onended = () => { 
+                    try { source.disconnect(); gainNode.disconnect(); } catch(e) {} 
+                    this.activeSources = this.activeSources.filter(s => s !== source);
+                };
+                return source;
+            }
+
+            stopAll() {
+                this.activeSources.forEach(source => {
+                    try { source.stop(); } catch(e) {}
+                });
+                this.activeSources = [];
+            }
+        }
+
+        const soundPool = new SoundPool();
+
+        function playSound(key, volume = 0.5, loop = false) {
+            if (!soundEnabled || document.hidden) return null;
+            if (soundPool.sounds[key]) {
+                try { return soundPool.play(key, volume, loop); } catch (error) {}
+            }
+            return null;
+        }
+
+        // --- Background Music System ---
+        const bgMusic = new Audio('https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/chickenroadmusic.mp3');
+        bgMusic.loop = true;
+        let bgmStarted = false;
+
+        function playMusic() {
+            if (musicEnabled && bgMusic.paused) {
+                bgMusic.play().catch(e => console.log("Music play blocked", e));
+                bgmStarted = true;
+            }
+        }
+
+        function stopMusic() {
+            if (!bgMusic.paused) {
+                bgMusic.pause();
+            }
+        }
+        
+        const diffConfig = {
+            easy: { 
+                lines: 30, 
+                chance: 0.80,
+                multipliers: [1.01, 1.03, 1.06, 1.10, 1.15, 1.19, 1.24, 1.30, 1.35, 1.42, 1.48, 1.56, 1.65, 1.75, 1.85, 1.98, 2.12, 2.28, 2.47, 2.70, 2.96, 3.28, 3.70, 4.11, 4.64, 5.39, 6.50, 8.36, 12.08, 23.24]
+            },
+            medium: { 
+                lines: 25, 
+                chance: 0.70,
+                multipliers: [1.08, 1.21, 1.37, 1.56, 1.78, 2.05, 2.37, 2.77, 3.24, 3.85, 4.62, 5.61, 6.91, 8.64, 10.99, 14.29, 18.96, 26.07, 37.24, 53.82, 82.36, 137.59, 265.35, 638.82, 2457.00]
+            },
+            hard: { 
+                lines: 22, 
+                chance: 0.50,
+                multipliers: [1.18, 1.46, 1.83, 2.31, 2.95, 3.82, 5.02, 6.66, 9.04, 12.52, 17.74, 25.80, 38.71, 60.21, 97.34, 166.87, 305.94, 595.86, 1283.03, 3267.64, 10898.54, 62162.09]
+            },
+            hardcore: { 
+                lines: 18, 
+                chance: 0.40,
+                multipliers: [1.44, 2.21, 3.45, 5.53, 9.09, 15.30, 26.78, 48.70, 92.54, 185.08, 391.25, 894.28, 2235.72, 6096.15, 18960.33, 72432.75, 379632.82, 3608855.25]
+            }
+        };
+
+        let currentDiff = 'easy'; // UPDATED DEFAULT
+        let gameState = 'IDLE'; 
+        let isProcessingBet = false;
+
+        let currentLane = 0;
+        let currentMultiplier = 1.0;
+        let currentBet = 10; // UPDATED DEFAULT
+        let maxLanes = 30; // UPDATED DEFAULT FOR EASY
+        
+        let isCurrentStepSafe = true;
+        let barrierActive = false;
+        let jumpLandedTime = 0;
+
+        let isJumpDelayed = false;
+        let jumpDelayTimer = 0;
+        let isSidewalkJumping = false;
+        let sidewalkJumpsRemaining = 0;
+
+        // --- Footwalk Images ---
+        const imgStartFootwalk = new Image();
+        imgStartFootwalk.src = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjH_iHlotqCIA8_dmlUB07LkfnMO7dDWwNoAx2ihOYln8hjrtuzVVyNlE52_rufOVGZRqZHaa6p5RXoyII2_Lt78EhCbKbBtFQ-UhDXPxXd6OulG77786NaOTzBz8qrYyBlwDK8XO66ruQBOOzagCv296M7aApJn_HgWnznWjp9w_rZ8Lob0jx_RmmXKoU/s1522/1000121155.png'; 
+
+        const imgEndFootwalk = new Image();
+        imgEndFootwalk.src = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoBV89yPgv64dT8glenqQJp7dnUxpI4cO7hovkOeDjlNE01fSJbn9yx-qi8Dnxt1WmfUjYJ0HLzaAPmT3cFjAuN7JmAXZ00kfgWkFiFxA8DH3iY4RBTZIz9zXGWZE2S4IPQpaTTae2APE0REMSCzJ4N3c7VLPDjikVxJEWg2DvPRD_-64TTur89MuJbBk/s1132/1000121173.png'; 
+
+        // ====================== 4 PHASE ANIMATION SYSTEM ====================== //
+
+        // 1. Waiting Phase (10 Frames)
+        const urlsWaiting = [
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2-ZMb6xC_YoFQTGZJWep0ZGmH9c20J4hPoGViuwrLvu2tn08LqEVdhztt-JxquiDE5dFBNPfmvliKNsc9G2LAN7BEKZQhcLpY-MEdppbIUZoQMtGFBdZVff6TfqRZeohPgjDn5y8ALUP1BT5ZB34XXWoU-HUm3YGeOzNDDtXkQ-_XBvGF01048Lw7ng4/s1124/1000121373.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXQReuSy8W_shiH8lWRanEZU_SaetMzsC6X-4QsvaZrNQuntla5AOQOboI2qI3KPPZbsB63JXmB4E-Na8QFX2d8jHPg_4Cwrayp3oMl1NuoZn113I_2ugfezYTyTnmo9OdV5tKIV-irFeogP5gAvIoWB_mAcM-M7sPa7YtE90cJxWmp_F7h_59yR9bIrA/s1124/1000121374.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidqbiO1kJ50IxVHwDSq9eP-wqU3M-xjA0cKTu64I-UeL53MrGFytNpOGmee0gz8aTBjvScwAz5BOzD4h7kHfj2IEB1a5cNL7WuB321u1t2Q7gR64Fn-j8E4DtPuqbYcTi6u_U1nzuePzjPKFOZ6mInP5ohnclV5hZCGkekqpkWwclDMZh8639yuZihMtQ/s1128/1000121383.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUghmvEUI6_L3_Hhyphenhyphen_XHouVAhgNVHJw73JuHw30xGIfOuyflDjQFCkX4icLUFQmViPFFc4IHjOawWIhonboM7gao-HowOI0qRWNnq71MklAwUL8l_nrImQXl-RvpdBAS8GuIKQKY0PyrpBmLL7E3YYDb_CoUMANahESBYAVzurGCR2ublTRCxHu9tqOZo/s1128/1000121382.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF7v8fx3CZAFCMJi0p5cpMWhwifhiBHhpB1pPh1U1ZnA8RfLCKXXXxPpPMnwFZkQidv_dYkHOeV8VHjT7wcSBEis0EHIZGaHR4ssFNWBxPCxaGd0reGnVCCI9P1XwLeeDbkUac_q3-3QSDdykVSgDSHKJd8wxnn_eRg2beFtRLuCyG51gYBBbgr6g_agU/s1128/1000121381.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiALJ2sLHfYG4ZdCq4CpHlJUqwYXWCkpLbIYUTe-wf84ZWPH_qooN9FxmoF0G1mJaL-l2jDS_1-zvhXXbefBHKhyphenhyphen-jroY6yTvW1na0MnK9_uENanL0cctWaTbZ43U4-_zMGSMqB5V2Mp7vPftb4CtNdacuYpm88XuSn0CojN4zc3g1zHKV9iL_S8SyVDYU/s1126/1000121380.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDzDsDypEdpLyOOfvXDausfzH9dQ9zXTx_VFfeEELZjvLB071VMI0KXBA66SkJj3vKrje9a14EZSUgQgEv_fKyceg9Lrk9mFYdfHurvcrhNB2NMPZ8C42bGeRVdVUDooFgbY-7FdyYr23vTF63r5NGo2_zkxsPaB6qOp22Sp6ijPobg5st4SgXy-CNzM8/s1122/1000121379.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEinlCz2c9xgVjcHHFtdZrTxO9-MzMx6DzPIkevbhkYDbky-z8oLR8sIlXh3fiYoqh7tLXpZoSwntGgBvB6UgAm2B2FwhKg0yuNR7RpAyXiTnjtAR-roJlNZbYYAkbsz82lhq2agbrmOrwVepY3hxdLzUJr2tWWi7Eyx3GanSClZchx4WhWiDtVe2Vc_GcI/s1132/1000121378.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZNunLgenK-nOs790zrsJ3EDDbtt4lrF596m955vgdQfQ5xLfdYc1EoxBBEmL737AmeKAFlAOS-E97muysLYc0s3ViYW5g7icDyTNTk2eZXDXE8_80mnEMF7UziIdtFB9wufMjjNNr7ZnVAeRauvqYzWrB2HW_L7cA3q7kcEL64CYTUCpwvlkLYalfWPg/s1122/1000121377.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIVQvQlIlOv8omkp9ISoU8CpmOYu7EhguePLVqCcpQ_I98fOx9tYLpseKLw44f-HC_aP-P1pMNTOnhsO1RKrQ85BCXqQJqV4BpxmP_AH0vFa4KwGTAE8VrjhONV4giFF2qxROigri37TxB_Zt9VTRMCa_RD7V16hFDfMml_Em5lEp0m_3M_Aay5MfPVzk/s1124/1000121376.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9UsFNJsbZxwPDNMfL0NEVaB_Gka61kMsyG64BBpt_1b-8astocB7p5-3Tp0s5InBX8ALCnBQF9XjNAAuNQe99FvMKbwk71S-qCozwwkKwi0VPjzM92TJc63fxyMKLhQXrAzrewTrnSDI8u33_vV0lZuV4OZBI-ue17L-pn7Sn9uc6CeLRH-tVX3-d7ek/s1124/1000121388.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieGDWUAxpLMskkSCbLH7o1l8dRNLPzzoxoTzJlDNzSYlqZxtTcEZ3H_LGAOUG1WZuJXVqK6PdhH2d1cQv2WAmXF2B_muxj2EqpYO_-yM2oiy5LTCW8Fe_CtO_RqDFs8dMuSfSa2vb_N-3x7B13AcswWVuS6eFxdUGFhBR3jphM38P7qem1QXGT1Txv56Y/s1128/1000121387.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3GE1Hmo_hmAUe50G1dUr8Lh6JIm9O9KYAdO41eOVsykhYj3nb5IJTDfkM1sDC_MiPRblO6vKXor2U6vw3Vtz2zqe3qcjHGkNSeGjLmUbgIyDBQARv9gaDjHxOkthIUbO8tWwbT1H3nc21PEfH7KUT00LnC0Y8NMm-tbEFZ30prY5_gty9XslgWKGnGtc/s1116/1000121386.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiq636v4XiqtFy2-lbOyISWBmf7p7REGhHD90zQe4YxQFXsgO0Y83OJFcGaBObdDti5RNYtGFInrPiiUjS-UjdjTFggHDUrUoFihzqwvym8HqUY-3ScRrYuB5ROH0mQA6tL6kIMdzx8QmTg74Q0TWXojb5jC7RA_SLbNs8QBXEqJF9LF5s3lSqqifnp-5M/s1130/1000121385.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6ipTM9jDCf1zomNymDz3LGCOrzH4AFdOzTn8tR_YsNzusdtYhm4xLOevj2K1Z9e-Ws-e31SODrO60tXVA-kCqxdRLTwDjCv8rKshIDqmZQnZBN7QkGGxvm40hOzxw_FcqvdJ6lQHaffiRsdre_86LPEoEGumT8cykfpwhCPRu4mhyAfTRZ94sUbmCcFA/s1130/1000121384.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhd3TIQz1KLOMdOO1iI4zkOdVVOxam7OB-ebTB2wbqojvycuRAAGw9o7MsCgg20Q2m-BK0Asr0RVbqEVXasauMo6a0tm683e5hssMTzLoJHaMJN1d4l8q10F3aZDTdYtKMUMisGWsFNAHo8pZ91yrgTzzzLUURrCQlBHv-ul2zMCin4rex0eNlFOPMMBn0/s1122/1000121394.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj00OTo1BWKnLaKdWgWvl2WDLxM1PD6PNkx6WQbAG66v_TYPSA_sgF_ZCSC4UtG3x3FWip7y7cZvfg4HDIb2hLNp4OCjcPJDJ06wRVE8Y_r0f-g4h4x7vStESeYKrCKZjMQb5TPOBgI7Se6uaplCAw7kqbp8hc_Kx0C7Xil7pxnQ5vHzrZ1o2lmiBbuPNI/s1114/1000121393.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEJ5ktEZZ63OEM2k6Hz5dJBOWAvFmVofj_yV6LRSWTWTX5gTIXSi2crYLadfui1cs3Iq9mQCm9O4WcBj1-_bwlz0NJS4t65YDPTiVHnb_C_SGCXQanT0XJHeOmkaQbQQKIlV2LaDP0go5zC-DFo_eSvh1NhAlgJV6jexjh-_DhFvgxU5HqqwoT4Q8tqKI/s1122/1000121392.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiaY24XGgxTA3zWDQz6ykyBx1DxeaSSdpFd9c9A9n6gwANNZLn7QvAwXKmCmBU2xjWs6EEve8CDhvgE6UrZCI8m7pjbVtLWc7Tn5-mYSeUgmSshnxc4vHAg3IFzFOczfglImfNQ4hYwg-qWFaWRPajrTYZunEMheJ9VZVXXsO_xRi0R5Yloj8dt1cGJwGE/s1126/1000121391.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhSeyHGTv6KCszp1PknqxlsAwOHPINtSCb554rH3PTTtqp1vnAY0SF698-c0Ebz5sfq0JWqX1gXALdm6ZuGy3wgjGkSDuBfS5zMcYZWD1yB1YSvh94t0_x0MJYMHrqYqSeooxHyzX5mxvVbuBep6Sn4VAkRz1ozFBs9lzMARbt4krJyv9__MosFoqtXl0c/s1122/1000121390.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigakqg6ALWQbSxgz5ii9s2aQ3_oE1vY7c2wDIiAPI86fFYRPs2Pak_Aj85fvg7I4aq-BFO81duP_uRJjPXl7wmAp0kiP9VqDWwCiLIRmkoEZCl3yJZeJlzTHW2uMOKcXdijTwJqS8l-GqpBPqmoaRYyT9IpvBpcVphaSXSOWHw305y1cxwA0rz4cuIYQ4/s1120/1000121389.png'
+        ];
+        // 2. Game Phase Waiting (4 Frames)
+        const urlsGameWait = [
+           'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2-ZMb6xC_YoFQTGZJWep0ZGmH9c20J4hPoGViuwrLvu2tn08LqEVdhztt-JxquiDE5dFBNPfmvliKNsc9G2LAN7BEKZQhcLpY-MEdppbIUZoQMtGFBdZVff6TfqRZeohPgjDn5y8ALUP1BT5ZB34XXWoU-HUm3YGeOzNDDtXkQ-_XBvGF01048Lw7ng4/s1124/1000121373.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXQReuSy8W_shiH8lWRanEZU_SaetMzsC6X-4QsvaZrNQuntla5AOQOboI2qI3KPPZbsB63JXmB4E-Na8QFX2d8jHPg_4Cwrayp3oMl1NuoZn113I_2ugfezYTyTnmo9OdV5tKIV-irFeogP5gAvIoWB_mAcM-M7sPa7YtE90cJxWmp_F7h_59yR9bIrA/s1124/1000121374.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidqbiO1kJ50IxVHwDSq9eP-wqU3M-xjA0cKTu64I-UeL53MrGFytNpOGmee0gz8aTBjvScwAz5BOzD4h7kHfj2IEB1a5cNL7WuB321u1t2Q7gR64Fn-j8E4DtPuqbYcTi6u_U1nzuePzjPKFOZ6mInP5ohnclV5hZCGkekqpkWwclDMZh8639yuZihMtQ/s1128/1000121383.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUghmvEUI6_L3_Hhyphenhyphen_XHouVAhgNVHJw73JuHw30xGIfOuyflDjQFCkX4icLUFQmViPFFc4IHjOawWIhonboM7gao-HowOI0qRWNnq71MklAwUL8l_nrImQXl-RvpdBAS8GuIKQKY0PyrpBmLL7E3YYDb_CoUMANahESBYAVzurGCR2ublTRCxHu9tqOZo/s1128/1000121382.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF7v8fx3CZAFCMJi0p5cpMWhwifhiBHhpB1pPh1U1ZnA8RfLCKXXXxPpPMnwFZkQidv_dYkHOeV8VHjT7wcSBEis0EHIZGaHR4ssFNWBxPCxaGd0reGnVCCI9P1XwLeeDbkUac_q3-3QSDdykVSgDSHKJd8wxnn_eRg2beFtRLuCyG51gYBBbgr6g_agU/s1128/1000121381.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiALJ2sLHfYG4ZdCq4CpHlJUqwYXWCkpLbIYUTe-wf84ZWPH_qooN9FxmoF0G1mJaL-l2jDS_1-zvhXXbefBHKhyphenhyphen-jroY6yTvW1na0MnK9_uENanL0cctWaTbZ43U4-_zMGSMqB5V2Mp7vPftb4CtNdacuYpm88XuSn0CojN4zc3g1zHKV9iL_S8SyVDYU/s1126/1000121380.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDzDsDypEdpLyOOfvXDausfzH9dQ9zXTx_VFfeEELZjvLB071VMI0KXBA66SkJj3vKrje9a14EZSUgQgEv_fKyceg9Lrk9mFYdfHurvcrhNB2NMPZ8C42bGeRVdVUDooFgbY-7FdyYr23vTF63r5NGo2_zkxsPaB6qOp22Sp6ijPobg5st4SgXy-CNzM8/s1122/1000121379.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEinlCz2c9xgVjcHHFtdZrTxO9-MzMx6DzPIkevbhkYDbky-z8oLR8sIlXh3fiYoqh7tLXpZoSwntGgBvB6UgAm2B2FwhKg0yuNR7RpAyXiTnjtAR-roJlNZbYYAkbsz82lhq2agbrmOrwVepY3hxdLzUJr2tWWi7Eyx3GanSClZchx4WhWiDtVe2Vc_GcI/s1132/1000121378.png', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZNunLgenK-nOs790zrsJ3EDDbtt4lrF596m955vgdQfQ5xLfdYc1EoxBBEmL737AmeKAFlAOS-E97muysLYc0s3ViYW5g7icDyTNTk2eZXDXE8_80mnEMF7UziIdtFB9wufMjjNNr7ZnVAeRauvqYzWrB2HW_L7cA3q7kcEL64CYTUCpwvlkLYalfWPg/s1122/1000121377.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIVQvQlIlOv8omkp9ISoU8CpmOYu7EhguePLVqCcpQ_I98fOx9tYLpseKLw44f-HC_aP-P1pMNTOnhsO1RKrQ85BCXqQJqV4BpxmP_AH0vFa4KwGTAE8VrjhONV4giFF2qxROigri37TxB_Zt9VTRMCa_RD7V16hFDfMml_Em5lEp0m_3M_Aay5MfPVzk/s1124/1000121376.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9UsFNJsbZxwPDNMfL0NEVaB_Gka61kMsyG64BBpt_1b-8astocB7p5-3Tp0s5InBX8ALCnBQF9XjNAAuNQe99FvMKbwk71S-qCozwwkKwi0VPjzM92TJc63fxyMKLhQXrAzrewTrnSDI8u33_vV0lZuV4OZBI-ue17L-pn7Sn9uc6CeLRH-tVX3-d7ek/s1124/1000121388.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieGDWUAxpLMskkSCbLH7o1l8dRNLPzzoxoTzJlDNzSYlqZxtTcEZ3H_LGAOUG1WZuJXVqK6PdhH2d1cQv2WAmXF2B_muxj2EqpYO_-yM2oiy5LTCW8Fe_CtO_RqDFs8dMuSfSa2vb_N-3x7B13AcswWVuS6eFxdUGFhBR3jphM38P7qem1QXGT1Txv56Y/s1128/1000121387.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3GE1Hmo_hmAUe50G1dUr8Lh6JIm9O9KYAdO41eOVsykhYj3nb5IJTDfkM1sDC_MiPRblO6vKXor2U6vw3Vtz2zqe3qcjHGkNSeGjLmUbgIyDBQARv9gaDjHxOkthIUbO8tWwbT1H3nc21PEfH7KUT00LnC0Y8NMm-tbEFZ30prY5_gty9XslgWKGnGtc/s1116/1000121386.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiq636v4XiqtFy2-lbOyISWBmf7p7REGhHD90zQe4YxQFXsgO0Y83OJFcGaBObdDti5RNYtGFInrPiiUjS-UjdjTFggHDUrUoFihzqwvym8HqUY-3ScRrYuB5ROH0mQA6tL6kIMdzx8QmTg74Q0TWXojb5jC7RA_SLbNs8QBXEqJF9LF5s3lSqqifnp-5M/s1130/1000121385.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6ipTM9jDCf1zomNymDz3LGCOrzH4AFdOzTn8tR_YsNzusdtYhm4xLOevj2K1Z9e-Ws-e31SODrO60tXVA-kCqxdRLTwDjCv8rKshIDqmZQnZBN7QkGGxvm40hOzxw_FcqvdJ6lQHaffiRsdre_86LPEoEGumT8cykfpwhCPRu4mhyAfTRZ94sUbmCcFA/s1130/1000121384.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhd3TIQz1KLOMdOO1iI4zkOdVVOxam7OB-ebTB2wbqojvycuRAAGw9o7MsCgg20Q2m-BK0Asr0RVbqEVXasauMo6a0tm683e5hssMTzLoJHaMJN1d4l8q10F3aZDTdYtKMUMisGWsFNAHo8pZ91yrgTzzzLUURrCQlBHv-ul2zMCin4rex0eNlFOPMMBn0/s1122/1000121394.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj00OTo1BWKnLaKdWgWvl2WDLxM1PD6PNkx6WQbAG66v_TYPSA_sgF_ZCSC4UtG3x3FWip7y7cZvfg4HDIb2hLNp4OCjcPJDJ06wRVE8Y_r0f-g4h4x7vStESeYKrCKZjMQb5TPOBgI7Se6uaplCAw7kqbp8hc_Kx0C7Xil7pxnQ5vHzrZ1o2lmiBbuPNI/s1114/1000121393.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEJ5ktEZZ63OEM2k6Hz5dJBOWAvFmVofj_yV6LRSWTWTX5gTIXSi2crYLadfui1cs3Iq9mQCm9O4WcBj1-_bwlz0NJS4t65YDPTiVHnb_C_SGCXQanT0XJHeOmkaQbQQKIlV2LaDP0go5zC-DFo_eSvh1NhAlgJV6jexjh-_DhFvgxU5HqqwoT4Q8tqKI/s1122/1000121392.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiaY24XGgxTA3zWDQz6ykyBx1DxeaSSdpFd9c9A9n6gwANNZLn7QvAwXKmCmBU2xjWs6EEve8CDhvgE6UrZCI8m7pjbVtLWc7Tn5-mYSeUgmSshnxc4vHAg3IFzFOczfglImfNQ4hYwg-qWFaWRPajrTYZunEMheJ9VZVXXsO_xRi0R5Yloj8dt1cGJwGE/s1126/1000121391.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhSeyHGTv6KCszp1PknqxlsAwOHPINtSCb554rH3PTTtqp1vnAY0SF698-c0Ebz5sfq0JWqX1gXALdm6ZuGy3wgjGkSDuBfS5zMcYZWD1yB1YSvh94t0_x0MJYMHrqYqSeooxHyzX5mxvVbuBep6Sn4VAkRz1ozFBs9lzMARbt4krJyv9__MosFoqtXl0c/s1122/1000121390.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigakqg6ALWQbSxgz5ii9s2aQ3_oE1vY7c2wDIiAPI86fFYRPs2Pak_Aj85fvg7I4aq-BFO81duP_uRJjPXl7wmAp0kiP9VqDWwCiLIRmkoEZCl3yJZeJlzTHW2uMOKcXdijTwJqS8l-GqpBPqmoaRYyT9IpvBpcVphaSXSOWHw305y1cxwA0rz4cuIYQ4/s1120/1000121389.png'
+        ];
+        // 3. Game Phase Jumping (6 Frames)
+        const urlsGameJump = [
+           'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiCfgYaCMoAv047NDWBumAu7yHx8anUP-nHJcMXxf-qHCvWQu9mzu4A7XkkLtyQ9VQOyQFetk-WFGvfS5YAl3nwQnvFZ06QZReJ6_XN4Jl7KKPQHLyShTDsBS6eq_GsYpG453BgZylHOb6mf8rfHidpdp-klYft5X1PAo3GgRqKqhNVV2BRimN7Wh0T8wE/s558/1000121466.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhns1iEfF_BTGyJ5yobnyXa95zc1i2pfC4l1L2OikzAmWa1QI6u1Pj-LDABLni-NxJY5X6Z249CdjMD1MYd484muGMis0h2egt49AUKDyu2IXCPIYzGrNmACzSNaXboOPqpgyOxr0aRyhTGGvRVfIj5lshO_HNgQk_Gj14fW2PAx481JEqk3SWdD3XZmZw/s596/1000121467.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTpAdD0r4bosvdv4NEh4vYPPDw5o6sT6ldfvUOUky8XdDgB3LPfHzC6fwyJDkivnHlrEZfWIKcRlrfNvuPAdCGuf6URX7-Xna0Mj91eb_Pxw0ZZTo5lpN1W803hD-3PllZXnlffcSxqVHb-zGqowJtEUjnya9sPU6R2spJzsFF3o6uU0tI6yieDDWVU24/s596/1000121468.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJ-FycLgS9cI2Qw8rAe1nRRIQ2EHJqGBAq8ujmAmDfr6uBaSD34gdmhbsj4w9zWL4zvQQgfdPyHusI9yWPILAV8RA4VtwPkpQryNGnHRE2WI4m1BGk1d3AZAa4H0smzQX4Ns9JuehmdZ6Hqfsr273dMRtCWkKiv5an7K6qY7F4HsJm5Yag1wXwG2OcgTU/s612/1000121470.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgzEzxQNGuXC-9ASBqjePiWdVO50svH6OmU7bsw6rSj5fvLhdTin3MwmfHUFRluxSvLg9_PAbB3NPfk_pAfG9RhrltiAQWe7GLUYtACy2bU9IutqvF64NE5cUe2vMl3cb9pqvVwAG9osv1g6Amf57Ny6qeNt5Fq6xaS9ObeRf93-wLodPebFokVmoKu8f8/s616/1000121469.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5_ffcYOeGtMhFLg_PEtiHecqDR_DFdVEI8bkkX_ljsA1Z9JSbXGmUrFlOIIBCu_pQjO05M-YS7Ze5vc_IfxkDz-k6FJ3lyQGDae47882uZDhlEqk3v_snJcdvI4npVgLX0jhyphenhyphenLKyCLkl2UpwmYSVEBLi0mnqS6VHWbm8pqLCpbTl2OtQWpHG6JF9XB9Q/s510/1000121471.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhi3M6Hqf_QqGCqejaeTriWU5QWIje1OXgLQ98-8MDePPa3_FrUV5VeAwiF_7EbpWXcrO-gB4Oj3JJfEDN_Pjz-a_VFVoramITeI3BlfsjBZs8e1zrEn2AP1KThE4pw779Ui9lcqQrq4_uk4uF3tot1NtNaDfnS2kqjMn49pj7aXZiuxE8HCH0CPH8srII/s508/1000121472.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVwuw7UnHTWodCpKBoyDqGflT1r4C0Xx4G2hdKhSm1S7mBBustkYlBtPBUrbKNa-jrvbdYnTF20H08txQJsE3dK8SxfJrWmRMWB9EZBCF0oNc4EUrPWUWmQyvAz3yDZDu4atXcSmGLVPWDlw-n_y0v6YwtL-p5jPtJMTiH2Ez3gP6r3JA49gBTcti_3uo/s508/1000121464.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvNNcpT1wkWT9ItTN2Vdt3yrDUOwUGZ8D4VYZi0EiIKHUNlEewX-pENBkVj5Pb5YqNLoFC1ab9GwxkXPsXUQ34PxIivrRCJn3hsX5aZdUCZv-VAWpfu04Or_TEXokl0pbK6P09Ekiz1sTCfsmILuXEsUQ7-RkZepNg0yorehX0_Xzt7yBf3oZn7gL9Lfc/s494/1000121465.png'
+        ];
+        // 4. Crash Phase (10 Frames)
+        const urlsCrash = [
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9_v_qL4Uit_h821kO9x2L7qoAEok8IiK4riLaSdltn61ZWN21SmxauA_5bR-4MtK4Czn-iGsERn_LESiOiQwRvcKrjHXhyphenhyphen1CGogE5PVGhUsP9kB_ANfG-gbzVN-P59-L9VlH1koAKiZqbLJi8luNfzQDhuRLoFWtXEOlB33QCvLODkvAbUG5vM33xjXE/s358/1000121515.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgL6UcQzgYCeG4U72opzKzhirVHFfQpV7hMFLB7O_Ig3TIkCWrlm3cUE40jI04p7wl-sD8neCizKlbP9uJMLN1bJeD-5YbJJ6cQjCJzt5uuf295bUTMVy7HRj8MPMnHBm08jPSCGdEkDfEQWQmAyGMicy6u1oVE5vll9qXJk-nzfYw5G0hMwRIo4tb3lg4/s372/1000121516.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGx5CxfNgy-Z1TRHqSqLbtvKLvh2AvK99as-Rmx9ZsdKVsKlNV_abJLCpVob9a0334OxRhffL5qZX_H_Oa2fteNiekKOGpe2rf59_UIH3jRYWzWfyvOQM5QzVGkp1ZoiLogAEYz3JUbiEvBzcSrNEFyMT98unFjcHKF9uz8Khy2fHg94JeKYOVnzvG3TU/s388/1000121523.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTo1GjXHmj_ZVPWBDTOWNfqmdPqNlAgrCKQRhKdeAA04hcuw6nJGjqd7IiI4GviSlneGd3UpBHZ_33TAQiGIOnGg5CMTZYA64tr7KtUv70HWfdQ-cflkQyte_ht9FlPzTfa5uR8NxgFoAQd8uGrGkS62H4xT7XinB1tbMtUpkakc-G7DnmXB43xtowIcw/s388/1000121522.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh0xusA0rjlOPYL5R16WTjsEAvwVZOjbBwihzqjtMi4Z-dnjgnQLEA3J-IkrDIoXXbNXk81G4m-lTSmyZ3vDf7F7AymdMVAN0MxLxWwpUjlWIgikOJlxs54FsbIgzUetSwUsrQmCBR3BE7FhFF454jrOnrPB4PPxGGt_GFnc1ddC5_GKqhO0ZHwc1CB7cE/s386/1000121521.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf9PRemduQ1lG5ELRchoR8Uhm7QwFGVVxYi8G_HN6XWNbrK8wPAdX3b1o7uRPjoEN2b_IWNG45G3UM8kb3r7X8-2Gd6FsSt0dupGB_kJQW5fTKREkqIMpJVedJoxYigLRLjBcqpaDekhLIKHeQep5e8AR_kiy9QKDPGql6H6ukUdGx48xw78IO5ew-vnA/s384/1000121520.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjwHR1qWtQJ14DEq9967AIqdRCCCNm_rTBs2f1C5MHP70J0MhIrox8ksn2pF2gntLcX6g0l2TmqRuXIetMYnwt3phmVIMJv-Dix7uFrUo6AFl-acPx0LSfFCvg_C7B5JDH08i_8ii7y0z6phjbabK-cUnJDx4qY58LfaZkJVzczjPcprlPS_T04cFL-JoI/s398/1000121519.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9EkkydTCWpRw_dYU1OttjGLke3z6W3P4FoCx33Z_flx2nB9DpQEXfSQrUSGZkdpRNZU3xTXbxu3qf25WeKA1OJ3Qz7GHPRmPJRt1rrvBqwGz07n4f1yujmwydrm-lLvjJv7_99l9cOEVlprpwmL5uqS3Kp6b8XKTPKkvEcw_d6BuCtHsHui-sDWn4t1E/s424/1000121518.png',
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiv4-WEWRFN7KK5reDtjqo79G_MrDEbBxhAEdwEqmSSDVa_rNOk7SL6ii5W74Jr8HTjTfJlhZno_r6QZ22smyjpx6-Q7DTuuCbf6XhKtX6PAlavkD8EYUdwP83ir6hoZrEBYu4nQ3P4jGFsXbSXRLR45uly2_qtnISfOQEcUbCXku4cAMEy9Np0Z8P4gXU/s404/1000121517.png'
+        ];
+
+        // Preload Arrays
+        const framesWaiting = urlsWaiting.map(url => { let img = new Image(); img.src = url; return img; });
+        const framesGameWait = urlsGameWait.map(url => { let img = new Image(); img.src = url; return img; });
+        const framesGameJump = urlsGameJump.map(url => { let img = new Image(); img.src = url; return img; });
+        const framesCrash = urlsCrash.map(url => { let img = new Image(); img.src = url; return img; });
+
+        // Animation State Variables
+        let currentAnimPhase = 'WAITING'; // 'WAITING', 'GAME_WAIT', 'GAME_JUMP', 'CRASH'
+        let lastAnimPhase = 'WAITING';
+        let currentFrameIdx = 0;
+        let animFrameTimer = 0;
+        
+        // ===================================================================== //
+        // NEW CHANGE: Independent Animation Speeds for each of the 4 phases
+        // Adjust these numbers to make animations faster (lower) or slower (higher)
+        const animSpeeds = {
+            WAITING: 15,     // Speed for the idle waiting phase
+            GAME_WAIT: 10,   // Speed for the mid-game wait phase
+            GAME_JUMP: 8,   // Speed for the jumping phase
+            CRASH: 5        // Speed for the crashing phase
+        };
+        // ===================================================================== //
+
+        // --- Barricade Image ---
+        const imgBarricade = new Image();
+        imgBarricade.src = 'https://msolens.pics//assets/chickenRoad2/img/barrier.webp'; 
+
+        // --- Manhole Images ---
+        const imgGoldenCoin = new Image();
+        imgGoldenCoin.src = 'https://msolens.pics//assets/chickenRoad2/img/golden.webp'; 
+
+        const imgManhole = new Image();
+        imgManhole.src = 'https://msolens.pics//assets/chickenRoad2/img/default.webp'; 
+
+        // --- 8 Custom Car Image URLs System ---
+        const carImageUrls = [
+            'https://msolens.pics//assets/chickenRoad2/img/car-1.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-2.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-3.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-4.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-5.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-6.webp', 
+            'https://msolens.pics//assets/chickenRoad2/img/car-7.webp', 
+            'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiKNubpxAAiP64ig5oooVStTrkUstaN_81J8swb1s79dzjV1QmZh72zsCB1Ek4eYnvp0KBClw2lNGk7DokoDnx8IBYf796GoqFxmpm4lZWv849EScbv9CbAYLCst6uPpkLUmJoV9xIIIv8OqWrqiUPeZzPL0qr8i83dmFjRNZI9oRgXkt39NFxV0e9h4xM/s527/1000121200.png'  
+        ];
+
+        const carTypes = carImageUrls.map((url, idx) => {
+            const img = new Image();
+            img.src = url;
+            const w = 75 + (idx % 3) * 5; 
+            const h = w * 2;
+            return { w, h, img };
+        });
+
+        // Canvas & View Setup
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let cameraX = 0;
+        
+        // Jump Animation Variables
+        let chickenObj = { x: 50, y: 0 };
+        let jumpProgress = 1; 
+        let jumpStartX = 50;
+        let jumpTargetX = 50;
+
+        // Entities
+        let crashCars = [];
+        let ambientCars = [];
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragCameraStart = 0;
+
+        // Initialization
+        // --- HYBRID SYSTEM UPDATE: Make init async and wait for platform listener ---
+        async function init() {
+            resizeCanvas();
+            checkAuthentication();
+            loadUserData();
+            updateMyBetsUI(); 
+            trackPresence();
+            listenToRealtimeLiveBets();
+            initAvatarGrid();
+            initAmbientCars();
+            
+            const savedAvatarIdx = localStorage.getItem('userAvatarIndex') || 0;
+            document.getElementById('current-avatar-dp').src = getAvatarUrl(savedAvatarIdx);
+            
+            const emailDisplay = document.getElementById('display-Email-id');
+            if (emailDisplay) {
+                const email = localStorage.getItem('email') || localStorage.getItem('userEmail') || 'Guest User';
+                emailDisplay.innerText = email.includes('@') ? email.split('@')[0] : email;
+            }
+
+            await setupGlobalPlatformListener();
+
+            requestAnimationFrame(drawGame);
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Listen for Admin Panel Traffic Light changes for CHICKEN ROAD ---
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                database.ref('platformControl/globalModes/chickenroad').on('value', snap => {
+                    if (snap.exists()) {
+                        globalMode = snap.val(); 
+                    } else {
+                        globalMode = 'NORMAL';
+                    }
+                    resolve(); // Siri Fix: Resolved instantly to avoid race condition delays
+                });
+            });
+        }
+
+        // Window & Drag Controls
+        function resizeCanvas() {
+            const container = document.getElementById('game-stage');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = container.clientWidth * dpr;
+            canvas.height = container.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
+            chickenObj.y = container.clientHeight / 2 - 30;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        canvas.addEventListener('mousedown', e => { isDragging = true; dragStartX = e.clientX; dragCameraStart = cameraX; });
+        canvas.addEventListener('mousemove', e => { if(!isDragging) return; cameraX = dragCameraStart - (e.clientX - dragStartX); clampCamera(); });
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+        canvas.addEventListener('touchstart', e => { isDragging = true; dragStartX = e.touches[0].clientX; dragCameraStart = cameraX; });
+        canvas.addEventListener('touchmove', e => { if(!isDragging) return; cameraX = dragCameraStart - (e.touches[0].clientX - dragStartX); clampCamera(); });
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        function clampCamera() {
+            let maxScroll = Math.max(0, (maxLanes * 100) + 300 - (canvas.clientWidth / (window.devicePixelRatio || 1)));
+            if(cameraX < 0) cameraX = 0;
+            if(cameraX > maxScroll) cameraX = maxScroll;
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Presence Tracking for Live Users ---
+        function trackPresence() {
+            if (!uid) return;
+            const presenceRef = database.ref(`gamePresence/chickenroad/${uid}`);
+            
+            database.ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() === false) {
+                    return;
+                }
+                presenceRef.onDisconnect().remove().then(function() {
+                    presenceRef.set(true);
+                });
+            });
+
+            // Extra fallback for explicit tab closures
+            window.addEventListener('beforeunload', () => {
+                presenceRef.remove();
+            });
+
+            // Keep updating the in-game UI counter to merge with the new system
+            database.ref('gamePresence/chickenroad').on('value', (snap) => {
+                const countEl = document.getElementById('online-count');
+                if (countEl) countEl.innerText = snap.numChildren() || 0;
+            });
+        }
+
+        function listenToRealtimeLiveBets() {
+            const startTime = Date.now();
+            database.ref('chickenRoadGame/currentRoundBets').orderByChild('timestamp').startAt(startTime).on('child_added', snap => {
+                const bet = snap.val();
+                if(bet.cashout > 0) {
+                    showLiveWinPopup(bet.name, bet.cashout, bet.avatar);
+                }
+            });
+        }
+
+        function showLiveWinPopup(name, amount, avatarIdx) {
+            const feed = document.getElementById('live-win-feed');
+            document.getElementById('live-feed-img').src = getAvatarUrl(avatarIdx);
+            document.getElementById('live-feed-name').innerText = name;
+            document.getElementById('live-feed-amt').innerText = `+₹${amount.toFixed(2)}`;
+            
+            feed.style.display = 'flex';
+            feed.style.animation = 'none';
+            feed.offsetHeight; 
+            feed.style.animation = 'slideUpFade 3s forwards';
+        }
+
+        function checkAuthentication() {
+            if (uid) {
+                document.getElementById('auth-popup').style.display = 'none';
+            } else {
+                document.getElementById('auth-popup').style.display = 'flex';
+                document.getElementById('sign-in-btn').onclick = () => window.location.href = 'index.html';
+            }
+        }
+
+        // --- History Modals ---
+        function loadUserData() {
+            if (!uid) return;
+            database.ref('appusers/' + uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    balance = data.totalBalance || 0;
+                    
+                    // --- HYBRID SYSTEM UPDATE: Keep lifetime stats synced ---
+                    lifetimeWagered = data.lifetimeWagered || 0;
+                    lifetimeWon = data.lifetimeWon || 0;
+
+                    updateBalanceUI();
+                }
+            });
+        }
+
+        function updateBalanceUI() {
+            document.getElementById('balance').innerText = balance.toFixed(2);
+        }
+
+        // --- Betting & Custom Dropdown Controls ---
+        function setBet(type) {
+            const input = document.getElementById('bet-input');
+            let val = parseFloat(input.value);
+            if (type === 'min') val = 10; // Updated per exact image
+            if (type === 'max') val = 10000;
+            if(val < 10) val = 10;
+            input.value = val.toFixed(2);
+        }
+
+        function setBetAmount(amount) {
+            document.getElementById('bet-input').value = amount.toFixed(2);
+        }
+
+        // Custom UI Dropdown Logic
+        function toggleDropdown(e) {
+            if(gameState !== 'IDLE') return;
+            e.stopPropagation();
+            const opts = document.getElementById('dropdown-options');
+            const icon = document.getElementById('dropdown-icon');
+            if(opts.style.display === 'flex') {
+                opts.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                opts.style.display = 'flex';
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+
+        function selectDifficulty(e, val, text) {
+            if(gameState !== 'IDLE') return;
+            e.stopPropagation();
+            
+            document.getElementById('dropdown-selected-text').innerText = text;
+            currentDiff = val;
+
+            document.querySelectorAll('.dropdown-option').forEach(el => el.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+
+            document.getElementById('dropdown-options').style.display = 'none';
+            document.getElementById('dropdown-icon').className = 'fas fa-chevron-down';
+
+            // Internal Change Trigger
+            maxLanes = diffConfig[currentDiff].lines;
+            cameraX = 0; 
+            chickenObj.x = 50;
+            jumpTargetX = 50;
+            initAmbientCars();
+        }
+
+        // Click outside to close dropdown
+        window.addEventListener('click', function(e) {
+            const opts = document.getElementById('dropdown-options');
+            if (opts && opts.style.display === 'flex' && !e.target.closest('.custom-dropdown')) {
+                opts.style.display = 'none';
+                const icon = document.getElementById('dropdown-icon');
+                if (icon) icon.className = 'fas fa-chevron-down';
+            }
+        });
+
+        function getMultiplier(diff, step) {
+            if (step === 0) return 1.0;
+            const multipliers = diffConfig[currentDiff].multipliers;
+            const index = step - 1;
+            
+            if (index >= 0 && index < multipliers.length) {
+                return multipliers[index];
+            }
+            return multipliers[multipliers.length - 1]; 
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Probability Matrix specific to Chicken Road Math ---
+        function getDynamicLossChance() {
+            let baseChance = 0.50; 
+            let rtp = 0;
+
+            if (lifetimeWagered >= 50) {
+                rtp = lifetimeWon / lifetimeWagered;
+            } else {
+                rtp = 0.50; 
+            }
+
+            if (rtp > 0.90) baseChance = 0.85;       
+            else if (rtp > 0.60) baseChance = 0.60;  
+            else if (rtp < 0.30) baseChance = 0.10;  
+            else baseChance = 0.45;                  
+
+            let finalChance = baseChance;
+
+            if (globalMode === 'RECOVERY') {
+                finalChance = baseChance + 0.30; 
+            } 
+            else if (globalMode === 'PAYOUT') {
+                finalChance = baseChance - 0.95; 
+            }
+
+            if (finalChance > 0.95) finalChance = 0.95; 
+            if (finalChance < 0.05) finalChance = 0.05;
+
+            return finalChance;
+        }
+
+        function startGame() {
+            if (gameState !== 'IDLE' || isProcessingBet) return;
+            isProcessingBet = true; // Security Lock
+            
+            const inputVal = parseFloat(document.getElementById('bet-input').value);
+            if(isNaN(inputVal) || inputVal < 10) {
+                isProcessingBet = false;
+                return showToast("Invalid Bet Amount", true);
+            }
+            
+            if(balance < inputVal) {
+                isProcessingBet = false;
+                openModal('insufficient-balance-modal');
+                return;
+            }
+
+            // Strictly disable and hide play button instantly to prevent any frontend glitch double clicks
+            const playBtn = document.getElementById('play-btn');
+            playBtn.style.display = 'none';
+            playBtn.disabled = true;
+
+            currentBet = inputVal;
+            
+            // Audio Logic Trigger
+            playSound('playBtn');
+            playMusic();
+            
+            // Strict Deduction Logic
+            if(uid) {
+                database.ref('appusers/' + uid).transaction((userData) => {
+                    if (userData) {
+                        let total = userData.totalBalance || 0;
+                        let withdrawable = userData.withdrawableBalance || 0;
+                        let betAmount = currentBet;
+                        
+                        let unwithdrawable = total - withdrawable;
+                        if (unwithdrawable < 0) unwithdrawable = 0;
+                        
+                        if (betAmount <= unwithdrawable) {
+                            unwithdrawable -= betAmount;
+                        } else {
+                            let remainingBet = betAmount - unwithdrawable;
+                            withdrawable -= remainingBet;
+                        }
+                        
+                        userData.totalBalance = total - betAmount;
+                        userData.withdrawableBalance = Math.max(0, withdrawable);
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record wager amount ---
+                        userData.lifetimeWagered = (userData.lifetimeWagered || 0) + betAmount;
+                    }
+                    return userData;
+                });
+            } else {
+                balance -= currentBet;
+                updateBalanceUI();
+            }
+
+            gameState = 'PLAYING';
+            currentLane = 1; 
+            barrierActive = false;
+            jumpLandedTime = 0;
+            currentMultiplier = getMultiplier(currentDiff, 0); 
+            crashCars = [];
+            isSidewalkJumping = false;
+            sidewalkJumpsRemaining = 0;
+
+            // --- HYBRID SYSTEM UPDATE: Degrader Execution for First Jump ---
+            const baseChance = diffConfig[currentDiff].chance;
+            const houseEdgeChance = baseChance - 0.02; // Global Platform House Edge
+            const forceLossChance = getDynamicLossChance();
+
+            for (let i = 0; i < 20; i++) {
+                let tempSafe = Math.random() < houseEdgeChance;
+                if (tempSafe && Math.random() < forceLossChance) {
+                    continue; // Secretly throw away the safe jump and reroll to force a crash!
+                } else {
+                    isCurrentStepSafe = tempSafe;
+                    break;
+                }
+            }
+            // --- END HYBRID DEGRADER ---
+
+            // Safe jump visual crash check & clear-out logic for Lane 1
+            let collisionRisk = false;
+            if (isCurrentStepSafe) {
+                ambientCars.forEach(car => {
+                    if (car.lane === currentLane) { // Checking Lane 1
+                        let landingY = chickenObj.y;
+                        let carBottomY = car.y + car.type.h;
+                        let carTopY = car.y;
+                        
+                        if (carBottomY > landingY - 150 && carTopY < landingY + 100) {
+                            collisionRisk = true;
+                            car.speed = 22; // Speed up specifically this car drastically so it clears
+                        }
+                    }
+                });
+            }
+
+            if (collisionRisk) {
+                isJumpDelayed = true;
+                jumpDelayTimer = Date.now();
+                jumpProgress = 0;
+            } else {
+                isJumpDelayed = false;
+                jumpProgress = 0; 
+            }
+            // -------------------------------------------------------------
+            
+            // Apply Visual Dimming to specific container per updated style logic
+            document.getElementById('controls-top').classList.add('disabled-state');
+            
+            // COMPLETELY HIDE THE DROPDOWN DURING GAMEPLAY
+            document.getElementById('diff-dropdown').style.display = 'none'; 
+            
+            document.getElementById('game-actions').style.display = 'flex';
+            updateCashoutBtn();
+            
+            cameraX = 0;
+            jumpStartX = 50;
+            jumpTargetX = 50 + (currentLane * 100); 
+        }
+
+        function nextStep() {
+            if(gameState !== 'PLAYING' || jumpProgress < 1 || (isCurrentStepSafe && !barrierActive) || isSidewalkJumping) return; 
+
+            // Audio Logic Trigger
+            playSound('goBtn');
+
+            // --- HYBRID SYSTEM UPDATE: Degrader Execution for Next Jump ---
+            const baseChance = diffConfig[currentDiff].chance;
+            const houseEdgeChance = baseChance - 0.02; 
+            const forceLossChance = getDynamicLossChance();
+
+            for (let i = 0; i < 20; i++) {
+                let tempSafe = Math.random() < houseEdgeChance;
+                if (tempSafe && Math.random() < forceLossChance) {
+                    continue; // Secretly throw away the safe jump and reroll to force a crash!
+                } else {
+                    isCurrentStepSafe = tempSafe;
+                    break;
+                }
+            }
+            // --- END HYBRID DEGRADER ---
+
+            // Safe jump visual crash check & clear-out logic
+            let collisionRisk = false;
+            if (isCurrentStepSafe) {
+                ambientCars.forEach(car => {
+                    if (car.lane === currentLane + 1) {
+                        let landingY = chickenObj.y;
+                        let carBottomY = car.y + car.type.h;
+                        let carTopY = car.y;
+                        
+                        if (carBottomY > landingY - 150 && carTopY < landingY + 100) {
+                            collisionRisk = true;
+                            car.speed = 22; 
+                        }
+                    }
+                });
+            }
+
+            currentLane++;
+            jumpStartX = chickenObj.x;
+            jumpTargetX = 50 + (currentLane * 100);
+            
+            if (collisionRisk) {
+                isJumpDelayed = true;
+                jumpDelayTimer = Date.now();
+                jumpProgress = 0;
+            } else {
+                isJumpDelayed = false;
+                jumpProgress = 0; 
+            }
+            
+            barrierActive = false;
+            jumpLandedTime = 0;
+        }
+
+        function cashOut() {
+            if (gameState !== 'PLAYING' || (isCurrentStepSafe && !barrierActive)) return;
+            if (isSidewalkJumping && sidewalkJumpsRemaining > 0) return; 
+            
+            const winAmount = currentBet * currentMultiplier;
+            gameState = 'IDLE'; 
+
+            // Audio Logic Trigger
+            playSound('cashoutBtn');
+            
+            if (uid) {
+                database.ref('appusers/' + uid).transaction((userData) => {
+                    if (userData) {
+                        userData.totalBalance = (userData.totalBalance || 0) + winAmount;
+                        userData.withdrawableBalance = (userData.withdrawableBalance || 0) + winAmount;
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record win amount ---
+                        userData.lifetimeWon = (userData.lifetimeWon || 0) + winAmount;
+                    }
+                    return userData;
+                });
+
+                let rawEmail = localStorage.getItem('email') || localStorage.getItem('userEmail') || 'guest@gmail.com';
+                let emailName = rawEmail.includes('@') ? rawEmail.split('@')[0] : rawEmail;
+                let maskedName = emailName.length > 2 ? emailName.charAt(0) + '***' + emailName.slice(-1) : emailName + '***';
+                
+                database.ref(`chickenRoadGame/currentRoundBets`).push({
+                    avatar: parseInt(localStorage.getItem('userAvatarIndex') || 0),
+                    name: maskedName,
+                    bet: currentBet,
+                    multiplier: currentMultiplier,
+                    cashout: winAmount,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            } else {
+                balance += winAmount;
+                updateBalanceUI();
+            }
+
+            saveToMyBets(currentBet, winAmount, currentMultiplier);
+            showToast(`You cashed out ${currentMultiplier.toFixed(2)}x\nWon ${winAmount.toFixed(2)} INR`);
+            resetGameUI();
+        }
+
+        function resetGameUI() {
+            // First, INSTANTLY reset physical positions so the waiting image doesn't erroneously show in lanes
+            cameraX = 0;
+            chickenObj.x = 50;
+            jumpStartX = 50;
+            jumpTargetX = 50;
+            jumpProgress = 1;
+            currentLane = 0;
+            crashCars = [];
+            isCurrentStepSafe = true;
+            barrierActive = false;
+            jumpLandedTime = 0;
+
+            // Reset Game Logic States
+            gameState = 'IDLE';
+            isJumpDelayed = false;
+            isSidewalkJumping = false;
+            sidewalkJumpsRemaining = 0;
+            isProcessingBet = false; // Security Release
+            
+            // Strictly re-enable and show play button ONLY at this exact moment
+            const playBtn = document.getElementById('play-btn');
+            playBtn.style.display = 'block';
+            playBtn.disabled = false;
+            
+            document.getElementById('game-actions').style.display = 'none';
+            
+            // Re-Enable Top Module per updated Styles
+            document.getElementById('controls-top').classList.remove('disabled-state');
+            
+            // RESTORE THE DROPDOWN
+            document.getElementById('diff-dropdown').style.display = 'block';
+        }
+
+        function updateCashoutBtn() {
+            document.getElementById('cashout-amt').innerText = (currentBet * currentMultiplier).toFixed(2) + ' INR';
+        }
+
+        function initAmbientCars() {
+            ambientCars = [];
+            for(let i=1; i<=maxLanes; i++) {
+                if(Math.random() > 0.1) { 
+                    let randomType = carTypes[Math.floor(Math.random() * carTypes.length)];
+                    ambientCars.push({
+                        lane: i,
+                        y: -(Math.random() * 1500), 
+                        speed: (2 + Math.random() * 3), 
+                        type: randomType,
+                        sfxPlayed: false
+                    });
+                }
+            }
+        }
+
+        function drawBarricade(ctx, x, y) {
+            if (imgBarricade.complete) {
+                ctx.drawImage(imgBarricade, x, y - 5, 80, 45); 
+            }
+        }
+
+        function drawGoldenCoin(ctx, x, y) {
+            if (imgGoldenCoin.complete) {
+                ctx.drawImage(imgGoldenCoin, x - 35, y - 5, 70, 70); 
+            }
+        }
+
+        function drawGreyManhole(ctx, x, y, multText) {
+            if (imgManhole.complete) {
+                ctx.drawImage(imgManhole, x - 35, y - 5, 70, 70);
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px "Arial Rounded MT Bold", "Segoe UI", sans-serif'; 
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 4;
+            ctx.fillText(multText, x, y + 30);
+            ctx.shadowBlur = 0; 
+        }
+
+        // --- Canvas Rendering Loop ---
+        function drawGame() {
+            if(!ctx) return;
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            
+            ctx.clearRect(0, 0, w, h);
+
+            // Sidewalk (Start / Left)
+            if (imgStartFootwalk.complete) {
+                ctx.drawImage(imgStartFootwalk, -cameraX, 0, 100, h);
+            }
+
+            // Sidewalk (End / Right)
+            if (imgEndFootwalk.complete) {
+                let endFootwalkX = -cameraX + 100 + (maxLanes * 100);
+                ctx.drawImage(imgEndFootwalk, endFootwalkX, 0, 200, h);
+            }
+
+            // Draw Lanes and Manholes
+            for(let i=1; i<=maxLanes; i++) {
+                let laneX = -cameraX + 100 + (i-1)*100;
+                
+                // Dashed Road Lines
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([20, 20]);
+                ctx.beginPath();
+                ctx.moveTo(laneX + 100, 0);
+                ctx.lineTo(laneX + 100, h);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                let manholeY = chickenObj.y + 35; 
+                let isPassed = false;
+                
+                if ((gameState === 'PLAYING' || gameState === 'CRASHED') && i < currentLane) {
+                    isPassed = true;
+                }
+
+                if (isPassed) {
+                    drawGoldenCoin(ctx, laneX + 50, manholeY);
+                } else {
+                    drawGreyManhole(ctx, laneX + 50, manholeY, getMultiplier(currentDiff, i).toFixed(2) + 'x');
+                }
+            }
+
+            // ====================== DETERMINE ANIMATION PHASE ======================
+            if (gameState === 'IDLE') {
+                currentAnimPhase = 'WAITING';
+            } else if (gameState === 'CRASHED') {
+                currentAnimPhase = 'CRASH';
+            } else if (gameState === 'PLAYING') {
+                if (jumpProgress < 1) {
+                    currentAnimPhase = 'GAME_JUMP';
+                } else {
+                    currentAnimPhase = 'GAME_WAIT';
+                }
+            }
+
+            // Reset frame index if phase changed
+            if (currentAnimPhase !== lastAnimPhase) {
+                currentFrameIdx = 0;
+                animFrameTimer = 0;
+                lastAnimPhase = currentAnimPhase;
+            }
+
+            // Select active animation array
+            let activeFrameArray = [];
+            if (currentAnimPhase === 'WAITING') activeFrameArray = framesWaiting;
+            if (currentAnimPhase === 'GAME_WAIT') activeFrameArray = framesGameWait;
+            if (currentAnimPhase === 'GAME_JUMP') activeFrameArray = framesGameJump;
+            if (currentAnimPhase === 'CRASH') activeFrameArray = framesCrash;
+
+            // Advance frame timer
+            animFrameTimer++;
+            
+            // ===================================================================== //
+            // NEW CHANGE: Fetch the specific speed assigned to the current animation phase
+            let currentPhaseSpeed = animSpeeds[currentAnimPhase] || 15;
+            
+            if (animFrameTimer >= currentPhaseSpeed) {
+                currentFrameIdx++;
+            // ===================================================================== //
+            
+                if (currentFrameIdx >= activeFrameArray.length) {
+                    // Loop animation, unless it's a crash (stop on last splat frame)
+                    if (currentAnimPhase === 'CRASH') {
+                        currentFrameIdx = activeFrameArray.length - 1;
+                    } else {
+                        currentFrameIdx = 0;
+                    }
+                }
+                animFrameTimer = 0;
+            }
+
+            // Get current frame image to display
+            let displayChickenImg = activeFrameArray[currentFrameIdx];
+            // =======================================================================
+
+            // Update Jump Math & Delay Logic
+            if (gameState === 'PLAYING' && jumpProgress < 1) {
+                if (isJumpDelayed && !isSidewalkJumping) {
+                    if (Date.now() - jumpDelayTimer > 400) {
+                        isJumpDelayed = false;
+                    }
+                } else {
+                    if (isSidewalkJumping) {
+                        jumpProgress += 0.06; // Slightly faster animation for end jumps
+                    } else {
+                        jumpProgress += 0.04; 
+                    }
+
+                    if(jumpProgress >= 1) {
+                        jumpProgress = 1;
+                        jumpLandedTime = Date.now();
+                        
+                        if (isSidewalkJumping) {
+                            sidewalkJumpsRemaining--;
+                            if (sidewalkJumpsRemaining > 0) {
+                                jumpStartX = chickenObj.x;
+                                jumpTargetX = chickenObj.x + 50;
+                                jumpProgress = 0;
+                            } else {
+                                setTimeout(() => cashOut(), 300);
+                            }
+                        } else if (!isCurrentStepSafe) {
+                            let randomType = carTypes[Math.floor(Math.random() * carTypes.length)];
+                            // Instantly spawn car immediately over the chicken for an instant crash
+                            crashCars.push({
+                                lane: currentLane,
+                                y: chickenObj.y - randomType.h - 10, 
+                                speed: 20, 
+                                type: randomType
+                            });
+                        }
+                    }
+                    chickenObj.x = jumpStartX + (jumpTargetX - jumpStartX) * jumpProgress;
+                    
+                    if(currentLane > 1 && !isDragging) {
+                        let targetCam = isSidewalkJumping ? (maxLanes * 100) + 150 : (currentLane - 1) * 100;
+                        cameraX += (targetCam - cameraX) * 0.1;
+                    }
+                }
+            }
+
+            // Barrier Instant Trigger Logic
+            if (gameState === 'PLAYING' && jumpProgress === 1 && isCurrentStepSafe && !barrierActive && !isSidewalkJumping) {
+                barrierActive = true;
+                currentMultiplier = getMultiplier(currentDiff, currentLane);
+                updateCashoutBtn();
+
+                if (currentLane >= maxLanes) {
+                    isSidewalkJumping = true;
+                    sidewalkJumpsRemaining = 3;
+                    jumpStartX = chickenObj.x;
+                    jumpTargetX = chickenObj.x + 50; 
+                    jumpProgress = 0;
+                }
+            }
+
+            // Draw Ambient Cars
+            ambientCars.forEach(car => {
+                let barrierY = chickenObj.y - 45; 
+                let isPausedLane = false;
+
+                if (gameState === 'PLAYING' || gameState === 'CRASHED') {
+                    if (car.lane < currentLane) {
+                        isPausedLane = true;
+                    } else if (car.lane === currentLane && barrierActive) {
+                        isPausedLane = true;
+                    }
+                }
+
+                if (isPausedLane) {
+                    let stopY = barrierY - car.type.h - 5;
+                    if (car.y <= stopY) {
+                        car.y += car.speed;
+                        if (car.y > stopY) {
+                            car.y = stopY; 
+                        }
+                    } else {
+                        car.y += car.speed; 
+                    }
+                } else {
+                    car.y += car.speed;
+                }
+
+                // --- Speedy Car Logic (Only next lane + Very speedy car) ---
+                if (gameState === 'PLAYING' && car.lane === currentLane + 1 && car.speed > 4.5) {
+                    if (!car.sfxPlayed && car.y > chickenObj.y - 300 && car.y < chickenObj.y + 100) {
+                        playSound('speedyCar');
+                        car.sfxPlayed = true;
+                    }
+                }
+
+                if (car.y > h + 100) {
+                    car.y = -(Math.random() * 1200 + 400); 
+                    car.type = carTypes[Math.floor(Math.random() * carTypes.length)];
+                    car.speed = 2 + Math.random() * 3;
+                    car.sfxPlayed = false; // Reset SFX flag
+                }
+                if (car.y < -2500) car.y = h + 100; 
+                
+                let laneX = -cameraX + 100 + (car.lane-1)*100;
+                if(car.type.img.complete && car.lane <= maxLanes) {
+                    ctx.drawImage(car.type.img, laneX + (100 - car.type.w)/2, car.y, car.type.w, car.type.h);
+                }
+            });
+
+            // Parabolic Arc for Chicken Jump
+            let jumpYOffset = 0;
+            if (jumpProgress < 1) {
+                jumpYOffset = Math.sin(jumpProgress * Math.PI) * 50; 
+            }
+            let chickenDrawY = chickenObj.y - jumpYOffset;
+
+            // Draw Barricades exactly aligned and utilizing delay phase
+            if (gameState === 'PLAYING' || gameState === 'CRASHED') {
+                for (let i = 1; i <= currentLane; i++) {
+                    if (i < currentLane || (i === currentLane && barrierActive)) {
+                        let laneX = -cameraX + 100 + (i - 1) * 100;
+                        drawBarricade(ctx, laneX + 10, chickenObj.y - 45);
+                    }
+                }
+            }
+
+            // Draw Chicken Shadow (Aligned vertically with manhole center)
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(chickenObj.x - cameraX, chickenObj.y + 65, 35, 35, 0, 0, Math.PI*2);
+            ctx.fill();
+
+            // Draw Chicken Entity (Shifted vertically to sit precisely on the adjusted shadow)
+            if (displayChickenImg && displayChickenImg.complete) {
+                ctx.drawImage(displayChickenImg, chickenObj.x - cameraX - 45, chickenDrawY - 0, 90, 90);
+            }
+
+            // --- Multiplier Blue Tooltip ---
+            if ((gameState === 'PLAYING' || gameState === 'CRASHED') && currentLane > 0) {
+                let toolTipX = chickenObj.x - cameraX;
+                // Shifted down to correctly sit underneath the visually lowered chicken
+                let toolTipY = chickenDrawY + 100; 
+                
+                let toolText = currentMultiplier.toFixed(2) + 'x';
+                ctx.font = 'bold 20px "Arial Rounded MT Bold", "Segoe UI", sans-serif';
+                let textWidth = ctx.measureText(toolText).width;
+                let boxWidth = textWidth + 30;
+                let boxHeight = 36;
+                
+                ctx.shadowColor = 'rgba(0,0,0,0.0)';
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetY = 3;
+                
+                ctx.fillStyle = '#3a4e76';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(toolTipX - boxWidth/2, toolTipY, boxWidth, boxHeight, 8);
+                else ctx.rect(toolTipX - boxWidth/2, toolTipY, boxWidth, boxHeight);
+                ctx.fill();
+                
+                // Tooltip Pointer Caret
+                ctx.beginPath();
+                ctx.moveTo(toolTipX - 8, toolTipY);
+                ctx.lineTo(toolTipX + 8, toolTipY);
+                ctx.lineTo(toolTipX, toolTipY - 8);
+                ctx.fill();
+                
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(toolText, toolTipX, toolTipY + boxHeight/2);
+            }
+
+            // Draw Crashing Cars (Passes visually ABOVE the chicken)
+            crashCars.forEach(car => {
+                car.y += car.speed;
+                let laneX = -cameraX + 100 + (car.lane-1)*100;
+                if(car.type.img.complete) {
+                    ctx.drawImage(car.type.img, laneX + (100 - car.type.w)/2, car.y, car.type.w, car.type.h);
+                }
+            });
+
+            // --- FAIR PHYSICAL COLLISION DETECTION ---
+            if (gameState === 'PLAYING') {
+                let cx = chickenObj.x - cameraX - 25; 
+                let cy = chickenDrawY - 25;
+                let cw = 50;
+                let ch = 50;
+
+                let allVehicles = [...ambientCars, ...crashCars];
+
+                for (let car of allVehicles) {
+                    let laneX = -cameraX + 100 + (car.lane-1)*100;
+                    let carX = laneX + (100 - car.type.w)/2;
+                    let carY = car.y;
+                    let carW = car.type.w;
+                    let carH = car.type.h;
+
+                    if (cx < carX + carW && cx + cw > carX && cy < carY + carH && cy + ch > carY) {
+                        if (!isCurrentStepSafe && car.lane === currentLane && jumpProgress === 1) {
+                            playSound('crash'); // Audio Logic Trigger
+                            gameState = 'CRASHED';
+                            document.getElementById('game-actions').style.display = 'none';
+                            setTimeout(() => {
+                                showToast("Game Over! Chicken was hit.", true);
+                                saveToMyBets(currentBet, 0, currentMultiplier);
+                                resetGameUI();
+                            }, 1500);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            requestAnimationFrame(drawGame);
+        }
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            return {
+                time: `${hours}:${minutes}`,
+                date: `${day}-${month}-${year}`
+            };
+        }
+
+        function saveToMyBets(betAmt, winAmt, mult) {
+            if (!uid) return;
+            const dt = getFormattedDateTime();
+            const record = {
+                gameName: "Chicken Road",
+                time: dt.time,
+                date: dt.date,
+                timestamp: Date.now(),
+                betAmount: betAmt,
+                winAmount: winAmt,
+                multiplier: mult
+            };
+            database.ref(`appusers/${uid}/betHistory`).push(record).catch(err => console.error(err));
+        }
+
+        let currentHistoryLimit = 20;
+        let myBetsRef = null;
+        let myBetsListener = null;
+
+        function updateMyBetsUI() {
+            if (!uid) return;
+            
+            if (myBetsRef && myBetsListener) {
+                myBetsRef.off('value', myBetsListener);
+            }
+            
+            myBetsRef = database.ref(`appusers/${uid}/betHistory`).orderByChild('gameName').equalTo('Chicken Road').limitToLast(currentHistoryLimit);
+            
+            myBetsListener = myBetsRef.on('value', (snapshot) => {
+                const history = [];
+                snapshot.forEach(child => { history.push(child.val()); });
+                history.reverse(); 
+
+                const container = document.getElementById('modal-my-bets-list');
+                if(!container) return;
+                container.innerHTML = '';
+                
+                history.forEach(bet => {
+                    const isWin = bet.winAmount > 0;
+                    const mult = bet.multiplier || 0;
+                    
+                    const row = document.createElement('div');
+                    row.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                    
+                    row.innerHTML = `
+                        <div class="col-date">${bet.time}<br><span>${bet.date}</span></div>
+                        <div class="col-bet">${bet.betAmount.toFixed(2)}</div>
+                        <div class="col-x">
+                            ${isWin ? `<span class="x-pill blue-bg">${mult.toFixed(2)}x</span>` : `<span style="color: #4db8ff; font-weight: bold; font-size: 12px;">0.00x</span>`}
+                        </div>
+                        <div class="col-cashout">
+                            <span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span>
+                            <div class="action-icons">
+                                <i class="fas fa-shield-alt"></i>
+                                <i class="far fa-comment"></i>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+
+                // Dynamic Load More Button Logic
+                const loadMoreBtn = document.querySelector('.load-more-btn');
+                if (loadMoreBtn) {
+                    if (history.length < currentHistoryLimit) {
+                        loadMoreBtn.style.display = 'none';
+                    } else {
+                        loadMoreBtn.style.display = 'inline-block';
+                    }
+                }
+            });
+        }
+
+        function loadMoreHistory() {
+            currentHistoryLimit += 20;
+            updateMyBetsUI();
+        }
+
+        // --- Avatars ---
+        const AVATAR_SEEDS = ['Christopher', 'Mason', 'Sawyer', 'Coins', 'Dollar', 'Cards', 'Dice', 'Neon', 'Vulture', 'Eye', 'Dog', 'Raccoon'];
+        function getAvatarUrl(index) { return `https://api.dicebear.com/8.x/avataaars/svg?seed=${AVATAR_SEEDS[index] || 'Jude'}`; }
+        
+        function initAvatarGrid() {
+            const grid = document.getElementById('avatar-grid-container');
+            const savedIdx = parseInt(localStorage.getItem('userAvatarIndex') || 0);
+            grid.innerHTML = '';
+            AVATAR_SEEDS.forEach((seed, idx) => {
+                const img = document.createElement('img');
+                img.src = `https://api.dicebear.com/8.x/avataaars/svg?seed=${seed}`;
+                img.className = `avatar-option ${idx === savedIdx ? 'selected' : ''}`;
+                img.onclick = () => {
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    img.classList.add('selected');
+                    document.getElementById('current-avatar-dp').src = getAvatarUrl(idx);
+                    localStorage.setItem('userAvatarIndex', idx);
+                };
+                grid.appendChild(img);
+            });
+        }
+
+        // --- Modals & Utilities ---
+        function showToast(msg, isError=false) {
+            const toast = document.getElementById('message-toast');
+            toast.innerText = msg;
+            if(isError) toast.classList.add('error'); else toast.classList.remove('error');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function toggleMenu() {
+            const modal = document.getElementById('menu-modal');
+            if(modal.classList.contains('show')) closeModal('menu-modal'); else openModal('menu-modal');
+        }
+        function openModal(id) { 
+            document.getElementById(id).classList.add('show'); 
+            if(id === 'menu-modal') document.getElementById('menu-btn').innerHTML = '<i class="fas fa-times" style="font-size: 24px; color: #888;"></i>';
+        }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('show'); 
+            if(id === 'menu-modal') document.getElementById('menu-btn').innerHTML = '<span></span><span></span><span></span>';
+        }
+        function closeModalOnBG(e, id) { if(e.target.id === id) closeModal(id); }
+        function openAvatarModal() { closeModal('menu-modal'); openModal('avatar-modal'); }
+        
+        function toggleMenuSetting(type, e) {
+            if(e) e.stopPropagation();
+            if(type === 'sound') { 
+                soundEnabled = !soundEnabled; 
+                document.getElementById('toggle-sound').classList.toggle('active'); 
+                
+                if (!soundEnabled) {
+                    soundPool.stopAll();
+                }
+            }
+            if(type === 'music') { 
+                musicEnabled = !musicEnabled; 
+                document.getElementById('toggle-music').classList.toggle('active'); 
+                if(musicEnabled) { 
+                    playMusic(); 
+                } else { 
+                    stopMusic(); 
+                }
+            }
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                bgMusic.pause();
+                soundPool.stopAll();
+            } else {
+                if (musicEnabled && bgmStarted) {
+                    bgMusic.play().catch(()=>{});
+                }
+            }
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>

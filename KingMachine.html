@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>King Machine Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #121212;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        /* Top Navigation Bar */
+       .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            width: 100vw;
+            height: 45px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+            z-index: 10000001;
+            backdrop-filter: blur(500px);
+        }
+
+       .nav-icons-left,.nav-icons-right {
+            display: flex;
+            align-items: center;
+            color: #fdbd02;
+            font-size: 25px;
+        }
+       .nav-icons-left i:active,.nav-icons-right i:active {
+            opacity: 0.6;
+        }
+       .deposit-btn {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+       .deposit-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Game Area */
+       .game-container {
+            background: radial-gradient(ellipse at 50% 50%, #2a0845 0%, #11021c 100%);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 10px;
+            margin: 5px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 12px;
+            box-shadow: inset 20px 20px 65px 20px rgba(0,10,20,0.1);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Header Controls */
+       .header-controls {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 50;
+            padding: 5px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+       .last-results-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+       .history-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 700;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+       .last-results-strip {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            flex-grow: 1;
+            align-items: center;
+            height: 35px;
+            padding-right: 10px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+       .last-results-strip::-webkit-scrollbar {
+            display: none;
+        }
+        
+       .last-results-strip > :first-child {
+            margin-left: auto;
+        }
+
+       .history-toggle-btn {
+            background: #2a0845;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 6px;
+            margin:-5px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+       .last-results-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% - 40px);
+            left: 0;
+            width: 100%;
+            min-height: 120px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+       .last-results-dropdown.show { display: block; animation: slideDown 0.2s ease-out; }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+       .last-results-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: flex-start;
+        }
+
+        .history-item-double {
+            display: flex;
+            height:34px;
+            width:46px;
+            gap: 1px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            animation: popIn 0.3s ease;
+            align-items: center;
+        }
+
+       .result-badge {
+            width: 23px;
+            height: 34px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            font-weight: bold;
+            color: #111;
+            flex-shrink: 0;
+            animation: popIn 0.3s ease;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+       .result-badge.black { 
+        background-image: 
+        url('https://upload.wikimedia.org/wikipedia/commons/6/6f/Joker_Card_Image.jpg'),
+        linear-gradient(180deg, #444 0%, #111 100%);
+        background-size: 100% 100%;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+       color: white;
+       }
+       .result-badge.gold { 
+        background-image: 
+        url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/English_pattern_king_of_hearts.svg/960px-English_pattern_king_of_hearts.svg.png'),
+        linear-gradient(180deg, #ffdf00 0%, #d4af37 100%);
+        color: #111; 
+        background-size: 100% 100%;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+       }
+       .result-badge.red { 
+        background-image: 
+        url('https://upload.wikimedia.org/wikipedia/commons/d/df/Queen_of_Hearts_%28Elizabeth_of_York%29.png'),
+        linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+        color: white;
+        background-size: 100% 100%;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+       }
+
+        /* Game Board Area - KING Table */
+       .KING-board-container {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 65, 10, 0.4);
+            border-radius: 15px;
+            border: 2px solid rgba(255,215,0,0.2);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            margin-bottom: 10px;
+            padding: 20px 0;
+            overflow: hidden;
+        }
+
+       .reels-wrapper {
+            display: flex;
+            gap: 15px;
+            height: 125px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+       .reel-window {
+            width: 100px;
+            height: 125px;
+            background: #1a1a1a;
+            border: 3px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,1);
+        }
+
+       .reel-window::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+       .target-line {
+        
+        }
+
+       .reel-strip {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+       .card-slot {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+       .playing-card {
+            width: 70px;
+            height: 100px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            overflow: hidden;
+            background: #fff;
+            border: 2px solid #555;
+        }
+
+        #reel-2 {
+            display: none;
+        }
+
+        /* High Risk Toggle */
+       .high-risk-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+
+       .high-risk-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+       .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+       .switch input { opacity: 0; width: 0; height: 0; }
+       .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition:.3s;
+            border-radius: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+       .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition:.3s;
+            border-radius: 50%;
+        }
+        input:checked +.slider { background-color: #d4af37; }
+        input:checked +.slider:before { transform: translateX(20px); }
+
+        /* Controls Panel */
+       .controls-panel {
+            background: rgba(0,0,0,0.6);
+            border-radius: 12px;
+            padding: 10px 5px;
+            margin: 0 -6px -6px -6px;
+            position: relative;
+            z-index: 60;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+       .action-buttons-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+            margin-bottom: 12px;
+            height: 55px;
+        }
+
+       .autoplay-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: linear-gradient(180deg, #1E90FF 0%, #0645a8 100%);
+            border: 2px solid black;
+            color: #fff;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35), inset -1px -1px 0px rgba(0, 0, 0, 0.35), inset 1px 1px 0px rgba(255,255,255, 0.3);
+            transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+
+       .autoplay-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.3);
+        }
+        
+       .autoplay-btn.active-red {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            border-color: #5c0812;
+            font-size: 16px;
+        }
+
+       .bet-btn {
+            flex: 1;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+       .bet-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.35), inset -1px -1px 0px rgba(0, 0, 0, 0.35), inset 1px 1px 0px rgba(255,255,255, 0.3);
+        }
+       .bet-btn-red, .bet-btn-gold, .bet-btn-black { 
+            background: linear-gradient(180deg, #2d1b4e 0%, #1f1235 100%); 
+            color: #d4af37; 
+            border: 2px solid #5539CC;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+       }
+       .multiplier-text { font-size: 11px; font-weight: 700; opacity: 0.9; color: #fff;}
+       .bet-input-wrapper { position: relative; }
+       .howtoplayimg {
+            height: 150px;
+            width: 100%;
+            background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIvhu_ZSSNjcqkWYmyOhBH8aYlmwvz1IbvnInH7EAOrZcYqPJ8jhj6p-MfSzoTSlhuUOvd-odIaNp8Mns65OOIvVhBliY1moWiVYcYYOBQLlQFBrKZsnocktobP8qdwvAj19obUCmJVSWthG9KUKuFiR8bW-pgbMxbKpQmeiJblnYA7NCMXzNRgaR7Dhs/s16000/1000119854.png');
+            background-size: 100% 100%;
+            border:none;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4af37;
+            font-weight: bold;
+        }
+        @keyframes slideUpPopup {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+       .slide-up-popup {
+            display: none;
+            position: absolute;
+            bottom: 75%; 
+            left: 4%;
+            width: 100% auto;
+            background: #1c449c;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.0), inset 0 1px 2px rgba(255,255,255,0.2);
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+       .slide-up-popup.show { display: block; }
+       .slide-up-popup2 {
+            display: none;
+            position: absolute;
+            bottom: 85%; 
+            left: 0;
+            width: 100%;
+            background: rgba(15,35,70,1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+       .slide-up-popup2.show { display: block; }
+       .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-bottom: 6px;
+        }
+       .keyboard-btn {
+            background: #1c449c;
+            border: 1px solid rgba(0,0,0,0.53);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.9);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 500;
+            height: 30px;
+            width: 65px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+       .keyboard-btn:active { background: #15357a; }
+       .keyboard-close-bar {
+            background: #0f2a63;
+            border: none;
+            color: #fff;
+            width: 100%;
+            height: 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+       .amounts-title { text-align: center; color: #fff; font-size: 14px; font-weight: 500; margin-bottom: 12px; }
+       .amounts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+       .amount-btn {
+            background: #1c449c;
+            border: 1px solid rgba(0,0,0,0.4);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 5px 25px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+        }
+       .amount-btn:active { background: #15357a; }
+
+       .bet-input-container {
+            background: #2d1b4e;
+            border: 1px solid rgba(0,0,0,0.5);
+            box-shadow: inset 0 1px 0px rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 0px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 50px;
+        }
+       .bet-input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+       .bet-label { color: #aaa; font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+       .bet-input-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.5);
+            width: 80%;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+       .bet-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            width: 100%;
+            pointer-events: none;
+        }
+       .bet-buttons { display: flex; gap: 5px; }
+       .bet-control-btn,.bet-control-btn2 {
+            width: 38px;
+            height: 35px;
+            border-radius: 30px;
+            border: 1px solid rgba(0,0,0, 0.5);
+            background: #3e266b;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: inset 0 1px 0px rgba(255,255,255,0.1);
+        }
+       .bet-control-btn2{ width:40px; height:36px; }
+       .bet-control-btn:active,.bet-control-btn2:active { background: rgba(0,0,0,0.4); }
+       .bottom-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            margin: 0 -5px -5px -5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+       .bottom-btn {
+            background: #2d1b4e;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 5px 30px;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+       .help-btn {
+            background: #d4af37;
+            border: 1px solid black;
+            outline: 2px solid #b8860b;
+            color: black;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            cursor: pointer;
+            margin-left: -15px;
+        }
+       .balance-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+       .menu-hamburger {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            background: transparent;
+        }
+       .menu-hamburger span { width: 12px; height: 1.5px; background: #fff; border-radius: 1px; }
+
+        /* Autoplay Modal Specific */
+        #autoplay-modal .modal-content {
+            background: #1c2024;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 380px;
+            position: relative;
+        }
+        
+       .ap-section {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+       .ap-section-title {
+            text-align: center; color: #fff; font-size: 14px; margin-bottom: 10px; font-weight: 500;
+        }
+
+       .color-toggles {
+            display: flex;
+            gap: 3px;
+            justify-content: space-between;
+        }
+        
+       .color-toggle-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            padding: 8px 5px;
+            background: #2a2e35;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            color: #ccc;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+        }
+       .color-toggle-btn.selected { background: #363c45; color: #fff; }
+       .color-toggle-btn.selected[data-color="red"] { border-color: #e42c42; }
+       .color-toggle-btn.selected[data-color="gold"] { border-color: #ffdf00; }
+       .color-toggle-btn.selected[data-color="black"] { border-color: #888; }
+        
+       .color-dot { width: 6px; height: 6px; border-radius: 5px; }
+       .color-dot.red { background: #e42c42; }
+       .color-dot.gold { background: #ffdf00; }
+       .color-dot.black { background: #1a2432; border: 1px solid #445;}
+
+       .autoplay-rounds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+       .autoplay-round-btn {
+            background: #2a2e35; border: none; color: #ccc; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+       .autoplay-round-btn.selected { background: #363c45; color: #fff; }
+       .autoplay-round-btn.selected::before { content: inline-block; width: 8px; height: 8px; background: #74bc14; border-radius: 50%; }
+       .autoplay-round-btn:not(.selected)::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #555; border-radius: 50%; }
+
+       .autoplay-condition-row {
+            display: flex; justify-content: space-between; align-items: center; background: #2a2e35; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px;
+        }
+       .auto-toggle {
+            position: relative; width: 34px; height: 18px; background: #555; border-radius: 12px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+        }
+       .auto-toggle::after {
+            content: ''; position: absolute; top: 1px; left: 1px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+       .auto-toggle.active { background: #74bc14; }
+       .auto-toggle.active::after { left: 17px; }
+
+       .autoplay-input-group {
+            display: flex; align-items: center; background: rgba(0,0,0,0.4); border-radius: 20px; box-shadow: inset 0 0.5px 1px rgba(255,255,255,0.2); padding: 2px; width: 130px; justify-content: space-between;
+            cursor: pointer;
+        }
+       .autoplay-input-group button {
+            background: #3a3f47; border: none; color: #888; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px;
+        }
+       .autoplay-input-group button:active { background: #555; }
+       .autoplay-input-group input { width: 60px; background: transparent; border: none; color: #fff; text-align: center; font-size: 14px; font-weight: 700; outline: none; pointer-events: none; }
+
+       .start-auto-btn {
+            background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+            border: none; border-bottom: 2px solid #1b5e20; color: white; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 15px; text-transform: uppercase;
+        }
+
+        /* Modals Generic */
+       .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center;
+        }
+       .modal-overlay.show { display: flex; }
+       .modal-content {
+            background: rgba(34,34,40,1); width: 95%; max-width: 350px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0); position: relative; animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+        
+       .modal-header { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+       .modal-title { font-size: 15px; font-weight: 700; color: #fff; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+       .modal-title i { color: #5a8dec; }
+       .modal-close {
+            background: #333; border: 1px solid rgba(0,0,0,0.5); color: #aaa; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+       .modal-body { padding: 15px; color: #ccc; font-size: 14px; line-height: 1.5; max-height: 70vh; overflow-y: auto; }
+        
+       /* Container and List Reset */
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* General Menu Item Styling */
+        .menu-list li {
+            padding: 10px 15px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #c2c7cc;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        /* Icon Styling (Supports FontAwesome) */
+        .menu-list li i, 
+        .menu-list li svg {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #a1a5b0;
+        }
+
+        /* Group 1: Isolated Sound Button */
+        #sound-toggle-menu-btn {
+            background: #141518;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Group 2: The Main Options Block */
+        #freebets-menu-btn,
+        #recordsmenu-btn,
+        #limits-menu-btn,
+        #how-to-play-menu-btn,
+        #rules-menu-btn,
+        #fairnessmenu-btn {
+            background: #141518;
+            border-bottom: 1px solid #232529;
+        }
+
+        /* Top rounded corners for the main block */
+        #freebets-menu-btn {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        /* Bottom rounded corners for the main block */
+        #fairnessmenu-btn {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border-bottom: none;
+            margin-bottom: 8px;
+        }
+
+        /* Group 3: Back to Home (Centered, Transparent) */
+        #closemenu {
+            justify-content: center;
+            color: #8a919e;
+            background: transparent;
+            padding:10px;
+        }
+
+        #closemenu i {
+            margin-right: 6px;
+            color: #8a919e;
+        }
+
+        /* Group 4: Footer styling and separator line */
+        .menu-list li:last-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            padding: 15px 4px 4px 4px;
+            border-top: 2px solid #292b30;
+            cursor: default;
+        }
+
+        /* Subtle Hover Effects */
+        #sound-toggle-menu-btn:hover,
+        #freebets-menu-btn:hover,
+        #recordsmenu-btn:hover,
+        #limits-menu-btn:hover,
+        #how-to-play-menu-btn:hover,
+        #rules-menu-btn:hover,
+        #fairnessmenu-btn:hover {
+            transform:none;
+        }
+
+        #closemenu:hover, 
+        #closemenu:hover i {
+            color: #d1d5db;
+        }
+
+       .limits-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+       .limits-table td { padding: 10px; background: #2a2c30; }
+       .limits-table td:first-child { border-radius: 8px 0 0 8px; color: #aaa; }
+       .limits-table td:last-child { border-radius: 0 8px 8px 0; text-align: right; font-weight: 700; color: #fff; }
+
+       .message-toast {
+            position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 1px solid #445; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+       .message-toast.show { opacity: 1; }
+
+       .auth-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
+       .auth-popup-content { background: #222428; padding: 25px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; border: 1px solid #5a8dec; }
+       .auth-popup h2 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+       .auth-popup p { color: #5a8dec; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+       .auth-popup-btn { background: linear-gradient(180deg, #1E90FF 0%, #0a4fbc 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; width: 100%; cursor: pointer; }
+
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; }
+       .spinner div { width: 12px; height: 12px; background: #d4af37; border-radius: 50%; margin: 0 4px; display: inline-block; animation: bounce 0.4s infinite ease-in-out both; }
+       .spinner div:nth-child(1) { animation-delay: -0.32s; }
+       .spinner div:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0.9); } 40% { transform: scale(1); } }
+        
+       .auto-keyboard-popup {
+            position: absolute;
+            top: 32%;
+            left: 20%;
+            transform: translateX(-50%);
+            background: #24272c;
+            border: 1px solid #1a1c20;
+            padding: 8px;
+            border-radius: 10px;
+            z-index: 200;
+            display: none;
+            width: 70%;
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+       .auto-keyboard-popup.show { display: block; }
+       .auto-keyboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 6px; }
+       .auto-keyboard-btn {
+            background: #3a3f47;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 500;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+       .auto-keyboard-btn:active { background: #4a5059; }
+       .auto-keyboard-close {
+            background: #1a1c20;
+            border: none;
+            color: #fff;
+            width: 100%;
+            height: 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Unified Bet History CSS (Aviator Style) */
+        .list-header {
+            display: flex; padding: 5px 15px; color: #888; font-size: 11px; align-items: center; background: #1b1c1d;
+        }
+        .list-row {
+            display: flex; padding: 8px 15px; align-items: center; font-size: 12px; border-bottom: 1px solid #1b1c1d; color: #ddd;
+        }
+        .list-row.win {
+            background: rgba(40, 167, 69, 0.15); border: 1px solid #28a745; border-radius: 6px; margin: 4px; border-bottom: 1px solid #28a745;
+        }
+        .list-row.win .col-date { color: #fff; }
+        .list-row.lose {
+            background: rgba(167,69,40,0.15); border-radius: 6px; margin: 4px; border: 1px solid rgba(280,20,10,1);
+        }
+        .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 10px; color: #888; }
+        .col-bet { flex: 1.5; text-align: left; }
+        .col-x { flex: 1; text-align: center; }
+        .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+        .x-pill {
+            background: rgba(255,255,255,0.1); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold;
+        }
+        .x-pill.blue-bg {
+            background: #1a425c; color: #4db8ff;
+        }
+        .action-icons { display: flex; gap: 5px; color: #28a745; font-size: 12px; margin-left: auto; }
+        .action-icons i { opacity: 0.8; }
+
+        @keyframes pulseBorderWin {
+            0%, 100% { border-color: #333; }
+            50% { border-color: #00ff00; }
+        }
+        @keyframes pulseBorderLose {
+            0%, 100% { border-color: #333; }
+            50% { border-color: orangered; }
+        }
+        .win-pulse {
+            animation: pulseBorderWin 0.4s 5; 
+        }
+        .lose-pulse {
+            animation: pulseBorderLose 0.4s 5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner">
+            <div></div><div></div><div></div>
+        </div>
+    </div>
+
+    <div class="top-nav">
+        <div class="nav-icons-left">
+            <i class="fas fa-reply" id="top-back-btn" onclick="window.location.href='home.html'"></i>
+        </div>
+        <div class="nav-icons-right">
+            <button class="deposit-btn" id="top-deposit-btn" onclick="window.location.href='deposit.html'">
+                Deposit
+            </button>
+        </div>
+    </div>
+    
+    <div class="game-container">
+        
+        <div class="header-controls">
+            <div class="last-results-main">
+                <div class="last-results-strip" id="last-results-strip">
+                    </div>
+                <button class="history-toggle-btn" id="history-dropdown-btn">
+                    <i class="fas fa-history" style="font-size: 16px;"></i> 
+                    <i class="fas fa-chevron-down" style="font-size:10px; margin-left:5px;"></i>
+                </button>
+            </div>
+            <div class="last-results-dropdown" id="last-results-dropdown">
+                <div style="color: #fff; font-size: 13px; margin-bottom: 12px; font-weight: 500; text-transform: uppercase;">LAST RESULTS</div>
+                <div class="last-results-grid" id="last-results-grid">
+                    </div>
+            </div>
+        </div>
+        <div style="flex-grow:1;"></div>
+
+        <div class="KING-board-container" id="KING-table">
+            <div class="reels-wrapper">
+                <div class="reel-window">
+                    <div class="target-line"></div>
+                    <div class="reel-strip" id="reel-1">
+                        </div>
+                </div>
+                <div class="reel-window" id="reel-2">
+                    <div class="target-line"></div>
+                    <div class="reel-strip" id="reel-strip-2">
+                        </div>
+                </div>
+            </div>
+            
+            <div class="high-risk-section">
+                <span class="high-risk-label">High Risk Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="high-risk-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div style="flex-grow:1;"></div>
+
+        <div class="controls-panel">
+            <div class="action-buttons-wrapper">
+                <button class="autoplay-btn" id="autoplay-btn">
+                    <i class="fas fa-sync-alt" style="font-size: 22px;"></i>
+                </button>
+                <button class="bet-btn bet-btn-red" id="btn-red">
+                    QUEEN
+                    <span class="multiplier-text" id="mult-red">2.15x</span>
+                </button>
+                <button class="bet-btn bet-btn-gold" id="btn-gold">
+                    KING
+                    <span class="multiplier-text" id="mult-gold">15.00x</span>
+                </button>
+                <button class="bet-btn bet-btn-black" id="btn-black">
+                    JOCKER
+                    <span class="multiplier-text" id="mult-black">2.15x</span>
+                </button>
+            </div>
+
+            <div class="bet-input-wrapper">
+                <div class="slide-up-popup keyboard-popup" id="keyboard-popup">
+                    <div class="keyboard-grid">
+                        <button class="keyboard-btn key-val" data-val="1">1</button>
+                        <button class="keyboard-btn key-val" data-val="2">2</button>
+                        <button class="keyboard-btn key-val" data-val="3">3</button>
+                        <button class="keyboard-btn key-val" data-val="4">4</button>
+                        <button class="keyboard-btn key-val" data-val="5">5</button>
+                        <button class="keyboard-btn key-val" data-val="6">6</button>
+                        <button class="keyboard-btn key-val" data-val="7">7</button>
+                        <button class="keyboard-btn key-val" data-val="8">8</button>
+                        <button class="keyboard-btn key-val" data-val="9">9</button>
+                        <button class="keyboard-btn key-val" data-val=".">.</button>
+                        <button class="keyboard-btn key-val" data-val="0">0</button>
+                        <button class="keyboard-btn key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                    </div>
+                    <button class="keyboard-close-bar" id="keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+                </div>
+
+                <div class="slide-up-popup2 amounts-popup" id="amounts-popup">
+                    <div class="amounts-title">Bet INR</div>
+                    <div class="amounts-grid">
+                        <button class="amount-btn" data-val="20">20.00</button>
+                        <button class="amount-btn" data-val="50">50.00</button>
+                        <button class="amount-btn" data-val="100">100.00</button>
+                        <button class="amount-btn" data-val="200">200.00</button>
+                        <button class="amount-btn" data-val="500">500.00</button>
+                        <button class="amount-btn" data-val="1000">1,000.00</button>
+                    </div>
+                </div>
+                
+                <div class="bet-input-container">
+                    <div class="bet-input-section" id="bet-input-trigger">
+                        <div class="bet-label">Bet INR</div>
+                        <div class="bet-input-box">
+                            <input type="text" class="bet-input" id="bet-amount" value="10.00" readonly>
+                        </div>
+                    </div>
+                    <div class="bet-buttons">
+                        <button class="bet-control-btn" id="half-btn"><i class="fas fa-minus" style="pointer-events: none;"></i></button>
+                        <button class="bet-control-btn2" id="max-btn">
+                            <i class="fas fa-database" style="font-size: 14px; pointer-events: none;"></i>
+                        </button>
+                        <button class="bet-control-btn" id="double-btn"><i class="fas fa-plus" style="pointer-events: none;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="bottom-btn" id="bottom-plinko-btn">KING</button>
+            <button class="help-btn" id="help-open-btn">?</button>
+            <div class="balance-display">
+                <span id="balance">0.00</span> INR
+                <button class="menu-hamburger" id="main-menu-btn">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="autoplay-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">AUTO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="auto-keyboard-popup" id="auto-keyboard-popup">
+                <div class="auto-keyboard-grid">
+                    <button class="auto-keyboard-btn auto-key-val" data-val="1">1</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="2">2</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="3">3</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="4">4</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="5">5</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="6">6</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="7">7</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="8">8</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="9">9</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val=".">.</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="0">0</button>
+                    <button class="auto-keyboard-btn auto-key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                </div>
+                <button class="auto-keyboard-close" id="auto-keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="ap-section">
+                    <div class="ap-section-title">Bet color</div>
+                    <div class="color-toggles">
+                        <button class="color-toggle-btn selected" data-color="red">
+                            <div class="color-dot red"></div> Queen
+                        </button>
+                        <button class="color-toggle-btn" data-color="gold">
+                            <div class="color-dot gold"></div> King
+                        </button>
+                        <button class="color-toggle-btn" data-color="black">
+                            <div class="color-dot black"></div> Jocker
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ap-section">
+                    <div class="ap-section-title">Number of rounds</div>
+                    <div class="autoplay-rounds-grid">
+                        <button class="autoplay-round-btn selected" data-rounds="3">3</button>
+                        <button class="autoplay-round-btn" data-rounds="10">10</button>
+                        <button class="autoplay-round-btn" data-rounds="25">25</button>
+                        <button class="autoplay-round-btn" data-rounds="100">100</button>
+                        <button class="autoplay-round-btn" data-rounds="200">200</button>
+                        <button class="autoplay-round-btn" data-rounds="500">500</button>
+                    </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:13px; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-loss-toggle"></div>
+                        Stop if cash decreases by
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-loss-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-loss-val" value="0.00" readonly>
+                        <button id="auto-loss-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:13px; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-win-toggle"></div>
+                        Stop if single win exceeds
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-win-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-win-val" value="0.00" readonly>
+                        <button id="auto-win-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <button class="start-auto-btn" id="start-auto-btn">START AUTO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menu-modal">
+        <div class="modal-content" style="background:#1b1d21; border-radius:12px; position:absolute; bottom:40px; padding: 16px; animation:none;">
+            
+            <div style="padding: 4px 4px 12px 4px; color: #e5e7eb; font-size: 12px;">
+                Email id: <span id="useremailID"></span>
+            </div>
+
+            <ul class="menu-list">
+                <li id="sound-toggle-menu-btn">
+                    <i class="fas fa-volume-up"></i> Sound 
+                    <div id="sound-toggle-ui" style="margin-left:auto; width:32px; height:18px; background:#62a628; border-radius:12px; position:relative; transition: background 0.2s;">
+                        <div id="sound-toggle-circle" style="width:15px; height:15px; background:#fff; border-radius:50%; position:absolute; top:1.5px; right:1.5px; transition: right 0.2s, left 0.2s;"></div>
+                    </div>
+                </li>
+                
+                <li id="freebets-menu-btn" class="menu-option-item"><i class="far fa-star"></i> Free Bets</li>
+                <li id="recordsmenu-btn" class="menu-option-item"><i class="fas fa-history"></i> Bet History</li>
+                <li id="limits-menu-btn" class="menu-option-item"><i class="fas fa-money-bill-wave"></i> Game Limits</li>
+                <li id="how-to-play-menu-btn" class="menu-option-item"><i class="far fa-question-circle"></i> How to Play</li>
+                <li id="rules-menu-btn" class="menu-option-item"><i class="far fa-file-alt"></i> Game Rules</li>
+                <li id="fairnessmenu-btn" class="menu-option-item"><i class="fas fa-balance-scale"></i> Provably Fair Settings</li>
+                
+                <li id="closemenu" class="menu-option-item"><i class="fas fa-home"></i> Back to Home</li>
+                
+                <li>
+                    <div style="display: flex; align-items: center; gap: 8px; color: #a1a5b0; font-size: 13px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#82E022" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M7.5 12.5L11 16L17.5 8.5"></path>
+        <path d="M7 9v-1.5q0-1.5 1.5-2l1-.4"></path>
+        <path d="M11 4.5v0"></path>
+        <path d="M17 13.5c-1 2-2 3.5-3.5 4.5"></path>
+        <path d="M12.5 19.5v0"></path>
+    </svg>
+                        <span>Provably Fair Game</span>
+                    </div>
+                    <div style="color: #a1a5b0; font-size: 13px;">
+                        © <strong style="text-decoration: underline; color: #ffffff; text-underline-offset: 4px; text-decoration-thickness: 2px; font-weight: 800;">SPRIBE</strong>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="how-to-play-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-gamepad"></i> HOW TO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <div style="font-size:20px; font-weight:700; color:#5a8dec; margin-bottom:10px;">
+                    KING
+                </div>
+                <div class="howtoplayimg"></div>
+                <p style="margin-bottom:15px; color:#fff;">Predict which card will Come Out.</p>
+                <p style="color:#ccc;">Select Queen, Jocker, or the high-payout King card. Enable High Risk Mode for a two-reel thrill with squared multipliers!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="limits-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME LIMITS</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:15px;">Game limits are managed by operator. Current game limits for this game are below:</p>
+                <table class="limits-table">
+                    <tr><td>Maximum bet INR:</td><td>40,000.00</td></tr>
+                    <tr><td>Minimum bet INR:</td><td>10.00</td></tr>
+                    <tr><td>Maximum win for one bet INR:</td><td>800,000.00</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME RULES</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:18px; font-weight:700; color:#5a8dec; text-align:center; margin-bottom:15px;">
+                    KING
+                </div>
+                <p>- KING is a prediction game where players bet on the outcome of card reels stopping on a designated Display.</p><br>
+                <p>- Players choose between Queen, Jocker, and King. Queen and Jocker offer steady returns, while King offers massive payouts.</p><br>
+                <p>- <strong>High Risk Mode:</strong> When toggled ON, the game introduces a second reel. Both reels must land on the chosen card to win. Multipliers are vastly increased in this mode.</p><br>
+                <p>- Outcomes are generated utilizing Provably Fair RNG methodologies, ensuring complete statistical independence.</p>
+                <hr style="border:0; border-top:1px solid #444; margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">GAME INTERFACE</p><br>
+                <p>- Bets can be made from the bet panel, by selecting predefined bet amounts, or entering your own.Click(-) and (+) buttons to move between two options;</p>
+                <p>- Player balance shows available funds to play;</p>
+                <p>- Sound can be turned off and back on from the game menu;</p>
+                <p>- Bet history can be accessed from the game menu;</p>
+                <p>- Game information and rules can be accessed from the game menu;</p>
+                <p>- Provably Fair settings can be accessed from the game menu;</p>
+                <hr style="border:0; border-top:1px solid #444; margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">AUTO PLAY</p><br>
+                <p style="margin-bottom:5px; font-weight:500;">Note:this feature might be unavailable in some casinos.</p>
+                <p>- Auto Play panel is activated by pressing the "Auto Play" button.</p>
+                <p>- In the Auto Play panel, the "Stop if cash decreases by" option stops Auto Play, if the balance is decreased by the Selected amount.</p>
+                <p>- In the Auto Play panel, the "Stop if single win exceeds" option stops Auto Play, if a single win exceeds the selected amount.</p>
+                <p>- After Start, remaining Number of rounds is displayed on the counter. The player can stop Auto Play at any time, by clicking the counter.</p>
+                <p>- Auto Play is activated by pressing the "Auto Game" button. To continue tiles on the board should be selected;</p>
+                <hr style="border:0; border-top:1px solid #444; margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">ADDITIONAL INFORMATION</p><br>
+                <p>- In the event of a malfunction of the gaming hardware/software, all effected game bets and payouts are rendered void and all effected bets are refunded.</p>
+                <p>- If the internet connection is interrupted when the bet is active, the game will auto cash out with the original bet amount or the current multiplier, and the winning amount will be added to your balance</p>
+                <p style="margin-top:5px; font-weight:500; color:rgba(190,8,7,1);">Note: Any Usage Of Illegal Tools to manipulate the game results may lead to account suspension.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content" style="max-width: 380px; max-height: 80vh; display: flex; flex-direction: column; background: #121418;">
+            <div class="modal-header">
+                <div class="modal-title">BET HISTORY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="list-header">
+                <div class="col-date">Date</div>
+                <div class="col-bet">Bet INR</div>
+                <div class="col-x">X</div>
+                <div class="col-cashout">Cash out INR</div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div id="history-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 15px; background: #1b1c1d; margin-top: auto;">
+                    <button id="load-more-history-btn" class="generic-btn" style="background: #2b2b2c; color: #aaa; border: none; padding: 8px 16px; border-radius: 16px; font-size: 12px; cursor: pointer; display: none;">Load more</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="fairness-modal">
+    <div class="modal-content" style="max-width: 380px;">
+        <div class="modal-header">
+            <div class="modal-title">PROVABLY FAIR SETTINGS</div>
+            <button class="modal-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+            <p style="color: #aaa; margin-bottom: 10px;">
+                This game uses Provably Fair technology to determine game result. This tool gives you ability to change your seed and check fairness of the game.
+            </p>
+            <a href="#" style="color: #4caf50; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block;">
+                <i class="far fa-question-circle"></i> What is Provably Fair
+            </a>
+            
+            <!-- CLIENT SEED -->
+            <div style="background: #1a1c20; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
+                    <div>
+                        <div style="color: #fff; font-weight: bold;">Next client seed:</div>
+                        <div style="color: #888; font-size: 11px;">Generated on Your side</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: #888; margin-bottom: 8px;">
+                        <input type="radio" name="seed_type" style="accent-color: #4caf50;"> Random on every new game
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; color: #888;">
+                        <input type="radio" name="seed_type" checked style="accent-color: #4caf50;"> Add nonce
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1; background: #2a2c30; border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+                        
+                        <!-- ID ADDED ONLY -->
+                        <span id="client-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ZT6tUHTD300bl...
+                        </span>
+
+                        <!-- COPY CLICK ADDED -->
+                        <i class="far fa-copy" style="color: #ccc; cursor: pointer;" onclick="copySeed('client-seed')"></i>
+                    </div>
+
+                    <!-- BUTTON CONNECTED -->
+                    <button onclick="updateSeeds()" style="background: #333; border: none; color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SERVER SEED -->
+            <div style="background: #1a1c20; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-server" style="font-size: 24px; color: #ccc;"></i>
+                    <div>
+                        <div style="color: #fff; font-weight: bold;">Next server seed SHA256:</div>
+                        <div style="color: #888; font-size: 11px;">Encrypted seed, generated on our side</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1; background: #2a2c30; border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+                        
+                        <!-- ID ADDED ONLY -->
+                        <span id="server-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            0xiaci5bskddmg...
+                        </span>
+
+                        <!-- COPY CLICK ADDED -->
+                        <i class="far fa-copy" style="color: #ccc; cursor: pointer;" onclick="copySeed('server-seed')"></i>
+                    </div>
+
+                    <!-- BUTTON CONNECTED -->
+                    <button onclick="updateSeeds()" style="background: #333; border: none; color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <p style="color: #888; font-size: 12px; margin-top: 15px;">
+                You can check fairness of each bet from 
+                <a href="#" style="color: #4caf50; text-decoration: none;">Game History</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function generateRandomSeed(length = 16) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function updateSeeds() {
+    document.getElementById("client-seed").textContent = generateRandomSeed(16);
+    document.getElementById("server-seed").textContent = generateRandomSeed(16);
+}
+
+// Copy to clipboard
+function copySeed(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text);
+}
+
+// Run once on load
+updateSeeds();
+
+// Auto update every 15 seconds
+setInterval(updateSeeds, 15000);
+</script>
+
+    <div class="modal-overlay" id="insufficient-balance-modal">
+        <div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #e42c42;">
+            <div class="modal-header" style="border-bottom: none;">
+                <div class="modal-title" style="color: #e42c42; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-wallet"></i> LOW BALANCE
+                </div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 0px;">
+                <i class="fas fa-coins" style="font-size: 50px; color: #ffc107; margin-bottom: 15px;"></i>
+                <p style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: 500;">Insufficient Balance</p>
+                <p style="color: #ccc; font-size: 13px; margin-bottom: 20px;">Please add cash to your wallet to place this bet and continue playing.</p>
+                <button id="popup-add-cash-btn" style="background: linear-gradient(180deg, #e42c42 0%, #a81123 100%); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">Add Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-popup" id="auth-popup">
+        <div class="auth-popup-content">
+            <h2>Authentication Required!!</h2>
+            <p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p>
+            <button class="auth-popup-btn" id="sign-in-btn">Sign In to Play</button>
+        </div>
+    </div>
+
+    <div class="message-toast" id="message-toast">Message</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        class SoundPool {
+            constructor() {
+                this.pool = [];
+                this.sounds = {};
+                this.activeSources = {}; 
+                this.init();
+            }
+            async init() {
+                this.soundUrls = {
+                    spinStart: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav', 
+                    reelStop: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click2.wav',
+                    genericClick: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',  
+                    betControl: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click4.wav',   
+                    autoplayStart: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/startbetbtn.mp3', 
+                    toggleOn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnon.mp3',      
+                    toggleOff: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnoff.mp3',     
+                    winTone: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallWinsTile.mp3',       
+                    loseTone: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallLosTile.mp3',
+                    keypad: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click5.wav',
+                    menuOpen: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click2.wav',
+                    spinning: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/freesound_community-spinning-reel-27903.mp3' 
+                };
+                await this.preloadSounds();
+            }
+            async preloadSounds() {
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        this.sounds[key] = { audioContext, audioBuffer, url };
+                    } catch (error) {
+                        console.error(`Error loading sound ${key}:`, error);
+                    }
+                }
+            }
+            play(soundName, volume = 0.5) {
+                if (!this.sounds[soundName]) return;
+                let audioContext = this.sounds[soundName].audioContext;
+                if (audioContext.state === 'suspended') audioContext.resume();
+                const source = audioContext.createBufferSource();
+                source.buffer = this.sounds[soundName].audioBuffer;
+                
+                this.activeSources[soundName] = source;
+                
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = volume;
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                source.start(0);
+                source.onended = () => { 
+                    source.disconnect(); 
+                    gainNode.disconnect(); 
+                    if(this.activeSources[soundName] === source) {
+                        delete this.activeSources[soundName];
+                    }
+                };
+            }
+            stop(soundName) {
+                if (this.activeSources[soundName]) {
+                    try {
+                        this.activeSources[soundName].stop();
+                    } catch(e) {}
+                    delete this.activeSources[soundName];
+                }
+            }
+        }
+
+        const soundPool = new SoundPool();
+        function playSound(key, volume = 0.5) {
+            if (gameState.soundEnabled && soundPool.sounds[key]) {
+                soundPool.play(key, volume);
+            }
+        }
+        function stopSound(key) {
+            soundPool.stop(key);
+        }
+
+        let currentHistoryLimit = 50;
+        let isHistoryLoading = false;
+
+        const KINGConfig = {
+            standard: {
+                red: { mult: 2.15, prob: 0.40 },    
+                black: { mult: 2.15, prob: 0.40 },  
+                gold: { mult: 15.00, prob: 0.05 }   
+            },
+            highRisk: {
+                red: { mult: 5.00, prob: 0.20 },
+                black: { mult: 5.00, prob: 0.20 },
+                gold: { mult: 150.00, prob: 0.005 }
+            }
+        };
+
+        const reelSequence = ['red', 'black', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black', 'gold'];
+
+        function getIcon(type) {
+            if (type === 'red') {
+                return `<img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Queen_of_Hearts_%28Elizabeth_of_York%29.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+            }
+            if (type === 'black') {
+                return `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Joker_Card_Image.jpg" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+            }
+            if (type === 'gold') {
+                return `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/English_pattern_king_of_hearts.svg/960px-English_pattern_king_of_hearts.svg.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+            }
+        }
+
+        const gameState = {
+            soundEnabled: true,
+            balance: 0,
+            betAmount: 10,
+            highRisk: false,
+            userAuthenticated: false,
+            isPlaying: false,
+            historyQueue: [], 
+            
+            // --- HYBRID SYSTEM UPDATE: Add tracking variables ---
+            lifetimeWagered: 0, 
+            lifetimeWon: 0,
+            globalMode: 'NORMAL',
+
+            autoplayActive: false,
+            autoplayColors: ['red'], 
+            autoplayTargetRounds: 3,
+            autoplayRoundsPlayed: 0,
+            autoplayColorIndex: 0,
+            autoplayInitialBalance: 0,
+            stopLossAmount: 0,
+            stopLossActive: false,
+            stopWinAmount: 0,
+            stopWinActive: false,
+            autoplayTimeout: null
+        };
+
+        // Firebase Setup
+        const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // UI Updates
+        const balanceElement = document.getElementById('balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const msgToast = document.getElementById('message-toast');
+        const strip1 = document.getElementById('reel-1');
+        const strip2 = document.getElementById('reel-strip-2');
+
+        function showMessage(msg) {
+            msgToast.textContent = msg;
+            msgToast.classList.add('show');
+            setTimeout(() => msgToast.classList.remove('show'), 2500);
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Make init async and wait for platform listener ---
+        async function init() {
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 800);
+            const userEmailSpan = document.getElementById('useremailID');
+            if(userEmailSpan) userEmailSpan.textContent = localStorage.getItem('email') || 'Guest User';
+            checkAuthentication();
+            setupEventListeners();
+            initReels();
+            updateMultipliersUI();
+            
+            await setupGlobalPlatformListener();
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Listen for Admin Panel Traffic Light changes for KING ---
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                database.ref('platformControl/globalModes/king').on('value', snap => {
+                    if (snap.exists()) {
+                        gameState.globalMode = snap.val(); 
+                    } else {
+                        gameState.globalMode = 'NORMAL';
+                    }
+                    resolve(); // Siri Fix: Resolved instantly to avoid race condition delays
+                });
+            });
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Presence Tracking for Live Users ---
+        function trackGamePresence(uid) {
+            const presenceRef = database.ref(`gamePresence/king/${uid}`);
+            
+            database.ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() === false) {
+                    return;
+                }
+                presenceRef.onDisconnect().remove().then(function() {
+                    presenceRef.set(true);
+                });
+            });
+
+            // Extra fallback for explicit tab closures
+            window.addEventListener('beforeunload', () => {
+                presenceRef.remove();
+            });
+        }
+
+        function checkAuthentication() {
+            const uid = localStorage.getItem('uid');
+            if (uid) {
+                gameState.userAuthenticated = true;
+                document.getElementById('auth-popup').style.display = 'none';
+                loadUserData(uid);
+                trackGamePresence(uid); // Siri Fix: Start tracking live user connection
+            } else {
+                gameState.userAuthenticated = false;
+                document.getElementById('auth-popup').style.display = 'flex';
+                document.getElementById('sign-in-btn').onclick = () => { window.location.href = 'index.html'; }
+            }
+        }
+
+        function loadUserData(uid) {
+            database.ref('appusers/' + uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    gameState.balance = data.totalBalance || 0;
+                    
+                    // --- HYBRID SYSTEM UPDATE: Keep lifetime stats synced ---
+                    gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                    gameState.lifetimeWon = data.lifetimeWon || 0;
+                    
+                    balanceElement.textContent = gameState.balance.toFixed(2);
+                }
+            });
+        }
+
+        function initReels() {
+            let html = '';
+            for(let i=0; i<45; i++) {
+                const type = reelSequence[i % reelSequence.length];
+                html += `<div class="card-slot"><div class="playing-card card-${type}">${getIcon(type)}</div></div>`;
+            }
+            strip1.innerHTML = html;
+            strip2.innerHTML = html;
+            strip1.style.transform = `translateY(0px)`;
+            strip2.style.transform = `translateY(0px)`;
+        }
+
+        function updateMultipliersUI() {
+            const conf = gameState.highRisk? KINGConfig.highRisk : KINGConfig.standard;
+            document.getElementById('mult-red').textContent = conf.red.mult.toFixed(2) + 'x';
+            document.getElementById('mult-black').textContent = conf.black.mult.toFixed(2) + 'x';
+            document.getElementById('mult-gold').textContent = conf.gold.mult.toFixed(2) + 'x';
+        }
+
+        function setupEventListeners() {
+            document.getElementById('history-dropdown-btn').onclick = () => {
+                playSound('menuOpen');
+                document.getElementById('last-results-dropdown').classList.toggle('show');
+            };
+
+            const soundToggleMenuBtn = document.getElementById('sound-toggle-menu-btn');
+            const soundToggleUI = document.getElementById('sound-toggle-ui');
+            const soundToggleCircle = document.getElementById('sound-toggle-circle');
+            
+            if(!gameState.soundEnabled) {
+                soundToggleUI.style.background = '#555';
+                soundToggleCircle.style.right = '18px';
+            }
+            
+            soundToggleMenuBtn.onclick = () => {
+                gameState.soundEnabled = !gameState.soundEnabled;
+                if(gameState.soundEnabled) {
+                    soundToggleUI.style.background = '#4caf50';
+                    soundToggleCircle.style.right = '2px';
+                    playSound('toggleOn'); 
+                } else {
+                    soundToggleUI.style.background = '#555';
+                    soundToggleCircle.style.right = '18px';
+                    gameState.soundEnabled = true;
+                    playSound('toggleOff');
+                    gameState.soundEnabled = false;
+                }
+            };
+
+            document.getElementById('high-risk-toggle').onchange = (e) => {
+                if(gameState.isPlaying || gameState.autoplayActive) {
+                    e.preventDefault();
+                    e.target.checked =!e.target.checked;
+                    return;
+                }
+                gameState.highRisk = e.target.checked;
+                document.getElementById('reel-2').style.display = gameState.highRisk? 'block' : 'none';
+                playSound('genericClick');
+                updateMultipliersUI();
+            };
+
+            document.getElementById('btn-red').onclick = () => placeBet('red');
+            document.getElementById('btn-black').onclick = () => placeBet('black');
+            document.getElementById('btn-gold').onclick = () => placeBet('gold');
+
+            document.getElementById('autoplay-btn').onclick = () => {
+                playSound('genericClick');
+                if(gameState.autoplayActive) stopAutoplay();
+                else document.getElementById('autoplay-modal').classList.add('show');
+            };
+            
+            document.querySelectorAll('.color-toggle-btn').forEach(btn => {
+                btn.onclick = () => {
+                    btn.classList.toggle('selected');
+                    const color = btn.dataset.color;
+                    if(btn.classList.contains('selected')) {
+                        playSound('toggleOn');
+                        if(!gameState.autoplayColors.includes(color)) gameState.autoplayColors.push(color);
+                    } else {
+                        playSound('toggleOff');
+                        gameState.autoplayColors = gameState.autoplayColors.filter(c => c!== color);
+                    }
+                };
+            });
+
+            document.querySelectorAll('.autoplay-round-btn').forEach(btn => {
+                btn.onclick = () => {
+                    playSound('genericClick');
+                    document.querySelectorAll('.autoplay-round-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    gameState.autoplayTargetRounds = parseInt(btn.dataset.rounds);
+                };
+            });
+
+            const autoLossVal = document.getElementById('auto-stop-loss-val');
+            const autoWinVal = document.getElementById('auto-stop-win-val');
+            
+            document.getElementById('auto-stop-loss-toggle').onclick = function() {
+                this.classList.toggle('active');
+                if(this.classList.contains('active')) playSound('toggleOn'); else playSound('toggleOff');
+            };
+            document.getElementById('auto-stop-win-toggle').onclick = function() {
+                this.classList.toggle('active');
+                if(this.classList.contains('active')) playSound('toggleOn'); else playSound('toggleOff');
+            };
+            function adjustAutoInput(inputEl, delta) {
+                let val = parseFloat(inputEl.value) || 0;
+                val = Math.max(0, val + delta);
+                inputEl.value = val.toFixed(2);
+                playSound('betControl');
+            }
+            document.getElementById('auto-loss-inc').onclick = () => adjustAutoInput(autoLossVal, 1.00);
+            document.getElementById('auto-loss-dec').onclick = () => adjustAutoInput(autoLossVal, -1.00);
+            document.getElementById('auto-win-inc').onclick = () => adjustAutoInput(autoWinVal, 1.00);
+            document.getElementById('auto-win-dec').onclick = () => adjustAutoInput(autoWinVal, -1.00);
+
+            let activeAutoInput = null;
+            let currentAutoInputStr = "";
+            const autoKeyboardPopup = document.getElementById('auto-keyboard-popup');
+            
+            document.querySelectorAll('.autoplay-input-group').forEach(group => {
+                group.onclick = (e) => {
+                    if(e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                    activeAutoInput = group.querySelector('input');
+                    currentAutoInputStr = "";
+                    autoKeyboardPopup.classList.add('show');
+                };
+            });
+            
+            document.querySelectorAll('.auto-key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSound('keypad');
+                    const val = btn.dataset.val;
+                    if(val === '.' && currentAutoInputStr.includes('.')) return;
+                    currentAutoInputStr += val;
+                    if(activeAutoInput) activeAutoInput.value = currentAutoInputStr;
+                };
+            });
+            
+            document.querySelector('.auto-key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playSound('keypad');
+                currentAutoInputStr = currentAutoInputStr.slice(0, -1);
+                if(activeAutoInput) activeAutoInput.value = currentAutoInputStr || "0.00";
+            };
+            
+            document.getElementById('auto-keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                autoKeyboardPopup.classList.remove('show');
+                if(activeAutoInput) {
+                    activeAutoInput.value = (parseFloat(activeAutoInput.value) || 0).toFixed(2);
+                }
+            };
+
+            document.getElementById('start-auto-btn').onclick = () => {
+                if(!gameState.userAuthenticated) { showMessage('Please Login'); return; }
+                if(gameState.autoplayColors.length === 0) { showMessage('Select at least one card'); return; }
+                playSound('autoplayStart');
+                document.getElementById('autoplay-modal').classList.remove('show');
+                startAutoplay();
+            };
+
+            const betInputTrigger = document.getElementById('bet-input-trigger');
+            const amountsPopup = document.getElementById('amounts-popup');
+            const keyboardPopup = document.getElementById('keyboard-popup');
+            
+            function closePopups() {
+                amountsPopup.classList.remove('show');
+                keyboardPopup.classList.remove('show');
+                validateBet();
+            }
+            betInputTrigger.onclick = (e) => {
+                e.stopPropagation();
+                if(gameState.autoplayActive || gameState.isPlaying) return;
+                closePopups();
+                playSound('genericClick');
+                keyboardPopup.classList.add('show');
+                currentInputStr = "";
+            };
+            document.getElementById('max-btn').onclick = (e) => {
+                e.stopPropagation();
+                if(gameState.autoplayActive || gameState.isPlaying) return;
+                closePopups();
+                playSound('betControl');
+                amountsPopup.classList.add('show');
+            };
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.onclick = () => {
+                    betAmountInput.value = parseFloat(btn.dataset.val).toFixed(2);
+                    closePopups();
+                    playSound('genericClick');
+                };
+            });
+
+            document.getElementById('half-btn').onclick = () => { if(gameState.isPlaying || gameState.autoplayActive) return; betAmountInput.value = Math.max(10, (parseFloat(betAmountInput.value)||10)/2).toFixed(2); playSound('betControl'); validateBet(); };
+            document.getElementById('double-btn').onclick = () => { if(gameState.isPlaying || gameState.autoplayActive) return; betAmountInput.value = Math.min(40000, (parseFloat(betAmountInput.value)||10)*2).toFixed(2); playSound('betControl'); validateBet(); };
+            
+            let currentInputStr = "";
+            document.querySelectorAll('.key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSound('keypad');
+                    const val = btn.dataset.val;
+                    if(val === '.' && currentInputStr.includes('.')) return;
+                    currentInputStr += val;
+                    betAmountInput.value = currentInputStr;
+                };
+            });
+            document.querySelector('.key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playSound('keypad');
+                currentInputStr = currentInputStr.slice(0, -1);
+                betAmountInput.value = currentInputStr || "0";
+            };
+            document.getElementById('keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                closePopups();
+            };
+
+            document.addEventListener('click', (e) => {
+                if(!e.target.closest('.bet-input-wrapper')) closePopups();
+                if(!e.target.closest('.last-results-wrapper') && !e.target.closest('.last-results-main')) document.getElementById('last-results-dropdown').classList.remove('show');
+            });
+            
+            document.querySelectorAll('.modal-close,.modal-overlay').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if(e.target === el || el.classList.contains('modal-close')) {
+                        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+                        playSound('genericClick');
+                    }
+                });
+            });
+            
+            document.getElementById('main-menu-btn').onclick = () => { playSound('menuOpen'); document.getElementById('menu-modal').classList.add('show'); };
+            document.getElementById('help-open-btn').onclick = () => { playSound('genericClick'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('recordsmenu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('history-modal').classList.add('show'); loadBetHistory(false); };
+            document.getElementById('how-to-play-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('rules-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('rules-modal').classList.add('show'); };
+            document.getElementById('limits-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('limits-modal').classList.add('show'); };
+            document.getElementById('fairnessmenu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('fairness-modal').classList.add('show'); };
+            document.getElementById('closemenu').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); };
+
+            document.getElementById('load-more-history-btn').onclick = () => { playSound('genericClick'); loadBetHistory(true); };
+        }
+
+        function validateBet() {
+            let val = parseFloat(betAmountInput.value) || 10;
+            if(val < 10) val = 10;
+            if(val > 40000) val = 40000;
+            gameState.betAmount = val;
+            betAmountInput.value = val.toFixed(2);
+        }
+
+        function getRNGOutcome(chosenColor) {
+            const rand = Math.random();
+            const config = gameState.highRisk ? KINGConfig.highRisk : KINGConfig.standard;
+            const winProb = config[chosenColor].prob;
+            
+            if (rand < winProb) {
+                return chosenColor; 
+            } else {
+                const options = ['red', 'black', 'gold'].filter(c => c !== chosenColor);
+                return options[Math.floor(Math.random() * options.length)];
+            }
+        }
+
+        function cleanupReels(strip) {
+            if(strip.children.length > 20) {
+                const keepCards = Array.from(strip.children).slice(-5);
+                strip.style.transition = 'none';
+                strip.innerHTML = '';
+                keepCards.forEach(c => strip.appendChild(c));
+                const resetPos = -(strip.children.length - 1) * 120;
+                strip.style.transform = `translateY(${resetPos}px)`;
+                void strip.offsetWidth; 
+            }
+        }
+
+        function buildSpinSequence(targetRes, chosenColor) {
+            let spinSeq = [];
+            spinSeq.push(...reelSequence);
+            spinSeq.push(...reelSequence);
+            
+            let validIndices = [];
+            reelSequence.forEach((c, i) => { if(c === targetRes) validIndices.push(i); });
+            let stopIdx = validIndices[Math.floor(Math.random() * validIndices.length)];
+            
+            if (targetRes !== chosenColor) {
+                for (let i = 0; i < reelSequence.length; i++) {
+                    if (reelSequence[i] === targetRes && 
+                       (reelSequence[(i+1)%reelSequence.length] === chosenColor || reelSequence[(i-1+reelSequence.length)%reelSequence.length] === chosenColor)) {
+                        stopIdx = i;
+                        break;
+                    }
+                }
+            }
+            
+            for(let i = 0; i <= stopIdx; i++) {
+                spinSeq.push(reelSequence[i]);
+            }
+            return spinSeq;
+        }
+
+        function updateBalance(amount) {
+            const uid = localStorage.getItem('uid');
+            if(!uid) return Promise.resolve(gameState.balance);
+            
+            return database.ref('appusers/' + uid).transaction((userData) => {
+                if (userData) {
+                    let total = userData.totalBalance || 0;
+                    let withdrawable = userData.withdrawableBalance || 0;
+                    
+                    if (amount < 0) {
+                        let betAmount = Math.abs(amount);
+                        let unwithdrawable = total - withdrawable;
+                        if (unwithdrawable < 0) unwithdrawable = 0;
+                        
+                        if (betAmount <= unwithdrawable) {
+                            unwithdrawable -= betAmount;
+                        } else {
+                            let remainingBet = betAmount - unwithdrawable;
+                            withdrawable -= remainingBet;
+                        }
+                        
+                        userData.totalBalance = total - betAmount;
+                        userData.withdrawableBalance = Math.max(0, withdrawable);
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record wager amount ---
+                        userData.lifetimeWagered = (userData.lifetimeWagered || 0) + betAmount;
+
+                    } else if (amount > 0) {
+                        userData.totalBalance = total + amount;
+                        userData.withdrawableBalance = withdrawable + amount;
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record win amount ---
+                        userData.lifetimeWon = (userData.lifetimeWon || 0) + amount;
+                    }
+                }
+                return userData;
+            }).then((result) => {
+                if (result.committed) {
+                    return result.snapshot.val().totalBalance;
+                }
+                return gameState.balance;
+            });
+        }
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            return {
+                time: `${hours}:${minutes}`,
+                date: `${day}-${month}-${year}`
+            };
+        }
+
+        function saveToMyBets(betAmount, winAmount) {
+            const uid = localStorage.getItem('uid');
+            if (!uid) return;
+            const dt = getFormattedDateTime();
+            
+            const record = {
+                gameName: "King",
+                time: dt.time,
+                date: dt.date,
+                timestamp: Date.now(),
+                betAmount: betAmount,
+                winAmount: winAmount
+            };
+            
+            database.ref(`appusers/${uid}/betHistory`).push(record).catch(err => console.error(err));
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Probability Matrix specific to King Math ---
+        function getDynamicLossChance() {
+            let baseChance = 0.50; 
+            let rtp = 0;
+
+            if (gameState.lifetimeWagered >= 50) {
+                rtp = gameState.lifetimeWon / gameState.lifetimeWagered;
+            } else {
+                rtp = 0.50; 
+            }
+
+            if (rtp > 0.90) baseChance = 0.85;       
+            else if (rtp > 0.60) baseChance = 0.60;  
+            else if (rtp < 0.30) baseChance = 0.10;  
+            else baseChance = 0.45;                  
+
+            let finalChance = baseChance;
+
+            if (gameState.globalMode === 'RECOVERY') {
+                finalChance = baseChance + 0.30; 
+            } 
+            else if (gameState.globalMode === 'PAYOUT') {
+                finalChance = baseChance - 0.95; 
+            }
+
+            if (finalChance > 0.95) finalChance = 0.95; 
+            if (finalChance < 0.05) finalChance = 0.05;
+
+            return finalChance;
+        }
+
+        async function placeBet(chosenColor) {
+            validateBet();
+            if(gameState.isPlaying) return;
+            if(!gameState.userAuthenticated) { document.getElementById('auth-popup').style.display = 'flex'; stopAutoplay(); return; }
+            if(gameState.betAmount > gameState.balance) { document.getElementById('insufficient-balance-modal').classList.add('show'); stopAutoplay(); return; }
+            
+            gameState.isPlaying = true;
+            playSound('spinStart');
+            setControlsLock(true);
+            
+            const bAfterBet = await updateBalance(-gameState.betAmount);
+            gameState.balance = bAfterBet;
+            balanceElement.textContent = bAfterBet.toFixed(2);
+
+            cleanupReels(strip1);
+            if(gameState.highRisk) cleanupReels(strip2);
+
+            // --- HYBRID SYSTEM UPDATE: Degrader Execution Loop ---
+            const forceLossChance = getDynamicLossChance();
+            let res1, res2;
+
+            // Loop to ensure the system forces a loss if required by the platform's math
+            for (let i = 0; i < 20; i++) {
+                res1 = getRNGOutcome(chosenColor);
+                res2 = gameState.highRisk ? getRNGOutcome(chosenColor) : null;
+                
+                let isTempWin = false;
+                if (gameState.highRisk) {
+                    if (res1 === chosenColor && res2 === chosenColor) isTempWin = true;
+                } else {
+                    if (res1 === chosenColor) isTempWin = true;
+                }
+
+                // If it's a natural win, roll the secret dice against the dynamic chance
+                if (isTempWin && Math.random() < forceLossChance) {
+                    continue; // Secretly throw away the win and reroll!
+                } else {
+                    break; // Keep the outcome
+                }
+            }
+            // --- END HYBRID DEGRADER ---
+
+            animateReels(res1, res2, chosenColor);
+        }
+
+        function animateReels(res1, res2, chosenColor) {
+            const slotHeight = 120;
+            
+            playSound('spinning');
+            
+            const seq1 = buildSpinSequence(res1, chosenColor);
+            let html1 = '';
+            seq1.forEach(type => {
+                html1 += `<div class="card-slot"><div class="playing-card card-${type}">${getIcon(type)}</div></div>`;
+            });
+            strip1.innerHTML += html1;
+            const finalPos1 = -(strip1.children.length - 1) * slotHeight;
+            strip1.style.transition = 'transform 5s cubic-bezier(0.15, 0.85, 0.15, 1)';
+            strip1.style.transform = `translateY(${finalPos1}px)`;
+
+            if(gameState.highRisk) {
+                const seq2 = buildSpinSequence(res2, chosenColor);
+                let html2 = '';
+                seq2.forEach(type => {
+                    html2 += `<div class="card-slot"><div class="playing-card card-${type}">${getIcon(type)}</div></div>`;
+                });
+                strip2.innerHTML += html2;
+                const finalPos2 = -(strip2.children.length - 1) * slotHeight;
+                strip2.style.transition = 'transform 3.0s cubic-bezier(0.15, 0.85, 0.15, 1)';
+                strip2.style.transform = `translateY(${finalPos2}px)`;
+            }
+
+            setTimeout(() => {
+                stopSound('spinning');
+            }, 4000);
+
+            setTimeout(() => {
+                playSound('reelStop');
+                if(gameState.highRisk) {
+                    setTimeout(() => resolveWin(chosenColor, res1, res2), 500);
+                } else {
+                    resolveWin(chosenColor, res1, res2);
+                }
+            }, 4000);
+        }
+
+        async function resolveWin(chosenColor, res1, res2) {
+            if(gameState.highRisk) playSound('reelStop');
+            let isWin = false;
+            let mult = 0;
+            
+            if(gameState.highRisk) {
+                if(chosenColor === res1 && chosenColor === res2) {
+                    isWin = true;
+                    mult = KINGConfig.highRisk[chosenColor].mult;
+                }
+            } else {
+                if(chosenColor === res1) {
+                    isWin = true;
+                    mult = KINGConfig.standard[chosenColor].mult;
+                }
+            }
+
+            const reelWin1 = strip1.parentElement;
+            const reelWin2 = strip2.parentElement;
+
+            reelWin1.classList.remove('win-pulse', 'lose-pulse');
+            void reelWin1.offsetWidth; 
+            if (res1 === chosenColor) {
+                reelWin1.classList.add('win-pulse');
+            } else {
+                reelWin1.classList.add('lose-pulse');
+            }
+
+            if(gameState.highRisk) {
+                reelWin2.classList.remove('win-pulse', 'lose-pulse');
+                void reelWin2.offsetWidth; 
+                if (res2 === chosenColor) {
+                    reelWin2.classList.add('win-pulse');
+                } else {
+                    reelWin2.classList.add('lose-pulse');
+                }
+            }
+
+            setTimeout(() => {
+                reelWin1.classList.remove('win-pulse', 'lose-pulse');
+                if(gameState.highRisk) reelWin2.classList.remove('win-pulse', 'lose-pulse');
+            }, 2000);
+
+            if(isWin) playSound('winTone');
+            else playSound('loseTone');
+
+            addToHistoryStrip(res1, res2);
+
+            if(isWin && mult > 0) {
+                const winnings = gameState.betAmount * mult;
+                const bAfterWin = await updateBalance(winnings);
+                gameState.balance = bAfterWin;
+                balanceElement.textContent = bAfterWin.toFixed(2);
+                saveToMyBets(gameState.betAmount, winnings);
+                
+                if(gameState.autoplayActive && gameState.stopWinActive && gameState.stopWinAmount > 0 && winnings > gameState.stopWinAmount) {
+                    showMessage("Single Win Limit Exceeded");
+                    stopAutoplay();
+                }
+            } else {
+                saveToMyBets(gameState.betAmount, 0);
+            }
+            
+            gameState.isPlaying = false;
+            if(!gameState.autoplayActive) setControlsLock(false);
+        }
+
+        function addToHistoryStrip(res1, res2) {
+            const obj = { res1, res2, highRisk: gameState.highRisk };
+            gameState.historyQueue.unshift(obj);
+            if(gameState.historyQueue.length > 30) gameState.historyQueue.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const createHtml = (h) => {
+                if (h.highRisk) {
+                    return `<div class="history-item-double">
+                                <div class="result-badge ${h.res1}"></div>
+                                <div class="result-badge ${h.res2}"></div>
+                            </div>`;
+                } else {
+                    return `<div class="result-badge ${h.res1}"></div>`;
+                }
+            };
+            
+            document.getElementById('last-results-strip').innerHTML = gameState.historyQueue.map(createHtml).join('');
+            document.getElementById('last-results-grid').innerHTML = gameState.historyQueue.map(createHtml).join('');
+        }
+
+        function setControlsLock(locked) {
+            document.getElementById('btn-red').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('btn-black').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('btn-gold').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('bet-input-trigger').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('half-btn').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('max-btn').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('double-btn').style.pointerEvents = locked? 'none' : 'auto';
+            document.getElementById('high-risk-toggle').disabled = locked;
+            document.querySelectorAll('.bet-btn').forEach(b => b.style.opacity = locked? '0.6' : '1');
+        }
+
+        function startAutoplay() {
+            gameState.autoplayActive = true;
+            gameState.autoplayTotalRounds = gameState.autoplayTargetRounds;
+            gameState.autoplayRoundsPlayed = 0;
+            gameState.autoplayColorIndex = 0;
+            gameState.autoplayInitialBalance = gameState.balance;
+            
+            gameState.stopLossAmount = parseFloat(document.getElementById('auto-stop-loss-val').value) || 0;
+            gameState.stopLossActive = document.getElementById('auto-stop-loss-toggle').classList.contains('active');
+            gameState.stopWinAmount = parseFloat(document.getElementById('auto-stop-win-val').value) || 0;
+            gameState.stopWinActive = document.getElementById('auto-stop-win-toggle').classList.contains('active');
+            
+            const abtn = document.getElementById('autoplay-btn');
+            abtn.classList.add('active-red');
+            abtn.innerHTML = `<i class="fas fa-stop"></i>`;
+            setControlsLock(true);
+            runAutoplayLoop();
+        }
+
+        function stopAutoplay() {
+            gameState.autoplayActive = false;
+            clearTimeout(gameState.autoplayTimeout);
+            const abtn = document.getElementById('autoplay-btn');
+            abtn.classList.remove('active-red');
+            abtn.innerHTML = `<i class="fas fa-sync-alt" style="font-size:22px;"></i>`;
+            if(!gameState.isPlaying) setControlsLock(false);
+        }
+
+        function runAutoplayLoop() {
+            if(!gameState.autoplayActive || gameState.autoplayRoundsPlayed >= gameState.autoplayTotalRounds) { stopAutoplay(); return; }
+            if(gameState.isPlaying) {
+                gameState.autoplayTimeout = setTimeout(() => runAutoplayLoop(), 1000);
+                return;
+            }
+            if(gameState.stopLossActive && gameState.stopLossAmount > 0 && (gameState.autoplayInitialBalance - gameState.balance) >= gameState.stopLossAmount) {
+                showMessage("Stop Loss Reached"); stopAutoplay(); return;
+            }
+            
+            const color = gameState.autoplayColors[gameState.autoplayColorIndex % gameState.autoplayColors.length];
+            placeBet(color);
+            
+            gameState.autoplayColorIndex++;
+            gameState.autoplayRoundsPlayed++;
+            
+            gameState.autoplayTimeout = setTimeout(() => runAutoplayLoop(), 4000); 
+        }
+
+        function loadBetHistory(isLoadMore = false) {
+            const uid = localStorage.getItem('uid');
+            const historyList = document.getElementById('history-list');
+            const loadMoreBtn = document.getElementById('load-more-history-btn');
+
+            if (!uid) {
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Please login to view history</div>';
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            if (isHistoryLoading) return;
+            isHistoryLoading = true;
+
+            if (!isLoadMore) {
+                currentHistoryLimit = 50;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Loading history...</div>';
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            } else {
+                currentHistoryLimit += 50;
+                const loadingText = document.createElement('div');
+                loadingText.id = 'history-loading-text';
+                loadingText.style.cssText = 'text-align:center; padding: 10px; color:#888; font-size: 12px;';
+                loadingText.innerText = 'Loading more...';
+                historyList.appendChild(loadingText);
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            }
+
+            let query = database.ref(`appusers/${uid}/betHistory`)
+                                .orderByChild('gameName')
+                                .equalTo('King')
+                                .limitToLast(currentHistoryLimit);
+
+            query.once('value').then(snapshot => {
+                isHistoryLoading = false;
+                historyList.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>';
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    return;
+                }
+
+                const records = [];
+                snapshot.forEach(child => { 
+                    records.push({ key: child.key, ...child.val() }); 
+                });
+
+                if (records.length === 0) {
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>';
+                    return;
+                }
+
+                if (records.length < currentHistoryLimit) {
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                } else {
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+                }
+
+                records.reverse(); 
+
+                records.forEach(bet => {
+                    const isWin = bet.winAmount > 0;
+                    const calcMultiplier = isWin ? (bet.winAmount / bet.betAmount) : 0;
+                    
+                    const item = document.createElement('div');
+                    item.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                    item.innerHTML = `
+                        <div class="col-date">${bet.time}<br><span>${bet.date}</span></div>
+                        <div class="col-bet">${bet.betAmount.toFixed(2)}</div>
+                        <div class="col-x">
+                            ${isWin ? `<span class="x-pill blue-bg">${calcMultiplier.toFixed(2)}x</span>` : `<span style="color: #4db8ff; font-weight: bold; font-size: 12px;">0.00x</span>`}
+                        </div>
+                        <div class="col-cashout">
+                            <span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span>
+                            <div class="action-icons">
+                                <i class="fas fa-shield-alt"></i>
+                                <i class="far fa-comment"></i>
+                            </div>
+                        </div>
+                    `;
+                    historyList.appendChild(item);
+                });
+            }).catch(err => {
+                isHistoryLoading = false;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#e53935;">Error loading history</div>';
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

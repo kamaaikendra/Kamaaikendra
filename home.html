@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kamaaikendra Games</title>
+  <link rel="preload" as="image" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png" fetchpriority="high">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* RESET & GLOBAL */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: radial-gradient(circle at center, rgba(125,44,155,0.99), rgba(128,11,155,0.99)),
+                  url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png');
+      background-blend-mode: overlay;
+      background-size: 100% 100%;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    /* WebKit Scrollbar Styling */
+    ::-webkit-scrollbar { width: 0px; height: 0px; }
+
+    /* --- FIXED HEADER AREA --- */
+    .fixed-header {
+      flex-shrink: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+    .top-bar {
+        width: 100vw;
+        height: 45px;
+        flex-shrink: 0;
+        background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 10000001;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .profile-section {
+        width: 20vw;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+    }
+
+    .balance-section {
+        max-width: 80vw;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+    }
+
+    .balance-display {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 300px;
+        padding:2px;
+        background: rgba(12,11,44,0.5);
+        border-radius: 40px;
+        box-shadow: inset 0 3px 6px rgba(0,0,0, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+        gap: 10px;
+    }
+
+    .coin-icon {
+        width: 25px;
+        height: 25px;
+        object-fit: contain;
+        flex-shrink: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23FDBD01'/%3E%3Ccircle cx='32' cy='32' r='28' fill='none' stroke='%23FFA500' stroke-width='4'/%3E%3Ctext x='32' y='40' font-family='Segoe Ui' font-size='32' font-weight='700' text-anchor='middle' fill='%23FF6700'%3E₹%3C/text%3E%3C/svg%3E");
+        background-size:fill;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: inset 0 3px 6px rgba(255,255,255, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+        border-radius: 25px;
+    }
+
+    .balance-amount {
+        font-size: 15px;
+        font-weight: 900;
+        font-family: serif;
+        background: linear-gradient(0deg, #fdbd01, #fff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-text-stroke: .5px #fdbd01;
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .page6-button {
+        width: 70px;
+        height: 20px;
+        background: radial-gradient(ellipse at center, #Fdbd01 0%, #FFA500 30%, #FF6700 100%);
+        border: .2px solid #FF6700;
+        outline:1.8px solid #fdbd01;
+        margin:1.8px;
+        border-radius: 25px;
+        color:rgba(255,255,255,1.9);
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.09);
+    }
+    .page6-button:hover { background: linear-gradient(0deg, #FFA500, #FF8C00); transform: scale(1); box-shadow: 0 5px 8px rgba(0, 0, 0, 0.4); }
+    .page6-button:active { transform: scale(0.95); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+
+    /* Profile Button */
+    .profile-button {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FDBD01"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>');
+        color: white;
+        border: 2px solid #fdbd01;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 25px;
+        font-weight: 900;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.99);
+        cursor: pointer;
+        object-fit: cover;
+        box-shadow: inset 0 3px 6px rgba(255,255,255,0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+    }
+    .profile-button:hover { transform: scale(1); }
+    .profile-button:active { transform: scale(0.9); }
+
+    /* --- AD BANNER --- */
+    .ad-banner-section { 
+        width: 100%;
+        margin: 0 auto 8px; 
+        padding: 0;
+    }
+    .ad-banner-carousel {
+      display: flex;
+      overflow-x: auto; 
+      scroll-snap-type: x mandatory; 
+      scroll-behavior: smooth;
+      border-radius: 8px;
+    }
+    .ad-banner-carousel::-webkit-scrollbar { display: none; }
+    .ad-banner-item {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+      height: 120px;
+      width: 100%; 
+      margin-right: 10px; 
+      border-radius: 6px;
+      cursor: pointer; 
+      position: relative;
+    }
+    .ad-banner-carousel img {
+      width: 100%;
+      height: 100%; 
+      object-fit: fill;
+      display: block; 
+      border-radius: 8px;
+      background: rgba(110, 2, 176, 0.7);
+      position: relative;
+      z-index: 1;
+    }
+    .ad-dots {display:none;}
+    .ad-dots span {
+      display: none; 
+    }
+    .ad-dots span.active { 
+    }
+
+    /* --- SEARCH BAR --- */
+    .search-container { width: 100%; margin: 0 auto 10px; }
+    .search-bar {
+      width: 100%; 
+      font-weight: 500;
+      font-size: 11px;
+      color: white;
+      transition: 0.2s;
+      background: linear-gradient(90deg, rgba(144,12,45,0.9), rgba(135,10,35,1)); 
+      backdrop-filter: blur(10px); 
+      border:1px solid rgba(292,20,9,1); 
+      outline:none; 
+      border-radius: 4px;
+      padding:5px 10px;
+    }
+    .search-bar::placeholder{
+        color:white;
+    }
+    .search-bar:focus { outline: none; background: rgba(0,20,5,0.8); }
+
+    /* --- SECTIONS, SCROLLABLE CONTAINERS & GENERAL STRUCTURE --- */
+    .section { 
+        display: none;
+        flex: 1;
+        width: 100%; 
+        height: 100%;
+        flex-direction: column;
+        overflow: hidden; 
+        padding-bottom: 40px;
+        scroll-behavior: smooth;
+        overflow-y: auto;
+    }
+    .homesec {
+        background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSctRj4-h9E0BQFPXIUzzuP7127whte-G8WPmE4rUZQp4mGmCFeZSTlpsWq8c33tHr17aWcAC70tLIoDWhEn_x8gw8FBqU8-tYGO575UmzcMtwi4OC95CqIJ0NPWD0W8b0tnFel53yxBvwSKQ-TttooacWD-Ao27okFc0XUZhzPiwsYd-xaFfGBH6xsCg/s1920/1000121615.png');
+        background-size: 100% 100%;
+    }
+    .section.active { display: flex; }
+    .scrollable-games {
+      flex: 1;
+      overflow-y: auto;
+      width: 98%; 
+      height:100%;
+      margin: 0 auto; 
+      padding: 10px 5px 10px 5px;
+      scroll-behavior: smooth;
+    }
+    .section-title { 
+        font-size: 12px; 
+        font-weight: 900;
+        margin-bottom: 10px; 
+        color:White; 
+        font-family: fantasy; 
+        justify-self: center; 
+        text-align: center; 
+        padding-top: 10px;
+    }
+
+    /* GAME GRID */
+    .game-grid {
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 5px; 
+        margin: 0px 0;
+    }
+    .game-card {
+      background: linear-gradient(95deg, rgba(160,68,10,0.97) 0%, rgba(120,69,20,0.96)100%);
+      backdrop-filter: blur(10px);
+      border-radius: 4px; 
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      position: relative; 
+      border:none;
+    }
+    .game-card::before {
+      content: ''; 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
+      z-index: 2; 
+      pointer-events: auto;
+    }
+    .game-card:active {
+        transform: scale(1.1); 
+        transition: 0.3s ease;
+    }
+    .game-card img {
+        width: 100%; 
+        height: 100%; 
+        min-height: 75px;
+        object-fit: fill; 
+        display: block;
+    }
+    .badge-hot { 
+        position: absolute; 
+        top: 0; 
+        left:0; 
+        width: 20px; 
+        height: 20px; 
+        font-size: 10px;
+        background-size:100% 100%; 
+        z-index: 100000;
+        background: url('https://media.tenor.com/zdo461V28w8AAAAi/cora%C3%A7%C3%A3o-fogo.gif') no-repeat center/contain;
+    }
+    .game-section {
+        margin-bottom: 10px;
+    }
+    .hidden {
+        display: none !important;
+    }
+
+    /* --- EXACT MATCH BET HISTORY UI STYLES --- */
+    .history-controls {
+      display: flex;
+      padding: 15px 10px 10px 10px;
+      gap: 10px;
+      background: transparent;
+    }
+    .history-controls select {
+      flex: 1;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background-color: #27213c;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e6e6e6;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px top 50%;
+      background-size: 12px auto;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .history-controls select option {
+      background-color: #27213c;
+      color: #e6e6e6;
+      padding: 5px 10px;
+      font-weight: 600;
+    }
+    .history-controls input {
+      flex: 1;
+      padding: 5px 12px;
+      border-radius: 4px;
+      background-color: #27213c;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .history-controls input::placeholder {
+      color: #e6e6e6;
+    }
+
+    .history-header-row {
+      display: flex;
+      padding: 12px 15px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 5px;
+      margin: 0 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      backdrop-filter: blur(5px);
+    }
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      margin: 2px 10px 10px 10px;
+      border-radius: 5px;
+    }
+    .history-item {
+      display: flex;
+      padding: 4px 10px;
+      margin:2px 0;
+      border-radius: 4px;
+      background:#270D52;
+      align-items: center;
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    .col-game { flex: 2; color: #fff; font-size: 10px; font-weight: bold; line-height: 1.4; }
+    .col-game .time { font-size: 8px; color: #9a9a9a; font-weight: normal; }
+    .col-bet { flex: 1; color: #ff6700; font-weight: bold; text-align: center; font-size: 10px; }
+    .col-win { flex: 1; color: #85d617; font-weight: bold; text-align: center; font-size: 10px; }
+
+    /* --- MAILS SECTION --- */
+    .mail-tabs-container {
+        background:#1c1c1c;
+        display: flex;
+        width: 100%;
+        padding:10px;
+        border-bottom:1px solid rgba(52,52,52,1);
+        gap: 8px;
+    }
+    .mail-tab-btn {
+        flex: 1;
+        padding: 6px 0;
+        background: #391018;
+        color: #b0b0b0;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        position: relative;
+        text-align: center;
+        font-family: 'Segoe UI', sans-serif;
+        transition: all 0.2s ease;
+        border:1px solid black;
+    }
+    .mail-tab-btn.active {
+        background: #84152c;
+        color: #ffffff;
+        border:1px solid black;
+    }
+    .tab-notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -5px;
+        background-color: #e50000;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border: 1.5px solid #2b030b;
+    }
+    .tab-notification-badge.hidden {
+        display: none;
+    }
+
+    .mails-page { 
+        position: relative;
+        flex: 1; 
+        overflow: hidden; 
+        background:#121212;
+        padding:0; 
+        border-radius: 0px;
+        width: 100%;
+        margin: 0 auto; 
+        padding-bottom: 50px;
+    }
+    .notification-container { 
+        height: 100%;
+        overflow-y: auto; 
+        scroll-behavior: smooth;
+        padding: 8px; 
+    }
+    .notification-card { 
+        position: relative; 
+        border: 1px solid rgba(0,0,0,0.9);
+        border-radius: 10px; 
+        margin-bottom: 8px; 
+        padding:5px; 
+        background: rgba(0,0,0,0.9); 
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 10px; 
+        overflow: hidden; 
+    }
+    .notification-card:active{
+        transform: scale(1.05);
+    }
+    .notification-card.unread { 
+        background:#5a1222;
+        animation: pulse-glow 3s infinite; 
+    }
+    .notification-card.read {
+        background:#3d141d;
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 1px rgba(123, 204, 181, 0.3); }
+        50% { box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2), 0 0 3px rgba(123, 204, 181, 0.5); }
+    }
+    .notification-header {
+        display: flex; 
+        align-items: flex-start;
+        gap: 8px; 
+    }
+    .notification-logo {
+        width: 100px;
+        height:70px;
+        border-radius: 6px; 
+        object-fit: fill;
+        border: 1px solid rgba(157, 204, 181, 0.1);
+        flex-shrink: 0; 
+        box-shadow: inset 0 6px 9px rgba(0,0,0, 0.4), inset 0 -6px 9px rgba(0, 0, 0, 0.5);
+    }
+    .card-content { 
+        flex: 1; 
+        min-width: 0; 
+    }
+    .card-title { 
+        font-weight: 900;
+        color:white; 
+        margin: 0 0 2px 0; 
+        font-size: 11px;
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        font-family: Segoe UI; 
+    }
+    .card-text { 
+        color: rgba(255, 255, 255, 0.7); 
+        margin: 0 0 2px 0; 
+        line-height: 1.3;
+        font-weight: 900; 
+        font-size: 10px; 
+        font-family: Segoe UI; 
+    }
+    .notification-time {
+        font-size: 7px; 
+        color: rgba(160, 160, 192, 0.8);
+        margin: 0; 
+        font-family: Segoe UI;
+    }
+    .newbadge {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+        font-size: 8px;
+        font-weight: 900; 
+        text-transform: uppercase;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1);
+        } 50% { transform: scale(1.05); } 
+    }
+    .empty-notifications { 
+        text-align: center; 
+        justify-self: center;
+        align-self: center;
+        padding: 180px 10px;
+        color: rgba(160, 160, 192, 0.8);
+    }
+    .empty-notifications i { 
+        font-size: 80px;
+        margin-bottom: 10px;
+        color: rgba(255,255,255,0.6); 
+    }
+
+    /* Mails Actions Buttons */
+    .mail-actions-container {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background: transparent;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        justify-content: center;
+    }
+    .mail-action-btn {
+        flex: 1;
+        padding: 8px;
+        border-radius: 6px;
+        font-weight: 900;
+        font-size: 11px;
+        cursor: pointer;
+        border: none;
+        color: white;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.8);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        transition: all 0.2s;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .mail-action-btn:active { transform: scale(0.95); }
+    .btn-mark-read { background: linear-gradient(135deg, #1d98dc, #0b5e8c); border: 1px solid #1d98dc; }
+    .btn-claim-rewards { background: linear-gradient(135deg, #f8961e, #f3722c); border: 1px solid #fdbd01; }
+    .btn-delete-all { background: linear-gradient(135deg, #f72585, #b5179e); border: 1px solid #f72585; }
+    .mail-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* --- REDEEM SECTION --- */
+.redeem-card {
+    background: linear-gradient(135deg, #3d141d 0%, #6d1b2d 50%, #351017 100%);
+    border-radius: 6px;
+    padding: 8px;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 95%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.redeem-title {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: stretch;
+}
+
+.form-input {
+    flex: 1;
+    background-color: #270a12;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: #ffffff;
+    font-size: 10px;
+    outline: none;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.form-input::placeholder {
+    color: #b0a3a6;
+}
+
+.redeem-btn {
+    background: linear-gradient(to bottom, #fee36e 0%, #d8a123 100%);
+    color: #8c1c1c;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.1s ease;
+}
+
+.redeem-btn:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 0px 2px rgba(0, 0, 0, 0.3);
+}
+
+.social-row {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 3px 2px;
+    border-radius: 6px;
+    border: none;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.social-btn:hover {
+    filter: brightness(1.1);
+}
+
+.social-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.btn-telegram { background-color: #1d98dc; }
+.btn-whatsapp { background-color: #1db954; }
+.btn-facebook { background-color: #3b5998; }
+.btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+    /* --- REDEEM PROMO AD CARDS --- */
+    .promo-ad-card {
+        width: 95%;
+        height: 170px;
+        margin: 5px auto;
+        border-radius: 8px;
+        overflow: none;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+        background-color: rgba(66,3,20,1); 
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    
+    .promo-ad-card:active { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+
+    .promo-ad-img-wrapper {
+        width: 100%;
+        height: 130px; 
+        flex-shrink: 0;
+        border-radius: 8px;
+        border: 1px solid rgba(195, 208, 25,0.5);
+        background:rgba(199,12,94,1);
+        overflow: hidden;
+    }
+    .promo-ad-img-wrapper:active{ transform:scale(1.05); }
+
+    .promo-ad-img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill; 
+        display: block;
+    }
+
+    .promo-ad-text {
+        width: 100%;
+        height: 30px; 
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    .deposit-feedback-section {
+        width:95%; 
+        margin:0 auto; 
+        background: rgba(66,3,20,1);
+        border-radius: 6px; 
+        padding:10px;
+        margin-bottom: 10px;
+    }
+    .feedback-card { 
+        background:#6d1b2d;
+        border-radius: 6px; 
+        margin:5px 0px; 
+        display: flex; 
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 10px; 
+        cursor: pointer; 
+        border: 1px solid rgba(177, 25, 395, 0.15);
+        backdrop-filter: blur(5px);
+    }
+    .feedback-card:active { border:1px solid#fdbd01; }
+    .feedback-icon { 
+        background-repeat: no-repeat;
+        background-size: 40px 40px; 
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
+    }
+    .feedback-icon1 { background-repeat: no-repeat; background-size: 100% 100%; width: 30px; height: 30px; margin:5px; margin-right: 15px; }
+    .feedback-text { color:rgba(190,144,430,0.9); font-family: Segoe UI; font-size: 12px; font-weight: 900; flex: 1; text-align: left; }
+    .feedback-arrow { font-size: 20px; color:rgba(190,44,430,0.7); }
+    .warning-box { 
+        background:rgba(0,0,0,0.5); 
+        border-radius: 6px; 
+        padding: 10px; 
+        font-size: 9px;
+        color: #f0f000;
+        font-weight: 600;
+        position: relative;
+        font-family:Segoe UI; 
+        text-align:left;
+    }
+    .warning-box li { list-style: none; margin-left: -30px;}
+
+    /* --- NEW PROMOTION SECTION STYLES --- */
+    .promotion-section { 
+        padding: 0px; 
+        position: relative; 
+        flex: 1; 
+        overflow-y: auto; 
+        width: 100%;
+        margin-bottom: 0px;
+        overflow-x: hidden; 
+        background-color: #1a1a1a;
+        color: white;
+    }
+    .promo-header-main {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        align-items: center;
+        border-bottom: 1px solid #333;
+        background: #222;
+    }
+    .promo-header-main h2 { margin: 0; font-size: 14px; font-weight: bold; color: #eee; }
+    .promo-inv-code { text-align: right; font-size: 11px; color: #999; }
+    .promo-inv-code strong { color: #fff; font-size: 13px; margin-left: 5px; }
+    .promo-inv-code i { color: #a224a0; cursor: pointer; margin-left: 5px; font-size: 14px;}
+    
+    .promo-stats-cards {
+        display: flex; justify-content: space-between; padding: 10px 15px; background: #1a1a1a;
+    }
+    .promo-stat-box { flex: 1; background: #2a2a2a; margin: 5px; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #444;}
+    .promo-stat-box h4 { font-size: 10px; color: #bbb; margin-bottom: 5px; }
+    .promo-stat-box .val { font-size: 14px; color: #00ff00; font-weight: bold; }
+    .promo-stat-box .val.refs { color: #fdbd01; }
+
+    .promo-share-block {
+        display: flex; padding: 15px; background: #222; margin: 10px; border-radius: 10px; align-items: stretch;
+    }
+    .promo-qr-col { width: 90px; text-align: center; margin-right: 15px; }
+    .promo-qr-placeholder { width: 80px; height: 80px; background: white; margin: 0 auto; border-radius: 5px; padding: 5px; }
+    .promo-qr-placeholder img { width: 100%; height: 100%; object-fit: contain; }
+    .promo-qr-btn { background: #e02af0; color: white; border: none; padding: 5px 0; width: 100%; font-size: 9px; font-weight: bold; border-radius: 0 0 5px 5px; cursor: pointer;}
+    
+    .promo-link-col { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .promo-link-label { font-size: 10px; color: #888; margin-bottom: 5px; }
+    .promo-link-input-row { display: flex; align-items: center; background: #333; border-radius: 5px; padding: 2px 5px; margin-bottom: 10px; border: 1px solid #444;}
+    .promo-link-input-row input { background: transparent; border: none; color: #ccc; font-size: 10px; flex: 1; outline: none; padding: 5px;}
+    .promo-link-input-row i { color: #e02af0; padding: 5px; cursor: pointer; }
+    
+    .promo-social-row { 
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+    }
+    .promo-social-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        color: #aaa; 
+        font-size: 7px; 
+        cursor: pointer;
+    }
+    .promo-social-btn i { 
+        font-size: 20px; 
+        margin-bottom: 4px; 
+        border-radius: 50%; 
+        display: flex;
+        align-items: center; 
+        justify-content: center; 
+        width: 30px;
+        height: 30px; 
+        color: white;
+    }
+    .ps-share i { background: #e02af0; }
+    .ps-wa i { background: #25D366; }
+    .ps-tg i { background: #0088cc; }
+    .ps-fb i { background: #1877F2; }
+    .ps-x i { background: #000; border: 1px solid #555; }
+
+    .promo-details-row { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 11px; color: #aaa; }
+    .promo-details-row strong { color: #fff; margin: 0 3px; }
+    .promo-details-btn { color: #e02af0; cursor: pointer; font-weight: bold; text-decoration: none; }
+
+    .promo-rules { background: #222; margin: 15px; padding: 12px; border-radius: 8px; font-size: 10px; color: #888; border: 1px solid #333;}
+    .promo-rules p { margin-bottom: 5px; }
+    .promo-rules span { color: #ddd; font-weight: bold; }
+
+    /* CHEST GRID SYSTEM */
+    .mystery-grid-container { 
+        padding: 10px 15px;
+        margin-bottom: 20px;
+    }
+    .mystery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        align-items: center;
+        justify-items: center;
+    }
+    .chest-box {
+        display: flex; 
+        flex-direction: column; 
+        align-items: center;
+        position: relative; 
+        width: 100%; 
+        cursor: default;
+    }
+    .chest-box:active { transform: scale(1.1); }
+    .chest-img-wrapper { 
+        position: relative; 
+        width: 60px; 
+        height: 50px; 
+    }
+    .chest-box img {
+        width: 100%; 
+        height: 100%; 
+        object-fit: contain;
+        transition: all 0.3s ease;
+    }
+    
+    /* Chest States */
+    .chest-box.locked img { 
+        filter: grayscale(100%) brightness(0.7); 
+        background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgk3oSMS9UnnUR_QDmktrUor9eYH0QcrYQz4f1oBfvu49f4LbBnvA0F_8Pz9KFjgyxtueK-X22kHA1j64czeGsr_rMvC_0M7qz5UwvVU_qFdFXYtD3bJ6uL5i8PFmAVw7Y6VHJrLtslNkwf7IulRjEU7tmRHDhIrqEM9LpDyvau752lj4scQ8a_b4UJk1s/s803/1000120264.png");
+        background-size: 100% 100%;
+    }
+    .chest-box.available { cursor: pointer; }
+    .chest-box.available img { 
+        animation: chestPulse 1.5s infinite;
+        filter: drop-shadow(0 0 5px #e02af0); 
+    }
+    .chest-box.claimed img {
+        filter: grayscale(10%) brightness(1.4);
+        cursor: default;
+    }
+    
+    .chest-amount-overlay {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        color: #00ff00; font-weight: 900; font-size: 13px; text-shadow: 1px 1px 3px #000, -1px -1px 3px #000;
+        z-index: 5; display: none;
+    }
+    .chest-box.claimed .chest-amount-overlay { display: block; }
+    
+    .chest-label {
+        background: #333; 
+        color: #888; 
+        font-size: 8px;
+        padding: 0px 8px; 
+        border-radius: 3px; 
+        margin-top: -10px; 
+        font-weight: bold;
+        border: 1px solid #444;
+        white-space: nowrap;
+        z-index: 50;
+    }
+    .chest-box.claimed .chest-label { background: #666; color: #fff; border-color: #888;}
+    
+    @keyframes chestPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+    .my-referrals-btn-container {
+        text-align: center;
+        margin: 10px 0 20px 0;
+    }
+    .my-referrals-btn { 
+        background:linear-gradient(135deg, #fdbd01, #b5179e); border: 1px solid #f72585;
+        color: white; 
+        border: none; 
+        padding: 6px 30px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 12px;
+        border: 1px solid #fdbd02;
+        cursor: pointer; 
+    }
+    .my-referrals-btn:active { transform: scale(0.95); }
+
+    /* MY REFERRALS MODAL (CARDS LAYOUT) */
+    .ref-modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+        z-index: 1000000; display: none; justify-content: center; align-items: flex-start; padding-top: 50px;
+    }
+    .ref-modal-content {
+        background: #1e1e1e; width: 95%; max-width: 450px; max-height: 80vh; border-radius: 12px;
+        display: flex; flex-direction: column; border: 1px solid #444; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    }
+    .ref-modal-header {
+        display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333;
+    }
+    .ref-modal-header h3 { color: white; font-size: 15px; margin: 0; }
+    .ref-modal-close { color: #888; font-size: 20px; cursor: pointer; }
+    .ref-modal-body { padding: 15px; overflow-y: auto; flex: 1; }
+    .ref-card { background: #2a2a2a; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #333; }
+    .ref-card-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 11px; }
+    .ref-card-label { color: #888; }
+    .ref-card-val { color: #ddd; font-weight: bold; }
+    .ref-card-email { color: #e02af0; font-size: 12px; font-weight: bold; margin-bottom: 8px; word-break: break-all;}
+    .ref-progress-container { margin-top: 8px; }
+    .ref-progress-label { display: flex; justify-content: space-between; font-size: 9px; color: #aaa; margin-bottom: 4px; }
+    .ref-progress-bar-bg { background: #111; height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid #444;}
+    .ref-progress-bar-fill { background: linear-gradient(90deg, #e02af0, #00ff00); height: 100%; width: 0%; transition: width 0.5s; }
+
+/* --- BOTTOM NAVIGATION --- */
+.nav-container { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000002; background:linear-gradient(180deg, #893BFF 0%, #5539CC 100%); box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); }
+
+.nav { display: flex; justify-content: space-around; }
+
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding:3px; padding-top: 6px; background:transparent; border-radius: 0; border:none; outline:none; text-shadow: 0 1px 1px rgba(0,0,0,0.99); transition: all 0.3s ease; flex: 1; position: relative; font-family:Segoe UI; }
+
+.nav-item.active { background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.01) 100%); border-bottom:2px solid #fdbd01; box-shadow: 0 0 10px rgba(253, 189, 1, 0.05); }
+
+.nav-icon { font-size: 20px; width: 1em; height: 1em; fill: currentColor; display: inline-block; color:white; z-index: 1003; margin-bottom: -3px; transition: all 0.3s ease; }
+
+.nav-item.active .nav-icon { color: #fdbd01; transform: scale(1.1); }
+.nav-item.active .nav-text { color: #fdbd01 !important; }
+
+    .notification-badge { position: absolute; top: 0px; right: 15px; width: 12px; height: 12px; background-color: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 800; color: white; font-family: fantasy; z-index: 1004; border: 1px solid white; box-shadow: 0 0 5px rgba(255, 0, 0, 0.1); }
+    .notification-badge.hidden { display: none; }
+    .referral-dot { position: absolute; top: 0px; right: 20px; width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1005; border: 1px solid white; box-shadow: 0 0 5px rgba(255, 0, 108, 0.5); }
+    .referral-dot.hidden { display: none; }
+
+    /* --- TOAST & MODALS --- */
+    .toast-container { 
+        position: fixed;
+        top: 0; 
+        right:0; 
+        left:0; 
+        z-index: 1000005; 
+        display: flex;
+        flex-direction: column;
+        gap: 0px; 
+        pointer-events: none; 
+        align-content: center; 
+        align-items: center;
+        justify-content: center;
+        width:100%; 
+        height:100%;
+    }
+    .toast { 
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0.1) 100%);
+        padding: 6px 16px; 
+        color: white;
+        font-size: 14px; 
+        font-weight: 600;
+        transform: scale(0);
+        border:none;
+        opacity: 0; 
+        border-radius: 0;
+        transition: all 0.1s;
+        width: 100%; 
+        min-height: 25px; 
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        text-align: center; 
+    }
+    .toast.show { transform: scale(1); opacity: 1; }
+    .toast.hide { transform:scale(0); opacity: 0; }
+    .toast.success { color:green; }
+    .toast.error { color: #ff2e7a; }
+    .toast.info { color: #00d4ff; }
+    
+    .popup-overlay { 
+        position: fixed;
+        top: 0; left: 0; 
+        right: 0; bottom: 0;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        z-index: 20001; display: none; 
+    }
+    .popup { background-color:#893BFF; padding: 8px 20px; min-width:95%; max-width: 95vw; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 1px solid black; border-left:2px solid black; border-right: 2px solid black; outline: 2px solid #893BFF; border-radius: 4px; text-shadow:0 1px 1px rgba(0,0,0,0.99); text-align: center;}
+    .popup-title { font-size: 9px; background: black; padding: 0 10px; border-radius: 2px; border:1px solid #893BFF; border-left:6px solid black; border-right: 6px solid black; font-weight: 900; margin-bottom: 5px; font-family: fantasy; display: inline-block; color:white; }
+    .popup-message { margin-bottom: 10px; font-size: 8px; font-family: fantasy; color:white; font-weight: 900; }
+    .popup-buttons { display: flex; gap: 10px; justify-content: center; }
+    .popup-btn { padding: 4px; border: 1px solid black; outline: 2px solid #fdbd01; box-shadow: inset 0 3px 6px rgba(255, 255, 255, 0.6); border-radius: 28px; font-weight: 900; font-size: 12px; cursor: pointer; font-family: fantasy; min-width: 60%; background-color: #4a6cfa; color: white; }
+
+    .loading { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center; flex-direction: column; color: white; }
+    .spinner { width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-bottom: 15px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .referral-success-modal-overlay { 
+        position: fixed; 
+        top: 0; left: 0; 
+        right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display:none;
+        align-items: center; 
+        justify-content: center; 
+        z-index: 1000000; 
+        backdrop-filter: blur(5px);
+    }
+    .referral-success-modal {
+        background: radial-gradient(circle at center, rgba(255,255,255, 0.99), rgba(255,255,255, 0.09)); 
+        background-blend-mode: overlay;
+        background-size: 100% 100%; 
+        border-radius: 12px;
+        padding: 10px; 
+        width: 90vw; 
+        max-width: 400px; 
+        text-align: center;
+        border: 1px solid white; 
+        outline: 1px solid #893BFF;
+    }
+    .referral-success-icon { 
+        margin-bottom: 10px;
+        background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKvVv0yiPcve2WHpkLCUENn6LBBUII9Tuvloz9kye3JeSma0LYRp-GGZ3uLWi6Emu0AHNz4y2l7rMT4MPvmO2DoUIh5kDg6uDfdVzy7sq9N8YIM89Hllv76OIM4GUGkU5xHAl7vmjpttOF1j8Njp9CA8Wa7WoP7DITDeTVI5dGJ4C3EwIDIQdPg6LtSCo/s926/1000120191.png");
+        background-size: 100% 100%;
+        animation: pulse 2s infinite;
+        height:150px;
+        width:150px;
+        justify-self: center;
+        align-self: center;
+    }
+    .referral-success-title { font-size: 15px; font-weight: 900; color: black; margin-bottom: 0px; font-family: fantasy; }
+    .referral-success-message{ font-size: 12px; color:black; font-weight: 700; font-family: fantasy; }
+    .referral-success-amount { font-size: 50px; font-weight: 900; color: green; text-shadow: 0 1px 1px rgba(0,0,0,0.9); margin: 10px 0; }
+    .referral-success-btn { background: #fdbd01; color: #8c1c1c; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; font-size: 16px; width: 90%; margin: 10px auto; }
+
+    /* --- DAILY TASK MODAL STYLES --- */
+    .task-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 100005; 
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .task-modal {
+        background: #3a0815;
+        width: 95%;
+        max-width: 450px;
+        max-height: 80vh;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        border: 2px solid #5a1222;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+        overflow: hidden;
+    }
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: #5a1222;
+        color: #fdbd01;
+        font-weight: 900;
+        font-size: 16px;
+        border-bottom: 1px solid #4a0d1a;
+    }
+    .task-header i { color: #fdbd01; cursor: pointer; font-size: 18px; }
+    .task-banner {
+        width: 100%;
+        height: 180px;
+        background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtRXH_Rc7sNhB838ov_jpDsfRCVrCY4XGhid5j57jSfMNjxS4j7F6MufoYlc3CzEU0DtYxvT9VJ6pGZPhQt0nbu9NzKvcquiAPbVAIr4crWCrRMv0ia9KizzJAI6px5ZVZCTinCyYMck7_WJe9I-PlTszHzFTrB9wA2V2CU3pvYIMkDTJIh7ls9ooKOP0/s16000/1000120361.png') no-repeat center center;
+        background-size:100% 100%;
+    }
+    .task-list { flex: 1; overflow-y: auto; padding: 10px; background:rgba(36,9,12,0.5); }
+    .task-card {
+      background-color: #8b0021;
+      border-radius: 8px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #4a0d1a;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden; 
+      z-index: 0;
+      background-size: 100% 100%;
+    }
+    .task-card::before {
+      content: ""; position: absolute; width: 300%; height: 600%; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg);
+      background-image: radial-gradient(circle at 6px 0px, rgba(255, 255, 255, 0.15) 0%, transparent 7px), radial-gradient(circle at 0px 6px, rgba(255, 255, 255, 0.15) 0%, transparent 7px);
+      background-size: 12px 12px; z-index: -1;
+    }
+
+    .task-icon-col { width:25px; margin-right: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .t-icon-box { width: 25px; height: 25px; background: linear-gradient(135deg, #7a3fa1, #512275); border: 1px solid #9c5ce6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fdbd01; font-weight: 900; font-size: 12px; box-shadow: inset 0 0 5px rgba(255,255,255,0.3); }
+    .t-icon-box.gold { background: linear-gradient(135deg, #fdbd01, #d68700); border: 1px solid #ffe16b; color: #4a1a1a; border-radius: 50%; width: 25px; height: 25px; }
+    .t-multiplier { position:absolute; color: #fff; font-size: 10px; font-weight: bold; }
+    .task-info-col { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .task-title { color: white; font-size: 10px; font-weight: 600; margin-bottom: 4px; }
+    .task-progress-bg { background: #1a0205; height: 12px; border-radius: 10px; border: 1px solid #000; position: relative; overflow: hidden; width: 95%; }
+    .task-progress-fill { background: linear-gradient(90deg, #5a0410, #a10f22); height: 100%; width: 0%; transition: width 0.5s ease; }
+    .task-progress-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; text-align: center; color: white; font-size: 9px; font-weight: bold; line-height: 12px; }
+    .task-action-col { width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .task-btn { background: linear-gradient(180deg, #fce186 0%, #fdbd01 50%, #d68700 100%); border: 1px solid #ffe16b; color: #4a1a1a; font-weight: 900; font-size: 13px; padding: 2px 15px; border-radius: 4px; cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.5); text-shadow: 0 1px 0 rgba(255,255,255,0.4); width: 100%; transition: transform 0.1s; }
+    .task-btn:active { transform: scale(0.95); }
+    .task-btn.claim { background: linear-gradient(180deg, #85d617 0%, #5b9e07 100%); border: 1px solid #a8f041; color: white; text-shadow: 0 1px 1px rgba(0,0,0,0.5); }
+    .task-btn:disabled { display:none; }
+    .task-completed-badge { color: #85d617; font-size: 10px; font-weight: 900; text-transform: uppercase; text-align: center; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); border: 1px solid #ffe16b; padding: 2px 5px; border-radius: 4px; cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.5); width: 100%; transition: transform 0.1s; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+      <div class="profile-section">
+          <button class="profile-button" id="profileButton" onclick="window.location.href='profile.html'"></button>
+      </div>
+      <div class="balance-section">
+          <div class="balance-display">
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeZQoKjM5USxhnGVsDfNKDaa4izjCIdzl0ClY7rl5fGVazetm9nFPFSO7rI6vzjPT9B8fnWf7cCfcItWHPEwLr0dtdA-O-f_JIH9UXdnruxbA0xDsLRC8ipXvI6e1aDTpnLDrLlo6jFlyisf3kJnhepyzWzSYGZr1Lf4LDML5jSt-BvU62_TTFQhYC5fA/s16000/1000115181.png" alt="" class="coin-icon" onclick="window.location.href='deposit.html'">
+              <div class="balance-amount" id="balance">0.00</div>
+              <button class="page6-button" onclick="window.location.href='withdraw.html'">Withdraw</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="games" class="section homesec active">
+  <div class="scrollable-games">
+    <div class="fixed-header">
+      <div class="ad-banner-section">
+        <div class="ad-banner-carousel" id="adBannerCarousel">
+          <div class="ad-banner-item" onclick="window.location.href='Deposit.html'"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaRwsT4O4DDi_vUlCV9R-50Je-CQor9Wo_wKzqNs3JzTRL1cefi-kqOdLT7Mxz-WfnqyxQPLLTI_aZvlN_hId8FvEqSJbAd6SXQUBUAsCdTPrSC3V0ZkNiWx1AzmR3hwTGqk9PKhPJS216NBzxQ1C9Ww_FtlPYfc8jdMAI8mQeV8Y_yv36uY3EmhWScTY/s16000/1000116524.png"/></div>
+          <div class="ad-banner-item" onclick="window.location.href='https://t.me/kamaaikendra777i'"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-QlVpseXzJdihIB3mLTFgmgLVsp-ia4wbGsYMA0YWC6D4tpqeCWgsivRMNGXUCzPVVC5Ve0l8DxZvoexZZ9V91_Mj8Y4vx3CiRN2GBbvi7qMOc0y_l88pfDxtU9nYBSwRpInKJPrXFxkbO5uXSZCWaegObmTZf41ou7dnNQyLv5cUCYEvE7Xv4DiPrf4/s16000/1000116529.png"/></div>
+          <div class="ad-banner-item" onclick="window.location.href='chat.html'"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7Dw7UeerWHP1ypJiMkS_tYskYglYeaEjUxZ6m4kKxdie5yeQ5jXaq4OZ8hTB8jrKz2vSZdc4iqIQojV_5MTouEHg-ONJJulyYHugm4Eq6rj2M3gZnCFndhnINsCLufL1x24ap0kgAVtfblzugZmyDGEWm-zse6Vibmq4eCW39UEpHCfKtLUz01_rAees/s16000/1000116538.png"/></div>
+          <div class="ad-banner-item" onclick="showSection('promotion')"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjWAz-QId9QR1LbkZ80fv0OdVqbALPE6FSFshqrjTJGuUum__6SlmTkoZo6VJ6B2UlsyCOepABiQxCoWfqfi2I694DzHykoqVo5hs8DudoXvkLia_7CVFhv2lXLHFFloZS3B8mZj6JYVoi2w0zf60t5iSQKZBEc8HG3-UwCq5vGL7A7Xvct5o61QtFMQ7g/s1564/1000120330.png"/></div>
+          <div class="ad-banner-item" onclick="openTaskModal()"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_ByEE1VU30kQi-vhyphenhyphen4wi7wCcUh1BxIsHXFYtPSPUBnuD6RsLzwW90fOttFq6WCNeAoc3UNL2loIH8V0c-_cJIr4fbA6k9cywV5zY4sOPxloWkFrKI4BR0hExkIwuOLt6YiTt3eur9q4OGjLbN7Pz5WkrU72Da44qjLmTDKIcG-VR2u4hoOLLwzTGkcaM/s1564/1000120329.png"/></div>
+        </div>
+        <div class="ad-dots" id="adDots"></div>
+      </div>
+
+      <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search Games..." oninput="searchGames()">
+      </div>
+    </div>
+
+      <div id="dynamic-games" class="game-section">
+        <div class="game-grid" id="games-grid-container">
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="history" class="section">
+    <div class="history-controls">
+      <select id="history-date-filter" onchange="loadDashboardHistory()"></select>
+      <input type="text" id="history-search" placeholder="Enter Game Name" oninput="loadDashboardHistory()">
+    </div>
+    <div class="history-header-row">
+      <div style="flex:2; font-family: 'Segoe UI', sans-serif;">Game</div>
+      <div style="flex:1; text-align:center; color:#FF6700;">Bet INR</div>
+      <div style="flex:1; text-align:center; color:#85d617;">Win INR</div>
+    </div>
+    <div class="history-list" id="dashboard-history-list">
+      </div>
+  </div>
+
+  <div id="mails" class="section">
+      <div class="mail-tabs-container">
+          <button class="mail-tab-btn active" id="tab-unread" onclick="switchMailTab('unread')">
+              Unread
+              <div id="unreadTabBadge" class="tab-notification-badge hidden">0</div>
+          </button>
+          <button class="mail-tab-btn" id="tab-read" onclick="switchMailTab('read')">
+              Read
+          </button>
+      </div>
+      <div class="mails-page">
+          <div class="notification-container">
+              <div id="notificationsList">
+                  <div class="empty-notifications loading">
+                      <i class="fas fa-bell-slash"></i>
+                      <p>Loading notifications...</p>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="mail-actions-container" id="unread-actions">
+              <button class="mail-action-btn btn-mark-read" id="markAllReadBtn" onclick="markAllRead()" disabled>Mark All Read</button>
+              <button class="mail-action-btn btn-claim-rewards" id="claimRewardsBtn" onclick="claimRewards()" disabled>Claim Rewards</button>
+          </div>
+          <div class="mail-actions-container hidden" id="read-actions">
+              <button class="mail-action-btn btn-delete-all" id="deleteAllBtn" onclick="deleteAllReadMails()" disabled>Delete all Mails</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="promotion" class="section">
+      <div class="promotion-section">
+          <div class="promo-header-main">
+              <h2>Invite friends</h2>
+              <div class="promo-inv-code">
+                  My invitation code<br>
+                  <strong id="user-referral-code">Loading...</strong>
+                  <i class="fas fa-copy" onclick="copyToClipboard(state.referralCode, 'user-referral-code')"></i>
+              </div>
+          </div>
+
+          <div class="promo-stats-cards">
+              <div class="promo-stat-box">
+                  <h4>Total Earnings</h4>
+                  <div class="val" id="total-earnings">₹0.00</div>
+              </div>
+              <div class="promo-stat-box">
+                  <h4>Total Referrals</h4>
+                  <div class="val refs" id="active-referrals">0</div>
+              </div>
+          </div>
+
+          <div class="promo-share-block">
+              <div class="promo-qr-col">
+                  <div class="promo-qr-placeholder" id="promo-qr-code"></div>
+                  <button class="promo-qr-btn" onclick="saveQRCode()">Save invitation</button>
+              </div>
+              <div class="promo-link-col">
+                  <div class="promo-link-label">Referral link</div>
+                  <div class="promo-link-input-row">
+                      <input type="text" id="app-link" readonly value="Loading...">
+                      <i class="fas fa-copy" onclick="copyToClipboard(getAppLinkWithReferral(), 'app-link')"></i>
+                  </div>
+                  <div class="promo-social-row">
+                      <div class="promo-social-btn ps-share" onclick="shareOnPlatformPromo('general')"><i class="fas fa-share-square"></i>Share</div>
+                      <div class="promo-social-btn ps-wa" onclick="shareOnPlatformPromo('whatsapp')"><i class="fab fa-whatsapp"></i>WhatsApp</div>
+                      <div class="promo-social-btn ps-tg" onclick="shareOnPlatformPromo('telegram')"><i class="fab fa-telegram-plane"></i>Telegram</div>
+                      <div class="promo-social-btn ps-fb" onclick="shareOnPlatformPromo('facebook')"><i class="fab fa-facebook-f"></i>Facebook</div>
+                      <div class="promo-social-btn ps-x" onclick="shareOnPlatformPromo('twitter')"><i class="fab fa-twitter"></i>X(Twitter)</div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="promo-details-row">
+              <div>Valid subordinates <strong id="valid-subordinates-count">0</strong> players <i class="fas fa-sync-alt" style="margin-left:5px; cursor:pointer;" onclick="loadPromotionData()"></i></div>
+              <div class="promo-details-btn" onclick="openMyReferralsModal()">Details</div>
+          </div>
+
+          <div class="promo-rules">
+              <p>What is a valid promotional number?</p>
+              Subordinate's Total Deposits <span>≥200</span>, Total Valid Bets <span>≥1000</span> Log in App to be valid
+          </div>
+
+          <div class="mystery-grid-container">
+              <div class="mystery-grid" id="mystery-boxes-grid"></div>
+          </div>
+
+          <div class="my-referrals-btn-container">
+              <button class="my-referrals-btn" onclick="openMyReferralsModal()">My Referrals</button>
+          </div>
+      </div>
+  </div>
+
+   <div id="redeem" class="section">
+      <div class="redeem-card">
+          <div class="redeem-title">Gift Code</div>
+          
+          <div class="input-row">
+              <input type="text" class="form-input" id="redeemCode" placeholder="Please enter your gift code">
+              <button class="redeem-btn" onclick="redeemCode()">Redeem</button>
+          </div>
+          
+          <div class="social-row">
+              <button class="social-btn btn-telegram" onclick="telegramAction()">
+                  <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.282-.346-.088l-6.4 4.024-2.76-.864c-.6-.18-.606-.604.126-.89l10.814-4.17c.5-.19.953.116.822 1.05z"/></svg>
+                  Telegram
+              </button>
+              
+              <button class="social-btn btn-whatsapp" onclick="whatsappAction()">
+                  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  WhatsApp
+              </button>
+              
+              <button class="social-btn btn-facebook" onclick="facebookAction()">
+                  <svg viewBox="0 0 24 24"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+                  Facebook
+              </button>
+              
+              <button class="social-btn btn-instagram" onclick="instagramAction()">
+                  <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  Instagram
+              </button>
+          </div>
+      </div>
+
+      <div class="promo-ad-card" onclick="openTaskModal()">
+          <div class="promo-ad-img-wrapper">
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_ByEE1VU30kQi-vhyphenhyphen4wi7wCcUh1BxIsHXFYtPSPUBnuD6RsLzwW90fOttFq6WCNeAoc3UNL2loIH8V0c-_cJIr4fbA6k9cywV5zY4sOPxloWkFrKI4BR0hExkIwuOLt6YiTt3eur9q4OGjLbN7Pz5WkrU72Da44qjLmTDKIcG-VR2u4hoOLLwzTGkcaM/s1564/1000120329.png" alt="Daily Task" class="promo-ad-img">
+          </div>
+          <div class="promo-ad-text">
+              Login everyday, claim free cash!
+          </div>
+      </div>
+
+      <div class="promo-ad-card" onclick="showSection('promotion')">
+          <div class="promo-ad-img-wrapper">
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjWAz-QId9QR1LbkZ80fv0OdVqbALPE6FSFshqrjTJGuUum__6SlmTkoZo6VJ6B2UlsyCOepABiQxCoWfqfi2I694DzHykoqVo5hs8DudoXvkLia_7CVFhv2lXLHFFloZS3B8mZj6JYVoi2w0zf60t5iSQKZBEc8HG3-UwCq5vGL7A7Xvct5o61QtFMQ7g/s1564/1000120330.png" alt="Invite to Earn" class="promo-ad-img">
+          </div>
+          <div class="promo-ad-text">
+              Sustainable income from inviting!
+          </div>
+      </div>
+      
+      <div class="promo-ad-card" onclick="window.location.href='Goshare.html'">
+          <div class="promo-ad-img-wrapper">
+              <img src="https://www.cheggindia.com/wp-content/uploads/2025/05/eo-269690-whatsapp-earning-app-v1.png" alt="Earn Via whatsapp" class="promo-ad-img">
+          </div>
+          <div class="promo-ad-text">
+              100% Free Earning From Whatsapp!
+          </div>
+      </div>
+      
+      <div class="promo-ad-card" onclick="window.location.href='https://dl2ti09at2kbw.cloudfront.net/v/a/L8e.html?uid=119791960&pid=202404000'">
+          <div class="promo-ad-img-wrapper">
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO0yrjBP9RSMWj000-i9HC6DqrVvprRXv8Lx9vu0RM1YVfWkVvd_R3s1Fn86iOLibf1cJiUO-P_5a7ddBlHuHTWfhOTfHv7vu3nnIYRMTis9Q2olo4h06J-EmCTxGZ6A6yrUTBt74GdLmDGfo-pnRTqCWca1PeZinOZc_rznmQcGm_85NCoDLqxXa16Xs/s686/1000116205.jpg" alt="Earn Via whatsapp" class="promo-ad-img">
+          </div>
+          <div class="promo-ad-text">
+              Kamaaikendra 100% Free Earning From SMS! App
+          </div>
+      </div>
+      
+      <div class="deposit-feedback-section">
+          <div class="feedback-card" onclick="window.location.href='https://t.me/kamaaikendra777i'">
+              <div class="feedback-icon1" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/330px-Telegram_2019_Logo.svg.png');"></div>
+              <div class="feedback-text">Official Telegram Channel</div>
+              <div class="feedback-arrow"><i class="fas fa-angle-right"></i></div>
+          </div>
+          <div class="feedback-card" onclick="window.location.href='chat.html'">
+              <div class="feedback-icon" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcLCD3aI9TJHWvMYo_FO-C9IhuuEmPI5-AQeTn8n7ScwC3tmfrDpWzu9CosgbLjiNuh-E-r3vyi9CWi9Emcra77H3eRMkgFwNrzPMU4RxmXJWsMRhmFhjn7ZOQRhzcqY78IBH1Ruw8to6H3Le7Sjr8eDhiQbp4-9pDyhHsxqgekgIAMGVZe7iqLZZ2AVA/s16000/1000110907.png');"></div>
+              <div class="feedback-text">Online Customer Service</div>
+              <div class="feedback-arrow"><i class="fas fa-angle-right"></i></div>
+          </div>
+      </div>
+  </div>
+
+  <div class="nav-container">
+    <div class="nav">
+        <div class="nav-item active" onclick="showSection('games')" data-section="games">
+           <svg class="nav-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <path d="M240 144 A96 96 0 1 0 144 240 L208 240 A32 32 0 0 0 240 208 Z 
+             M272 144 A96 96 0 1 1 368 240 L304 240 A32 32 0 0 1 272 208 Z 
+             M368 272 A96 96 0 1 1 272 368 L272 304 A32 32 0 0 1 304 272 Z 
+             M144 272 A96 96 0 1 0 240 368 L240 304 A32 32 0 0 0 208 272 Z"/>
+</svg>
+            <span class="nav-text" style="font-size: 8px; color: white; font-family: fantasy;">Games</span>
+        </div>
+        
+                <div class="nav-item" onclick="showSection('redeem')" data-section="redeem">
+            <svg class="nav-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect x="216" y="68" width="80" height="52" rx="8" />
+                <rect x="224" y="136" width="64" height="360" rx="6" />
+                <rect x="40" y="136" width="168" height="88" rx="8" />
+                <rect x="304" y="136" width="168" height="88" rx="8" />
+                <rect x="72" y="240" width="136" height="256" rx="8" />
+                <rect x="304" y="240" width="136" height="256" rx="8" />
+                <path fill-rule="evenodd" d="
+                    M 200 104 
+                    C 120 136, 16 96, 48 32 
+                    C 80 -16, 160 16, 200 64 
+                    Z 
+                    M 184 88 
+                    C 128 104, 64 80, 80 48 
+                    C 96 16, 144 32, 184 64 
+                    Z
+                " />
+                <path fill-rule="evenodd" d="
+                    M 312 104 
+                    C 392 136, 496 96, 464 32 
+                    C 432 -16, 352 16, 312 64 
+                    Z 
+                    M 328 88 
+                    C 384 104, 448 80, 432 48 
+                    C 416 16, 368 32, 328 64 
+                    Z
+                " />
+            </svg>
+            <span class="nav-text" style="font-size: 8px; color: white; font-family: fantasy;">Redeem</span>
+            
+            <div id="redeemNotificationDot" class="referral-dot hidden"></div>
+        </div>
+        
+        <div class="nav-item" onclick="showSection('promotion')" data-section="promotion">
+            <svg class="nav-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="
+        M 256 32 
+        C 320 80, 352 160, 352 240 
+        C 384 240, 448 288, 448 352 
+        C 448 384, 416 400, 392 400 
+        L 352 352 
+        L 320 400 
+        L 192 400 
+        L 160 352 
+        L 120 400 
+        C 96 400, 64 384, 64 352 
+        C 64 288, 128 240, 160 240 
+        C 160 160, 192 80, 256 32 Z 
+        
+        M 256 144 
+        A 48 48 0 1 0 256 240 
+        A 48 48 0 1 0 256 144 Z 
+        
+        M 212 434 
+        A 10 10 0 0 1 232 434 
+        L 232 454 
+        A 10 10 0 0 1 212 454 Z 
+        
+        M 246 434 
+        A 10 10 0 0 1 266 434 
+        L 266 470 
+        A 10 10 0 0 1 246 470 Z 
+        
+        M 280 434 
+        A 10 10 0 0 1 300 434 
+        L 300 454 
+        A 10 10 0 0 1 280 454 Z" 
+    />
+</svg>
+
+            <span class="nav-text" style="font-size: 8px; color: white; font-family: fantasy;">Promotion</span>
+            <div id="referralNotificationDot" class="referral-dot hidden"></div>
+        </div>
+        
+        <div class="nav-item" onclick="showSection('mails')" data-section="mails">
+            <svg class="nav-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
+            </svg>
+            <span class="nav-text" style="font-size: 8px; color: white; font-family: fantasy;">mails</span>
+            <div id="notificationBadge" class="notification-badge hidden"></div>
+        </div>
+        
+        <div class="nav-item" onclick="showSection('history')" data-section="history">
+           <svg class="nav-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="doc-mask">
+      <rect width="512" height="512" fill="white" />
+      <rect x="104" y="136" width="272" height="48" rx="24" fill="black" />
+      <rect x="104" y="232" width="144" height="48" rx="24" fill="black" />
+      <circle cx="384" cy="384" r="132" fill="black" />
+    </mask>
+
+    <mask id="clock-mask">
+      <rect width="512" height="512" fill="white" />
+      <path d="M 384 312 V 384 H 440" fill="none" stroke="black" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" />
+    </mask>
+  </defs>
+
+  <rect x="32" y="32" width="448" height="448" rx="120" fill="currentColor" mask="url(#doc-mask)" />
+
+  <circle cx="384" cy="384" r="100" fill="currentColor" mask="url(#clock-mask)" />
+</svg>
+
+            <span class="nav-text" style="font-size: 8px; color: white; font-family: fantasy;">Bet History</span>
+        </div>
+    </div>
+</div>
+
+
+  <div class="referral-success-modal-overlay" id="referralSuccessModal">
+      <div class="referral-success-modal">
+          <div class="referral-success-icon"></div>
+          <div class="referral-success-title">CONGRATULATIONS!</div>
+          <div class="referral-success-message" id="referralSuccessMsg">You Have Successfully Invited a New Friend<br> ₹5.00 Has Been Added To Your Account </div>
+          <button class="referral-success-btn" onclick="closeReferralSuccessModal()">AWESOME!</button>
+      </div>
+  </div>
+  
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="popup-overlay" id="popupOverlay">
+      <div class="popup">
+          <div class="popup-title" id="popupTitle">Message</div>
+          <div class="popup-message" id="popupMessage"></div>
+          <div class="popup-buttons">
+              <button class="popup-btn popup-btn-primary" onclick="hidePopup()">OK</button>
+          </div>
+      </div>
+  </div>
+
+  <div class="ref-modal-overlay" id="myReferralsModal">
+      <div class="ref-modal-content">
+          <div class="ref-modal-header">
+              <h3>My Referrals</h3>
+              <div class="ref-modal-close" onclick="closeMyReferralsModal()"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="ref-modal-body" id="my-referrals-list">
+              </div>
+      </div>
+  </div>
+
+  <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>Processing...</div>
+  </div>
+
+  <div class="task-modal-overlay" id="taskModalOverlay">
+      <div class="task-modal">
+          <div class="task-header">
+              <i class="fas fa-arrow-left" onclick="closeTaskModal()"></i>
+              <span>Daily Task</span>
+              <i class="fas fa-sync-alt" onclick="refreshTaskData()"></i>
+          </div>
+          <div class="task-banner"></div>
+          <div class="task-list" id="taskListContainer">
+              </div>
+      </div>
+  </div>
+
+<script>
+    // --- COMPREHENSIVE SOUND POOL SYSTEM ---
+    const SOUND_CONFIG = {
+        DEFAULT_CLICK: 'https://audio.jukehost.co.uk/SOrgXYyuSDba9zvEdeTW8RrOGMrYd9y0',
+        ALERT_MODAL_OPEN: 'https://audio.jukehost.co.uk/hKORFoyigdJil5uXgqXC8DoOKK9u1KdA',
+        ALERT_MODAL_CLOSE: 'https://audio.jukehost.co.uk/93zIHUwOUTFF1mpNMJlB1c647rqFsgEg',
+        INVEST_SECTION_OPEN: 'https://audio.jukehost.co.uk/659gZZTytCEItAHY2fOIzGDxqzQf5PwD',
+        RECORDS_SECTION_OPEN: 'https://audio.jukehost.co.uk/RayjQIfdEGJ1I4SeNWpf1XGEyPh2HEAK',
+        MAILS_SECTION_OPEN: 'https://audio.jukehost.co.uk/6VoAoaim0XsYVl1TQM136abCXWthL7dk',
+        PROMOTION_SECTION_OPEN: 'https://audio.jukehost.co.uk/Bc0IKlhTbwau1HzwHzw1LmzcGA8Y3QzG',
+        MAILS_CLICK: 'https://audio.jukehost.co.uk/ev8tWw7FtuqIh7UZacocfiWqukpyxgeV',
+        COPY_BUTTON_CLICK: 'https://audio.jukehost.co.uk/nuhT5yrf53OgzfVG8D5LRhPRRgAKsXdy',
+        ABOUT_REFERRAL_INFO_CLICK: 'https://audio.jukehost.co.uk/AKcNCrYACkyVBmd1A6Yl18de4lO4ckMZ',
+        SHARE_BUTTON_CLICK: 'https://audio.jukehost.co.uk/iesUw39VFPfvOT8lwXXPOEoroBTClVXL',
+        ABOUT_REFERRAL_INFO_CLOSE: 'https://audio.jukehost.co.uk/Whky4jETI3TKg8sshzRAoE7znGQoqWV0',
+        REFERRAL_SUCCESS_MODAL_OPEN: 'https://audio.jukehost.co.uk/AKcNCrYACkyVBmd1A6Yl18de4lO4ckMZ',
+        REFERRAL_SUCCESS_MODAL_CLOSE: 'https://audio.jukehost.co.uk/Whky4jETI3TKg8sshzRAoE7znGQoqWV0',
+        CHEST_OPEN_SOUND: 'https://audio.jukehost.co.uk/AKcNCrYACkyVBmd1A6Yl18de4lO4ckMZ'
+    };
+
+    class SoundPool {
+        constructor() {
+            this.pools = {};
+            this.maxInstances = 1;
+            this.volume = 0.8;
+            this.enabled = true;
+            this.initPools();
+        }
+        initPools() {
+            for (const [key, url] of Object.entries(SOUND_CONFIG)) {
+                this.pools[key] = [];
+                for (let i = 0; i < this.maxInstances; i++) {
+                    const audio = new Audio(url);
+                    audio.volume = this.volume;
+                    audio.preload = 'auto';
+                    this.pools[key].push(audio);
+                }
+            }
+        }
+        play(soundKey) {
+            if (!this.enabled || !this.pools[soundKey]) return;
+            const audioPool = this.pools[soundKey];
+            let availableAudio = null;
+            for (const audio of audioPool) {
+                if (audio.paused || audio.ended) { availableAudio = audio; break; }
+            }
+            if (!availableAudio && audioPool.length > 0) availableAudio = audioPool[0];
+            if (availableAudio) {
+                availableAudio.currentTime = 0;
+                availableAudio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+    }
+    const soundPool = new SoundPool();
+
+    document.querySelectorAll('.game-card, .profile-button, .nav-item, .invest-btn, .mail-action-btn, .promo-qr-btn, .my-referrals-btn').forEach(el => {
+        el.addEventListener('click', () => soundPool.play('DEFAULT_CLICK'));
+    });
+
+    // --- FIREBASE CONFIG & APP STATE ---
+    const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    let currentMailTab = 'unread';
+
+    let state = {
+        balance: 0, uid: null, authed: false,
+        unreadNotifications: 0,
+        readMails: {}, allMails: [], 
+        deletedMails: {}, claimedMails: {},
+        isClaiming: false, isMarking: false, isDeleting: false,
+        referralCode: null, referralEarnings: 0, totalReferrals: 0,
+        hasUsedReferral: false, referredVia: null, referralHistory: {}, referrals: {},
+        hasNewReferralNotification: false, lastViewedReferralTimestamp: 0,
+        redeemCodes: [], usedRedeemCodes: [], isRedeemingCode: false,
+        validSubordinatesCount: 0, claimedBoxes: {},
+        hasUnclaimedTasks: false, hasUnclaimedChests: false
+    };
+
+    let firebaseListeners = [];
+    let appSettings = { referralReward: 5, downloadLink: "https://kamaaikendra.github.io/Kimi-2026/" };
+    let promotionInitialized = false;
+
+    // MYSTERY BOX LOGIC CONFIG
+    const MYSTERY_BOX_MILESTONES = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+        12, 14, 16, 18, 20,
+        25, 30, 35, 40, 45, 50,
+        60, 70, 80, 90, 100,
+        150, 200, 300, 500, 1000, 2000
+    ];
+
+    // --- DAILY TASK CONFIG & LOGIC ---
+    const DAILY_TASKS_CONFIG = [
+        { id: 'bet_500', type: 'bet', target: 500, reward: 1, text: 'Place bets of 500 rupees', iconType: 'gold', multiplier: '', iconText: '₹1' },
+        { id: 'bet_1000', type: 'bet', target: 1000, reward: 3, text: 'Place bets of 1000 rupees', iconType: 'gold', multiplier: '', iconText: '₹3' },
+        { id: 'bet_2000', type: 'bet', target: 2000, reward: 1, text: 'Place bets of 2000 rupees', iconType: 'gold', multiplier: '', iconText: '₹1' },
+        { id: 'bet_5000', type: 'bet', target: 5000, reward: 3, text: 'Place bets of 5000 rupees', iconType: 'gold', multiplier: '', iconText: '₹3' },
+        { id: 'bet_10000', type: 'bet', target: 10000, reward: 5, text: 'Place bets of 10000 rupees', iconType: 'gold', multiplier: '', iconText: '₹5' },
+        { id: 'dep_500', type: 'deposit', target: 500, reward: 10, text: 'Total Deposit 500 rupees', iconType: 'gold', multiplier: '', iconText: '₹10' }
+    ];
+
+    let currentTaskDayKey = '';
+    let currentTaskClaims = {};
+
+    function openTaskModal() {
+        soundPool.play('DEFAULT_CLICK');
+        document.getElementById('taskModalOverlay').style.display = 'flex';
+        refreshTaskData();
+    }
+
+    function closeTaskModal() {
+        soundPool.play('DEFAULT_CLICK');
+        document.getElementById('taskModalOverlay').style.display = 'none';
+    }
+
+    function goToTaskRoute(type) {
+        soundPool.play('DEFAULT_CLICK');
+        if (type === 'deposit') {
+            window.location.href = 'Deposit.html';
+        } else {
+            closeTaskModal();
+            showSection('games');
+        }
+    }
+
+    async function fetchTaskProgressData() {
+        const now = new Date();
+        const resetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 30, 0, 0);
+        let startTimestamp, endTimestamp;
+
+        if (now.getTime() >= resetToday.getTime()) {
+            startTimestamp = resetToday.getTime();
+            endTimestamp = startTimestamp + (24 * 60 * 60 * 1000) - 1;
+            currentTaskDayKey = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}`;
+        } else {
+            endTimestamp = resetToday.getTime() - 1;
+            startTimestamp = endTimestamp - (24 * 60 * 60 * 1000) + 1;
+            let yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            currentTaskDayKey = `${yesterday.getFullYear()}_${yesterday.getMonth()+1}_${yesterday.getDate()}`;
+        }
+
+        let totalBet = 0;
+        let totalDeposit = 0;
+
+        const betSnap = await db.ref(`appusers/${state.uid}/betHistory`)
+            .orderByChild('timestamp')
+            .startAt(startTimestamp)
+            .endAt(endTimestamp)
+            .once('value');
+        
+        if (betSnap.exists()) {
+            betSnap.forEach(child => {
+                totalBet += Number(child.val().betAmount || 0);
+            });
+        }
+
+        const depSnap = await db.ref('depositRequests')
+            .orderByChild('uid')
+            .equalTo(state.uid)
+            .once('value');
+        
+        if (depSnap.exists()) {
+            depSnap.forEach(child => {
+                const val = child.val();
+                if ((val.status === 'success' || val.status === 'approved') && val.timestamp >= startTimestamp && val.timestamp <= endTimestamp) {
+                    totalDeposit += Number(val.amount || 0);
+                }
+            });
+        }
+
+        const claimsSnap = await db.ref(`appusers/${state.uid}/dailyTaskClaims/${currentTaskDayKey}`).once('value');
+        currentTaskClaims = claimsSnap.val() || {};
+
+        return { totalBet, totalDeposit };
+    }
+
+    async function refreshTaskData() {
+        if (!state.authed) { showToast('Please Login First', 'error'); return; }
+        showLoading();
+
+        try {
+            const data = await fetchTaskProgressData();
+            renderTaskModal(data.totalBet, data.totalDeposit);
+        } catch (error) {
+            console.error("Error refreshing task data", error);
+            showToast("Error loading tasks", "error");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function renderTaskModal(totalBet, totalDeposit) {
+        const container = document.getElementById('taskListContainer');
+        container.innerHTML = '';
+
+        DAILY_TASKS_CONFIG.forEach(task => {
+            const progress = task.type === 'bet' ? totalBet : totalDeposit;
+            const claimed = !!currentTaskClaims[task.id];
+            const isCompleted = progress >= task.target;
+            const progressPercent = Math.min(100, (progress / task.target) * 100);
+
+            let actionHtml = '';
+            if (claimed) {
+                actionHtml = `
+                    <div class="task-completed-badge">Completed</div>
+                    <button class="task-btn claim" disabled>Claimed</button>
+                `;
+            } else if (isCompleted) {
+                actionHtml = `<button class="task-btn claim" onclick="claimTaskReward('${task.id}', ${task.reward})">Claim</button>`;
+            } else {
+                actionHtml = `<button class="task-btn" onclick="goToTaskRoute('${task.type}')">Go</button>`;
+            }
+
+            container.innerHTML += `
+                <div class="task-card">
+                    <div class="task-icon-col">
+                        <div class="t-icon-box ${task.iconType}">${task.iconText}</div>
+                        <div class="t-multiplier">${task.multiplier}</div>
+                    </div>
+                    <div class="task-info-col">
+                        <div class="task-title">${task.text}</div>
+                        <div class="task-progress-bg">
+                            <div class="task-progress-fill" style="width: ${progressPercent}%;"></div>
+                            <div class="task-progress-text">${Math.floor(progress)}/${task.target}</div>
+                        </div>
+                    </div>
+                    <div class="task-action-col">
+                        ${actionHtml}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    async function claimTaskReward(taskId, rewardAmount) {
+        if (!state.authed || state.isClaiming) return;
+        soundPool.play('DEFAULT_CLICK');
+        state.isClaiming = true;
+        showLoading();
+
+        try {
+            const claimCheck = await db.ref(`appusers/${state.uid}/dailyTaskClaims/${currentTaskDayKey}/${taskId}`).once('value');
+            if (claimCheck.exists()) {
+                throw new Error("Already Claimed");
+            }
+
+            await db.ref(`appusers/${state.uid}/totalBalance`).transaction(current => {
+                return (Number(current) || 0) + rewardAmount;
+            });
+
+            const txId = db.ref().child('transactions').push().key;
+            await db.ref().update({
+                [`appusers/${state.uid}/dailyTaskClaims/${currentTaskDayKey}/${taskId}`]: true,
+                [`${state.uid}-Freecash Records/${txId}`]: {
+                    "Transaction name": "Daily Task Reward",
+                    "Timestamp": firebase.database.ServerValue.TIMESTAMP,
+                    "amount": rewardAmount
+                }
+            });
+
+            showToast(`Task Completed! ₹${rewardAmount} added to balance.`, 'success');
+            refreshTaskData(); 
+            checkUnclaimedTasksBackground(); 
+
+        } catch (e) {
+            console.error("Task claim failed", e);
+            if (e.message !== "Already Claimed") showToast("Failed to claim reward", "error");
+        } finally {
+            state.isClaiming = false;
+            hideLoading();
+        }
+    }
+
+    async function checkUnclaimedTasksBackground() {
+        if (!state.authed) return;
+        try {
+            const data = await fetchTaskProgressData();
+            let hasUnclaimed = false;
+            
+            DAILY_TASKS_CONFIG.forEach(task => {
+                const progress = task.type === 'bet' ? data.totalBet : data.totalDeposit;
+                const claimed = !!currentTaskClaims[task.id];
+                const isCompleted = progress >= task.target;
+                if (isCompleted && !claimed) {
+                    hasUnclaimed = true;
+                }
+            });
+
+            state.hasUnclaimedTasks = hasUnclaimed;
+            updateRedeemNotificationDot();
+        } catch (error) {
+            console.error("Error checking background tasks", error);
+        }
+    }
+
+    function updateRedeemNotificationDot() {
+        const dot = document.getElementById('redeemNotificationDot');
+        if (dot) {
+            if (state.hasUnclaimedTasks) dot.classList.remove('hidden');
+            else dot.classList.add('hidden');
+        }
+    }
+
+
+    // --- NAVIGATION LOGIC ---
+    function showSection(sectionId) {
+        soundPool.play('DEFAULT_CLICK');
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+            const navText = item.querySelector('.nav-text');
+            if (navText) navText.style.color = 'white';
+        });
+
+        const activeNav = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
+        if (activeNav) {
+            activeNav.classList.add('active');
+            const navText = activeNav.querySelector('.nav-text');
+            if (navText) navText.style.color = '#fdbd01';
+        }
+
+        if (sectionId === 'games') soundPool.play('INVEST_SECTION_OPEN');
+        if (sectionId === 'history') {
+            soundPool.play('RECORDS_SECTION_OPEN');
+            if (document.getElementById('history-date-filter').options.length === 0) initDateDropdown();
+            loadDashboardHistory();
+        }
+        if (sectionId === 'mails') {
+            soundPool.play('MAILS_SECTION_OPEN');
+            loadNotifications();
+        }
+        if (sectionId === 'promotion') {
+            soundPool.play('PROMOTION_SECTION_OPEN');
+            initializePromotionSection();
+            markReferralNotificationAsViewed();
+        }
+    }
+
+    // --- GAMES SEARCH & DYNAMIC LOADING ---
+    function loadDynamicGames() {
+        db.ref('games').on('value', snapshot => {
+            const container = document.getElementById('games-grid-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            snapshot.forEach(child => {
+                const game = child.val();
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.setAttribute('data-name', game.name || '');
+                card.onclick = () => { 
+                    soundPool.play('DEFAULT_CLICK');
+                    window.location.href = game.url || '#'; 
+                };
+                
+                const img = document.createElement('img');
+                img.src = game.image || '';
+                card.appendChild(img);
+                
+                if (game.isHot) {
+                    const badge = document.createElement('div');
+                    badge.className = 'badge-hot';
+                    card.appendChild(badge);
+                }
+                
+                container.appendChild(card);
+            });
+            searchGames(); 
+        });
+    }
+
+    function searchGames() {
+        const searchTerm = document.querySelector('.search-bar').value.trim().toLowerCase();
+        const allGames = document.querySelectorAll('#games-grid-container .game-card');
+        
+        if (searchTerm === '') {
+            allGames.forEach(g => g.classList.remove('hidden'));
+            return;
+        }
+        
+        allGames.forEach(game => {
+            const name = game.getAttribute('data-name');
+            if (name && name.toLowerCase().includes(searchTerm)) game.classList.remove('hidden');
+            else game.classList.add('hidden');
+        });
+    }
+
+    function loadDynamicSettings() {
+        db.ref('settings/referralLink').on('value', snap => {
+            if (snap.exists()) {
+                appSettings.downloadLink = snap.val();
+                refreshPromotionUI(); 
+            }
+        });
+    }
+
+    // --- AD CAROUSEL ---
+    const carousel = document.getElementById('adBannerCarousel');
+    const dotsContainer = document.getElementById('adDots');
+    const banners = carousel.querySelectorAll('.ad-banner-item');
+    for (let i = 0; i < banners.length; i++) {
+        const dot = document.createElement('span');
+        dot.addEventListener('click', () => goToBanner(i));
+        dotsContainer.appendChild(dot);
+    }
+    const dots = dotsContainer.querySelectorAll('span');
+    function goToBanner(index) {
+        const w = banners[0].offsetWidth + 10;
+        carousel.scrollTo({ left: index * w, behavior: 'smooth' });
+        updateDots(index);
+    }
+    function updateDots(idx) { dots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
+    carousel.addEventListener('scroll', () => updateDots(Math.round(carousel.scrollLeft / (banners[0].offsetWidth + 10))));
+    updateDots(0);
+    setInterval(() => {
+        const next = (Math.round(carousel.scrollLeft / (banners[0].offsetWidth + 10)) + 1) % banners.length;
+        goToBanner(next);
+    }, 5000);
+
+    // --- BET HISTORY LOGIC ---
+    function initDateDropdown() {
+        const select = document.getElementById('history-date-filter');
+        select.innerHTML = '';
+        const today = new Date();
+        for (let i = 0; i < 30; i++) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year4 = d.getFullYear();
+            const year2 = String(year4).slice(-2);
+
+            const displayDate = `${day}-${month}-${year4}`;
+            const queryDate = `${day}-${month}-${year2}`; 
+
+            const option = document.createElement('option');
+            option.value = queryDate;
+            option.textContent = displayDate;
+            select.appendChild(option);
+        }
+    }
+
+    function loadDashboardHistory() {
+        const uid = localStorage.getItem('uid');
+        const list = document.getElementById('dashboard-history-list');
+        const dateFilter = document.getElementById('history-date-filter').value;
+        const searchFilter = document.getElementById('history-search').value.toLowerCase().trim();
+
+        if (!uid) {
+            list.innerHTML = '<div style="text-align:center; padding: 20px; color:#fff;">Please login to view history</div>';
+            return;
+        }
+
+        list.innerHTML = '<div style="text-align:center; padding: 20px; color:#fff;">Loading history...</div>';
+
+        db.ref(`appusers/${uid}/betHistory`).orderByChild('date').equalTo(dateFilter).once('value')
+        .then(snapshot => {
+            list.innerHTML = '';
+            if (!snapshot.exists()) {
+                list.innerHTML = '<div style="text-align:center; padding: 20px; color:#fff;">No transactions on this date</div>';
+                return;
+            }
+
+            const records = [];
+            snapshot.forEach(child => {
+                records.push(child.val());
+            });
+
+            records.sort((a, b) => b.timestamp - a.timestamp);
+
+            let filteredRecords = records;
+            if (searchFilter) {
+                filteredRecords = records.filter(r => (r.gameName || '').toLowerCase().includes(searchFilter));
+            }
+
+            if (filteredRecords.length === 0) {
+                list.innerHTML = '<div style="text-align:center; padding: 20px; color:#fff;">No games found matching search</div>';
+                return;
+            }
+
+            filteredRecords.forEach(bet => {
+                let timeDisplay = '';
+                if (bet.timestamp) {
+                    const dateObj = new Date(bet.timestamp);
+                    timeDisplay = dateObj.toLocaleTimeString('en-IN', {
+                        timeZone: 'Asia/Kolkata',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                    }).toUpperCase();
+                } else if (bet.time) {
+                    timeDisplay = bet.time; 
+                }
+
+                const row = document.createElement('div');
+                row.className = 'history-item';
+                row.innerHTML = `
+                    <div class="col-game">
+                        ${bet.gameName || 'Game'}<br>
+                        <span class="time">${timeDisplay}</span>
+                    </div>
+                    <div class="col-bet">₹${parseFloat(bet.betAmount || 0).toFixed(2)}</div>
+                    <div class="col-win">₹${parseFloat(bet.winAmount || 0).toFixed(2)}</div>
+                `;
+                list.appendChild(row);
+            });
+        }).catch(err => {
+            list.innerHTML = '<div style="text-align:center; padding: 20px; color:#f44336;">Error loading history</div>';
+        });
+    }
+
+    // --- MAILS NOTIFICATIONS ---
+    function loadNotifications() {
+        if (!state.authed) return;
+        processMails();
+    }
+    
+    function switchMailTab(tab) {
+        currentMailTab = tab;
+        document.getElementById('tab-unread').classList.remove('active');
+        document.getElementById('tab-read').classList.remove('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
+
+        if(tab === 'unread') {
+            document.getElementById('unread-actions').classList.remove('hidden');
+            document.getElementById('read-actions').classList.add('hidden');
+        } else {
+            document.getElementById('unread-actions').classList.add('hidden');
+            document.getElementById('read-actions').classList.remove('hidden');
+        }
+
+        soundPool.play('DEFAULT_CLICK');
+        processMails();
+    }
+
+    function processMails() {
+        if (!state.allMails) return;
+        const userMails = [];
+        let hasUnclaimedGifts = false;
+        
+        state.allMails.forEach(mail => {
+            if (state.deletedMails[mail.id]) return;
+
+            let isForUser = false;
+            if (!mail.targetUsers || mail.targetUsers === 'all') {
+                isForUser = true;
+            } 
+            else if (typeof mail.targetUsers === 'object' && mail.targetUsers !== null) {
+                if (Array.isArray(mail.targetUsers)) {
+                    if (mail.targetUsers.includes(state.uid)) isForUser = true;
+                } else if (mail.targetUsers[state.uid]) {
+                    isForUser = true;
+                }
+            } 
+            else if (typeof mail.targetUsers === 'string' && mail.targetUsers.includes(state.uid)) {
+                isForUser = true;
+            }
+
+            if (isForUser) {
+                mail.read = !!state.readMails[mail.id];
+                mail.claimed = !!state.claimedMails[mail.id];
+                userMails.push(mail);
+
+                if (!mail.read && mail.giftAmount && parseFloat(mail.giftAmount) > 0 && !mail.claimed) {
+                    hasUnclaimedGifts = true;
+                }
+            }
+        });
+
+        userMails.sort((a, b) => b.timestamp - a.timestamp);
+        updateUnreadNotificationCount(userMails);
+        
+        const claimBtn = document.getElementById('claimRewardsBtn');
+        if (claimBtn) {
+            claimBtn.disabled = !hasUnclaimedGifts;
+            claimBtn.style.opacity = hasUnclaimedGifts ? '1' : '0.5';
+        }
+
+        const markAllBtn = document.getElementById('markAllReadBtn');
+        const unreadExist = userMails.some(m => !m.read);
+        if (markAllBtn) {
+             markAllBtn.disabled = !unreadExist;
+             markAllBtn.style.opacity = unreadExist ? '1' : '0.5';
+        }
+
+        const deleteBtn = document.getElementById('deleteAllBtn');
+        const readExist = userMails.some(m => m.read);
+        if (deleteBtn) {
+             deleteBtn.disabled = !readExist;
+             deleteBtn.style.opacity = readExist ? '1' : '0.5';
+        }
+
+        if (document.getElementById('mails').classList.contains('active')) {
+            const filteredMails = userMails.filter(m => currentMailTab === 'unread' ? !m.read : m.read);
+            displayNotifications(filteredMails);
+        }
+    }
+
+    function updateUnreadNotificationCount(notifications) {
+        if (!notifications) return;
+        const unreadCount = notifications.filter(n => !n.read).length;
+        state.unreadNotifications = unreadCount;
+        updateNotificationBadge();
+        
+        const tabBadge = document.getElementById('unreadTabBadge');
+        if (tabBadge) {
+            if (unreadCount > 0) {
+                tabBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+                tabBadge.classList.remove('hidden');
+            } else {
+                tabBadge.classList.add('hidden');
+            }
+        }
+    }
+
+    function displayNotifications(notifications) {
+        const list = document.getElementById('notificationsList');
+        if (notifications.length === 0) {
+            list.innerHTML = `<div class="empty-notifications"><i class="fas fa-frown-open"></i><p>Nothing Found</p></div>`; return;
+        }
+        let html = '';
+        notifications.forEach(n => {
+            const timeString = new Date(n.timestamp).toLocaleString();
+            const logoHtml = n.logoUrl ? `<img src="${n.logoUrl}" alt="Notification Logo" class="notification-logo">` : '';
+            
+            const hasGift = n.giftAmount && parseFloat(n.giftAmount) > 0 && !state.claimedMails[n.id];
+            const giftBadge = hasGift ? `<span class="newbadge" style="background: #f8961e; margin-left: 5px;"><i class="fas fa-gift"></i> ₹${n.giftAmount}</span>` : '';
+
+            html += `
+                <div class="notification-card ${n.read ? 'read' : 'unread'}" data-id="${n.id}" data-url="${n.redirectUrl || '#'}">
+                    <div class="notification-header">
+                        ${logoHtml}
+                        <div class="card-content">
+                            <div class="card-title">
+                                <span>${n.title} ${giftBadge}</span>
+                                ${!n.read ? '<span class="newbadge">new</span>' : ''}
+                            </div>
+                            <p class="card-text">${n.message}</p>
+                            <p class="notification-time">${timeString}</p>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        list.innerHTML = html;
+        document.querySelectorAll('.notification-card').forEach(card => {
+            card.addEventListener('click', async function() {
+                soundPool.play('MAILS_CLICK');
+                const nid = this.getAttribute('data-id');
+                const rurl = this.getAttribute('data-url');
+                
+                const mail = state.allMails.find(m => m.id === nid);
+                if (mail && mail.giftAmount && parseFloat(mail.giftAmount) > 0 && !state.claimedMails[nid]) {
+                    showLoading();
+                    const amount = await claimSingleReward(mail);
+                    hideLoading();
+                    if(amount > 0) {
+                        showToast(`You claimed ₹${amount.toFixed(2)} from this mail!`, 'success');
+                    }
+                } else {
+                    markNotificationAsRead(nid);
+                }
+
+                if (rurl && rurl !== '#') window.location.href = rurl;
+            });
+        });
+    }
+
+    async function claimSingleReward(mail) {
+        if (!mail || !mail.giftAmount || mail.giftAmount <= 0 || state.claimedMails[mail.id]) return 0;
+        const amount = parseFloat(mail.giftAmount);
+        const txId = db.ref().child('transactions').push().key;
+
+        try {
+            await db.ref(`appusers/${state.uid}/totalBalance`).transaction(current => {
+                return (Number(current) || 0) + amount;
+            });
+
+            let updates = {};
+            updates[`appusers/${state.uid}/claimedMails/${mail.id}`] = true;
+            updates[`appusers/${state.uid}/readMails/${mail.id}`] = true;
+            updates[`${state.uid}-Freecash Records/${txId}`] = {
+                "Transaction name": mail.transactionName || 'Gift Reward',
+                "Timestamp": firebase.database.ServerValue.TIMESTAMP,
+                "amount": amount
+            };
+            await db.ref().update(updates);
+            return amount;
+        } catch(e) {
+            console.error(e);
+            return 0;
+        }
+    }
+
+    async function claimRewardsLogic() {
+        const unreadGifts = state.allMails.filter(mail => {
+            let isForUser = false;
+            if (!mail.targetUsers || mail.targetUsers === 'all') isForUser = true;
+            else if (typeof mail.targetUsers === 'object' && mail.targetUsers !== null) {
+                if (Array.isArray(mail.targetUsers)) { if (mail.targetUsers.includes(state.uid)) isForUser = true; }
+                else if (mail.targetUsers[state.uid]) isForUser = true;
+            } else if (typeof mail.targetUsers === 'string' && mail.targetUsers.includes(state.uid)) isForUser = true;
+
+            return isForUser && !state.deletedMails[mail.id] && !state.readMails[mail.id] && !state.claimedMails[mail.id] && mail.giftAmount && parseFloat(mail.giftAmount) > 0;
+        });
+
+        if (unreadGifts.length === 0) return 0;
+
+        let totalClaimed = 0;
+        let updates = {};
+        
+        unreadGifts.forEach(mail => {
+            const amount = parseFloat(mail.giftAmount);
+            totalClaimed += amount;
+            const txId = db.ref().child('transactions').push().key;
+
+            updates[`appusers/${state.uid}/claimedMails/${mail.id}`] = true;
+            updates[`appusers/${state.uid}/readMails/${mail.id}`] = true;
+            updates[`${state.uid}-Freecash Records/${txId}`] = {
+                "Transaction name": mail.transactionName || 'Gift Reward',
+                "Timestamp": firebase.database.ServerValue.TIMESTAMP,
+                "amount": amount
+            };
+        });
+
+        if(totalClaimed > 0) {
+            try {
+                await db.ref(`appusers/${state.uid}/totalBalance`).transaction(current => {
+                    return (Number(current) || 0) + totalClaimed;
+                });
+                await db.ref().update(updates);
+            } catch(e) {
+                console.error("Error claiming in bulk:", e);
+                return 0;
+            }
+        }
+        return totalClaimed;
+    }
+
+    async function claimRewards() {
+        if(!state.authed || state.isClaiming) return;
+        state.isClaiming = true;
+        showLoading();
+        
+        const totalClaimed = await claimRewardsLogic();
+        if(totalClaimed > 0) {
+            showToast(`Successfully claimed ₹${totalClaimed.toFixed(2)} from mails!`, 'success');
+        }
+        
+        hideLoading();
+        state.isClaiming = false;
+    }
+
+    async function markAllRead() {
+        if(!state.authed || state.isMarking) return;
+        state.isMarking = true;
+        showLoading();
+
+        await claimRewardsLogic();
+
+        const unreadMails = state.allMails.filter(mail => {
+            let isForUser = false;
+            if (!mail.targetUsers || mail.targetUsers === 'all') isForUser = true;
+            else if (typeof mail.targetUsers === 'object' && mail.targetUsers !== null) {
+                if (Array.isArray(mail.targetUsers)) { if (mail.targetUsers.includes(state.uid)) isForUser = true; }
+                else if (mail.targetUsers[state.uid]) isForUser = true;
+            } else if (typeof mail.targetUsers === 'string' && mail.targetUsers.includes(state.uid)) isForUser = true;
+
+            return isForUser && !state.deletedMails[mail.id] && !state.readMails[mail.id];
+        });
+
+        let updates = {};
+        unreadMails.forEach(mail => {
+             updates[`appusers/${state.uid}/readMails/${mail.id}`] = true;
+        });
+
+        if(Object.keys(updates).length > 0) {
+             try {
+                 await db.ref().update(updates);
+                 showToast('All mails marked as read', 'success');
+             } catch(e) {
+                 console.error(e);
+             }
+        }
+
+        hideLoading();
+        state.isMarking = false;
+    }
+
+    async function deleteAllReadMails() {
+         if(!state.authed || state.isDeleting) return;
+         state.isDeleting = true;
+         showLoading();
+
+         const readMails = state.allMails.filter(mail => {
+            let isForUser = false;
+            if (!mail.targetUsers || mail.targetUsers === 'all') isForUser = true;
+            else if (typeof mail.targetUsers === 'object' && mail.targetUsers !== null) {
+                if (Array.isArray(mail.targetUsers)) { if (mail.targetUsers.includes(state.uid)) isForUser = true; }
+                else if (mail.targetUsers[state.uid]) isForUser = true;
+            } else if (typeof mail.targetUsers === 'string' && mail.targetUsers.includes(state.uid)) isForUser = true;
+
+            return isForUser && !state.deletedMails[mail.id] && state.readMails[mail.id];
+        });
+
+        let updates = {};
+        readMails.forEach(mail => {
+             updates[`appusers/${state.uid}/deletedMails/${mail.id}`] = true;
+        });
+
+        if(Object.keys(updates).length > 0) {
+             try {
+                 await db.ref().update(updates);
+                 showToast('All read mails deleted', 'success');
+             } catch(e) {
+                 console.error(e);
+             }
+        }
+
+        hideLoading();
+        state.isDeleting = false;
+    }
+
+    function markNotificationAsRead(notificationId) {
+        if (!state.authed) return;
+        db.ref(`appusers/${state.uid}/readMails/${notificationId}`).set(true).then(() => {
+            const card = document.querySelector(`.notification-card[data-id="${notificationId}"]`);
+            if (card) {
+                if (currentMailTab === 'unread') {
+                    card.style.display = 'none'; 
+                } else {
+                    card.classList.remove('unread'); card.classList.add('read');
+                    const badge = card.querySelector('.newbadge'); if (badge) badge.remove();
+                }
+            }
+        });
+    }
+
+    function updateNotificationBadge() {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            if (state.unreadNotifications > 0) { 
+                badge.textContent = state.unreadNotifications > 99 ? '99+' : state.unreadNotifications.toString(); 
+                badge.classList.remove('hidden'); 
+            } else { 
+                badge.classList.add('hidden'); 
+            }
+        }
+    }
+
+    function setupNotificationsRealTimeUpdates() {
+        if (!state.authed) return;
+
+        const readMailsCallback = (snapshot) => { state.readMails = snapshot.val() || {}; processMails(); };
+        db.ref(`appusers/${state.uid}/readMails`).on('value', readMailsCallback);
+        
+        const deletedMailsCallback = (snapshot) => { state.deletedMails = snapshot.val() || {}; processMails(); };
+        db.ref(`appusers/${state.uid}/deletedMails`).on('value', deletedMailsCallback);
+
+        const claimedMailsCallback = (snapshot) => { state.claimedMails = snapshot.val() || {}; processMails(); };
+        db.ref(`appusers/${state.uid}/claimedMails`).on('value', claimedMailsCallback);
+
+        const universalMailsCallback = (snapshot) => {
+            const mails = [];
+            snapshot.forEach((childSnapshot) => { mails.push({ id: childSnapshot.key, ...childSnapshot.val() }); });
+            state.allMails = mails; processMails();
+        };
+        db.ref('universalMails').orderByChild('timestamp').on('value', universalMailsCallback);
+    }
+
+    // --- NEW PROMOTION LOGIC ---
+    function initializePromotionSection() {
+        if (promotionInitialized) return;
+        promotionInitialized = true;
+        if (state.authed) loadPromotionData();
+    }
+
+    function loadPromotionData() {
+        if (!state.authed) return;
+        
+        const userRef = db.ref(`appusers/${state.uid}`);
+
+        userRef.child('referralCode').on('value', snapshot => {
+            state.referralCode = snapshot.val() || null;
+            refreshPromotionUI();
+        });
+
+        userRef.child('referralEarnings').on('value', snapshot => {
+            state.referralEarnings = snapshot.val() || 0;
+            refreshPromotionUI();
+        });
+
+        userRef.child('Referrals').on('value', async snapshot => {
+            state.referrals = snapshot.val() || {};
+            await calculateValidSubordinates(); 
+            refreshPromotionUI();
+            renderMysteryBoxes();
+            checkForNewReferrals();
+            updateTotalReferralsCount();
+        });
+
+        userRef.child('history').on('value', snapshot => {
+            state.referralHistory = snapshot.val() || {};
+            checkForPendingRewards();
+        });
+
+        userRef.child('claimedMysteryBoxes').on('value', snapshot => {
+            state.claimedBoxes = snapshot.val() || {};
+            renderMysteryBoxes();
+        });
+    }
+
+    async function calculateValidSubordinates() {
+        let count = 0;
+        
+        const promises = Object.entries(state.referrals).map(async ([key, referral]) => {
+            let deposit = Number(referral.totalDeposit || 0);
+            
+            try {
+                const snap = await db.ref('depositRequests').orderByChild('uid').equalTo(key).once('value');
+                let fetchedDeposit = 0;
+                snap.forEach(child => {
+                    let val = child.val();
+                    if (val.status === 'success' || val.status === 'approved') {
+                        fetchedDeposit += Number(val.amount) || 0;
+                    }
+                });
+                
+                if (fetchedDeposit > deposit) {
+                    deposit = fetchedDeposit;
+                }
+                
+                if (!state.referrals[key]) state.referrals[key] = {};
+                state.referrals[key].totalDeposit = deposit;
+            } catch (e) {
+                console.error("Error fetching deposit dynamically:", e);
+            }
+
+            if (deposit >= 200) {
+                count++;
+            }
+        });
+
+        await Promise.all(promises);
+
+        state.validSubordinatesCount = count;
+        const countEl = document.getElementById('valid-subordinates-count');
+        if(countEl) countEl.innerText = count;
+    }
+
+    function refreshPromotionUI() {
+        if (!state.uid) return;
+        
+        const totalEarnings = document.getElementById('total-earnings');
+        const activeReferrals = document.getElementById('active-referrals');
+        const userReferralCode = document.getElementById('user-referral-code');
+        const appLink = document.getElementById('app-link');
+        
+        if (totalEarnings) totalEarnings.textContent = `₹${formatCurrency(state.referralEarnings)}`;
+        if (activeReferrals) activeReferrals.textContent = state.totalReferrals;
+        if (userReferralCode) userReferralCode.textContent = state.referralCode || 'Not generated';
+        if (appLink) {
+            appLink.value = getAppLinkWithReferral();
+            generateQRCode(appLink.value);
+        }
+        populateMyReferralsModal();
+    }
+
+    function renderMysteryBoxes() {
+        const grid = document.getElementById('mystery-boxes-grid');
+        if (!grid) return;
+        
+        let html = '';
+        let hasUnclaimedChests = false;
+
+        MYSTERY_BOX_MILESTONES.forEach(milestone => {
+            const isClaimed = !!state.claimedBoxes[milestone];
+            const isAvailable = !isClaimed && (state.validSubordinatesCount >= milestone);
+            
+            if (isAvailable) hasUnclaimedChests = true;
+
+            let statusClass = 'locked';
+            let imgSrc = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgk3oSMS9UnnUR_QDmktrUor9eYH0QcrYQz4f1oBfvu49f4LbBnvA0F_8Pz9KFjgyxtueK-X22kHA1j64czeGsr_rMvC_0M7qz5UwvVU_qFdFXYtD3bJ6uL5i8PFmAVw7Y6VHJrLtslNkwf7IulRjEU7tmRHDhIrqEM9LpDyvau752lj4scQ8a_b4UJk1s/s803/1000120264.png';
+            let overlayHtml = '';
+            let clickAttr = '';
+
+            if (isClaimed) {
+                statusClass = 'claimed';
+                imgSrc = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfNJAY8yZ_igmf5xIrl_GSbzj4CSOn3BSapy7_oMD5U89xiwq6dkKV5Ip9F_vMS0WBHoqTmjvsDZE4BbDR7ovVGaVo6Bu51IZCku1BStH0MD0CSwHqn33ME-E3zJHjjFE1wwWg_KRSa7atcsqZDIAqe1vOfROSXtr1n7qr_l5zYEMamJ4d9Z2qv03uEPY/s798/1000120265.png';
+                overlayHtml = `<div class="chest-amount-overlay">₹${state.claimedBoxes[milestone].amount}</div>`;
+            } else if (isAvailable) {
+                statusClass = 'available';
+                clickAttr = `onclick="openMysteryBox(${milestone})"`;
+            }
+
+            html += `
+                <div class="chest-box ${statusClass}" ${clickAttr}>
+                    <div class="chest-img-wrapper">
+                        <img src="${imgSrc}" alt="Chest">
+                        ${overlayHtml}
+                    </div>
+                    <div class="chest-label">${milestone} people</div>
+                </div>
+            `;
+        });
+        
+        state.hasUnclaimedChests = hasUnclaimedChests;
+        updatePromotionNotificationDot();
+
+        grid.innerHTML = html;
+    }
+
+    async function openMysteryBox(milestone) {
+        if (!state.authed || state.isClaiming) return;
+        soundPool.play('CHEST_OPEN_SOUND');
+        state.isClaiming = true;
+        showLoading();
+
+        if (state.validSubordinatesCount < milestone || state.claimedBoxes[milestone]) {
+            hideLoading();
+            state.isClaiming = false;
+            return;
+        }
+
+        const winAmount = Math.floor(Math.random() * 100) + 1; 
+        
+        try {
+            await db.ref(`appusers/${state.uid}/totalBalance`).transaction(current => {
+                return (Number(current) || 0) + winAmount;
+            });
+            await db.ref(`appusers/${state.uid}/referralEarnings`).transaction(current => {
+                return (Number(current) || 0) + winAmount;
+            });
+            
+            await db.ref(`appusers/${state.uid}/claimedMysteryBoxes/${milestone}`).set({
+                claimed: true,
+                amount: winAmount,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            document.getElementById('referralSuccessMsg').innerHTML = `You opened a Mystery Box!<br> ₹${winAmount.toFixed(2)} Has Been Added To Your Account`;
+            hideLoading();
+            showReferralSuccessModal();
+
+        } catch(e) {
+            console.error("Error claiming mystery box", e);
+            showToast("Failed to open box", "error");
+            hideLoading();
+        }
+        
+        state.isClaiming = false;
+    }
+
+    function updateTotalReferralsCount() {
+        if (!state.authed) return;
+        const actualCount = Object.keys(state.referrals).length;
+        if (actualCount !== state.totalReferrals) {
+            state.totalReferrals = actualCount;
+            db.ref(`appusers/${state.uid}/totalReferrals`).set(actualCount);
+        }
+        const el = document.getElementById('active-referrals');
+        if (el) el.textContent = actualCount;
+    }
+
+    function checkForPendingRewards() {
+        let hasNewRewards = false;
+        let rewardCount = 0;
+        let processedKeys = [];
+        for (const key in state.referralHistory) {
+            const entry = state.referralHistory[key];
+            if (entry.type === 'referral_earned' && !entry.notified) {
+                hasNewRewards = true; rewardCount++; processedKeys.push(key);
+                db.ref(`appusers/${state.uid}/history/${key}/notified`).set(true);
+            }
+        }
+        if (hasNewRewards) {
+            processedKeys.forEach(key => { if (state.referralHistory[key]) state.referralHistory[key].notified = true; });
+            document.getElementById('referralSuccessMsg').innerHTML = `You Have Successfully Invited ${rewardCount} Friend(s)<br> ₹${(rewardCount * appSettings.referralReward).toFixed(2)} Has Been Added To Your Account`;
+            showReferralSuccessModal();
+        }
+    }
+
+    function checkForNewReferrals() {
+        const lastViewedKey = `lastViewedReferral_${state.uid}`;
+        state.lastViewedReferralTimestamp = parseInt(localStorage.getItem(lastViewedKey)) || 0;
+        let hasNewReferral = false;
+        
+        for (const key in state.referrals) {
+            if (state.referrals[key].timestamp > state.lastViewedReferralTimestamp) hasNewReferral = true;
+        }
+        state.hasNewReferralNotification = hasNewReferral;
+        updatePromotionNotificationDot();
+        const promo = document.getElementById('promotion');
+        if (promo && promo.classList.contains('active')) markReferralNotificationAsViewed();
+    }
+
+    function updatePromotionNotificationDot() {
+        const dot = document.getElementById('referralNotificationDot');
+        if (dot) { 
+            if (state.hasNewReferralNotification || state.hasUnclaimedChests) {
+                dot.classList.remove('hidden'); 
+            } else { 
+                dot.classList.add('hidden'); 
+            } 
+        }
+    }
+
+    function markReferralNotificationAsViewed() {
+        if (!state.uid) return;
+        state.lastViewedReferralTimestamp = Date.now();
+        localStorage.setItem(`lastViewedReferral_${state.uid}`, state.lastViewedReferralTimestamp.toString());
+        state.hasNewReferralNotification = false;
+        updatePromotionNotificationDot();
+    }
+
+    function populateMyReferralsModal() {
+        const container = document.getElementById('my-referrals-list');
+        if (!container) return;
+        
+        const referralsArray = Object.entries(state.referrals).map(([id, data]) => ({ id, ...data }));
+        referralsArray.sort((a, b) => b.timestamp - a.timestamp);
+
+        if(referralsArray.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding: 20px; color: #888;">No referrals yet</div>`;
+            return;
+        }
+
+        let html = '';
+        referralsArray.forEach(ref => {
+            const deposit = Number(ref.totalDeposit || 0);
+            const progressPct = Math.min(100, (deposit / 200) * 100).toFixed(0);
+            
+            html += `
+                <div class="ref-card">
+                    <div class="ref-card-email"><i class="fas fa-user-circle"></i> ${ref.email || 'User'}</div>
+                    <div class="ref-card-row">
+                        <span class="ref-card-label">Join Date:</span>
+                        <span class="ref-card-val">${formatDate(ref.timestamp)}</span>
+                    </div>
+                    <div class="ref-progress-container">
+                        <div class="ref-progress-label">
+                            <span>Task Progress:</span>
+                            <span style="color:${progressPct === '100' ? '#00ff00' : '#e02af0'}; font-weight:bold;">${progressPct}% (₹${deposit.toFixed(2)} / ₹200)</span>
+                        </div>
+                        <div class="ref-progress-bar-bg">
+                            <div class="ref-progress-bar-fill" style="width: ${progressPct}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function openMyReferralsModal() {
+        soundPool.play('DEFAULT_CLICK');
+        document.getElementById('myReferralsModal').style.display = 'flex';
+    }
+
+    function closeMyReferralsModal() {
+        soundPool.play('DEFAULT_CLICK');
+        document.getElementById('myReferralsModal').style.display = 'none';
+    }
+
+    function shareOnPlatformPromo(platform) {
+        soundPool.play('SHARE_BUTTON_CLICK');
+        const shareMessage = `Join me using my referral code ${state.referralCode} and earn ₹${appSettings.referralReward}! Download the app here: ${getAppLinkWithReferral()}`;
+        let shareUrl = '';
+        switch (platform) {
+            case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`; break;
+            case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getAppLinkWithReferral())}&quote=${encodeURIComponent(shareMessage)}`; break;
+            case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`; break;
+            case 'telegram': shareUrl = `https://t.me/share/url?url=${encodeURIComponent(getAppLinkWithReferral())}&text=${encodeURIComponent(shareMessage)}`; break;
+            default: copyToClipboard(shareMessage, null); return;
+        }
+        if (shareUrl) window.open(shareUrl, '_blank');
+    }
+
+    function generateQRCode(text) {
+        const qrContainer = document.getElementById('promo-qr-code');
+        qrContainer.innerHTML = "";
+        try {
+            new QRCode(qrContainer, {
+                text: text,
+                width: 70,
+                height: 70,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+        } catch(e) { console.error("QR Code generation failed", e); }
+    }
+
+    function saveQRCode() {
+        soundPool.play('DEFAULT_CLICK');
+        const qrImg = document.querySelector('#promo-qr-code img');
+        if(!qrImg) { showToast("QR not ready", "error"); return; }
+        
+        const a = document.createElement('a');
+        a.href = qrImg.src;
+        a.download = `Referral_QR_${state.referralCode}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    async function copyToClipboard(text, buttonId) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast('Copied Successfully', 'success');
+            soundPool.play('COPY_BUTTON_CLICK');
+        } catch (err) { showToast('Failed to Copy', 'error'); }
+    }
+
+    function getAppLinkWithReferral() { return appSettings.downloadLink + (state.referralCode ? `?ref=${state.referralCode}` : ''); }
+    function showReferralSuccessModal() { const m = document.getElementById('referralSuccessModal'); if (m) { m.style.display = 'flex'; soundPool.play('REFERRAL_SUCCESS_MODAL_OPEN'); } }
+    function closeReferralSuccessModal() { const m = document.getElementById('referralSuccessModal'); if (m) { m.style.display = 'none'; soundPool.play('REFERRAL_SUCCESS_MODAL_CLOSE'); } }
+
+    // --- REDEEM SECTION LOGIC ---
+    function loadRedeemCodes() {
+        if (!state.authed) return;
+        db.ref('redeemcodes').on('value', snapshot => {
+            const data = snapshot.val();
+            state.redeemCodes = [];
+            if (data) Object.keys(data).forEach(key => { const code = data[key]; code.id = key; state.redeemCodes.push(code); });
+        });
+    }
+
+    function loadUsedRedeemCodes() {
+        if (!state.authed) return;
+        db.ref(`appusers/${state.uid}/usedRedeemCodes`).on('value', snapshot => {
+            const data = snapshot.val();
+            state.usedRedeemCodes = [];
+            if (data) Object.keys(data).forEach(key => state.usedRedeemCodes.push(data[key]));
+        });
+    }
+
+    function redeemCode() {
+        if (!state.authed) { window.location.href = 'index.html'; return; }
+        soundPool.play('DEFAULT_CLICK');
+        if (state.isRedeemingCode) { showToast('Please wait, processing previous redeem request...', 'warning'); return; }
+        
+        const code = document.getElementById('redeemCode').value.trim().toUpperCase();
+        if (!code) { showToast('Please enter a code', 'error'); return; }
+        if (state.usedRedeemCodes.includes(code)) { showToast('This Code has Already Been Used', 'error'); return; }
+        
+        const redeemCodeData = state.redeemCodes.find(rc => rc.code === code);
+        if (!redeemCodeData) { showToast('Invalid or expired code', 'error'); return; }
+        
+        const availableStocks = (parseInt(redeemCodeData.stocks) || 0) - (redeemCodeData.currentStocks || 0);
+        if (availableStocks <= 0) { showToast('This code has been fully redeemed', 'error'); return; }
+
+        state.isRedeemingCode = true; showLoading();
+        db.ref(`redeemcodes/${redeemCodeData.id}`).transaction(codeData => {
+            if (!codeData) return codeData;
+            if ((codeData.currentStocks || 0) >= (parseInt(codeData.stocks) || 0)) return codeData;
+            codeData.currentStocks = (codeData.currentStocks || 0) + 1;
+            return codeData;
+        }).then(res => {
+            if (!res.committed || res.snapshot.val().currentStocks > (res.snapshot.val().stocks || 0)) throw new Error('Code unavailable');
+            return db.ref('appusers/' + state.uid).transaction(user => {
+                if (!user) return user;
+                user.totalBalance = Number(user.totalBalance || 0) + parseInt(redeemCodeData.value);
+                return user;
+            });
+        }).then(() => db.ref(`appusers/${state.uid}/usedRedeemCodes`).push(code))
+        .then(() => {
+            state.usedRedeemCodes.push(code);
+            hideLoading(); state.isRedeemingCode = false;
+            state.balance += parseInt(redeemCodeData.value);
+            document.getElementById('balance').textContent = state.balance.toFixed(2);
+            showToast(`Code redeemed successfully! ₹${redeemCodeData.value} added to balance.`, 'success');
+            document.getElementById('redeemCode').value = '';
+        }).catch(err => {
+            hideLoading(); state.isRedeemingCode = false;
+            showToast(err.message === 'Code unavailable' ? 'Code fully redeemed' : 'Failed to redeem', 'error');
+        });
+    }
+
+    // --- PROFILE FETCH FOR TOP BAR ---
+    function loadProfilePicture() {
+        if (!state.authed) return;
+        db.ref(`appusers/${state.uid}/profile`).once('value').then(snapshot => {
+            const profile = snapshot.val();
+            if (profile && profile.profilePic) {
+                const btn = document.getElementById('profileButton');
+                if (btn) { btn.style.backgroundImage = `url('${profile.profilePic}')`; btn.style.backgroundSize = '100% 100%'; }
+            }
+        });
+    }
+
+    // --- UTILITIES & TOASTS ---
+    function formatCurrency(amt) { return Number(amt).toFixed(2); }
+    function formatDate(ts) { if(!ts) return "N/A"; return new Date(ts).toLocaleDateString() + ' ' + new Date(ts).toLocaleTimeString(); }
+    
+    let lastToastTime = 0, toastDebounceTimer = null;
+    function showToast(message, type = 'success', duration = 3000) {
+        const now = Date.now();
+        if (toastDebounceTimer) { clearTimeout(toastDebounceTimer); toastDebounceTimer = null; }
+        if (now - lastToastTime < 500) { toastDebounceTimer = setTimeout(() => showToast(message, type, duration), 500 - (now - lastToastTime)); return; }
+        lastToastTime = now;
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show'); toast.classList.add('hide');
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 500);
+        }, duration);
+    }
+
+    function showPopup(title, message) {
+        document.getElementById('popupTitle').textContent = title;
+        document.getElementById('popupMessage').textContent = message;
+        document.getElementById('popupOverlay').style.display = 'flex';
+    }
+    function hidePopup() { document.getElementById('popupOverlay').style.display = 'none'; }
+    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+    // --- APP INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // NEW: Update Last Seen accurately when returning from background
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && state.authed && state.uid) {
+                db.ref(`appusers/${state.uid}/lastLogin`).set(firebase.database.ServerValue.TIMESTAMP);
+            }
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                state.uid = user.uid; state.authed = true;
+                
+                // NEW: Update Last Seen on App Open
+                db.ref(`appusers/${state.uid}/lastLogin`).set(firebase.database.ServerValue.TIMESTAMP);
+                
+                db.ref(`appusers/${state.uid}/totalBalance`).on('value', snap => {
+                    state.balance = Number(snap.val() || 0);
+                    document.getElementById('balance').textContent = state.balance.toFixed(2);
+                });
+                loadProfilePicture();
+                setupNotificationsRealTimeUpdates();
+                loadRedeemCodes();
+                loadUsedRedeemCodes();
+                initializePromotionSection(); 
+                checkUnclaimedTasksBackground();
+                loadDynamicGames();       // Load games from DB
+                loadDynamicSettings();    // Load referral link from DB
+            } else {
+                const localUid = localStorage.getItem('uid');
+                if (localUid) {
+                    state.uid = localUid; state.authed = true;
+                    
+                    // NEW: Update Last Seen on App Open
+                    db.ref(`appusers/${state.uid}/lastLogin`).set(firebase.database.ServerValue.TIMESTAMP);
+                    
+                    db.ref(`appusers/${state.uid}/totalBalance`).on('value', snap => {
+                        state.balance = Number(snap.val() || 0);
+                        document.getElementById('balance').textContent = state.balance.toFixed(2);
+                    });
+                    loadProfilePicture();
+                    setupNotificationsRealTimeUpdates();
+                    loadRedeemCodes();
+                    loadUsedRedeemCodes();
+                    initializePromotionSection(); 
+                    checkUnclaimedTasksBackground();
+                    loadDynamicGames();       // Load games from DB
+                    loadDynamicSettings();    // Load referral link from DB
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sectionToOpen = urlParams.get('section');
+        if (sectionToOpen) {
+            const targetSection = sectionToOpen.toLowerCase();
+            if (document.getElementById(targetSection)) {
+                showSection(targetSection);
+            }
+        }
+    });
+</script>
+</body>
+</html>

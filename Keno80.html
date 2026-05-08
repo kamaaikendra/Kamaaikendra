@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Withdrawal Management</title>
+
+  <!-- Icons / libs -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+  <style>
+/* Reset and base */
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent; 
+}
+html, body { 
+  height: 100%; 
+  overflow-x: hidden;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #0b2a22;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      #005530,
+      #103f35 2px
+    );
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 8px 12px 16px;
+  line-height: 1.35;
+  min-height: 100%;
+  max-height: 100vh;
+}
+
+:root{
+  --bg: #0f3d33;
+  --bg-2:#10463a;
+  --surface:#f7faf9;
+  --surface-2:#ffffff;
+  --muted:#5a6b67;
+  --brand:#12b886; /* mint */
+  --brand-2:#0fa678;
+  --accent:#ffd166; /* soft amber */
+  --error:#e05666;
+  --ok:#19b36b;
+  --ring: 0 0 0 3px rgba(18,184,134,.18);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 6px 20px rgba(0,0,0,.10);
+  --shadow-soft: 0 2px 10px rgba(0,0,0,.08);
+  --trans: 180ms cubic-bezier(.2,.8,.2,1);
+  --gap: 10px;
+}
+
+/* Layout */
+.container { 
+    display: flex;
+    flex-direction: column; 
+    gap: 0px; 
+    overflow: hidden;
+}
+/* Tab system */
+.tabs {
+  display: flex;
+  gap:2px;
+  margin: 0px;
+  padding:2px;
+  padding-bottom: 3px;
+  padding-top: 3px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none; /* Firefox */
+  position: sticky; /* Make tabs sticky */
+  top: 0; /* Stick to top */
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      #005530,
+      #103f35 2px
+    ); /* Match body background */
+  z-index: 100; /* Ensure tabs stay above scrollable content */
+}
+.tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+.tab {
+  flex: 1;
+  backdrop-filter: blur(10px);
+  padding: 10px 2px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 900;
+  font-family: fantasy;
+  background:rgba(205,255,205,0.2);
+  box-shadow: inset 0 0 20px rgba(0, 675, 80, 0.3);
+  color: rgba(0,0,0,0.7);
+  border: 1.6px solid #fdbd01;
+  border-radius: 8px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  cursor: pointer;
+  transition: var(--trans);
+  white-space: nowrap;
+  min-width: 50px;
+  outline:0.1px solid black;
+}
+.tab.active {
+  color: #fdbd01;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 9px rgba(0, 675, 680, 0.5);
+  background: rgba(22,167,45,0.9);
+  background: linear-gradient(180deg, #50C878, #006400);
+}
+/* UPDATED: Orders container for scrollable content */
+.orders-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+    max-height: 90vh;
+}
+
+/* Withdrawal cards - UPDATED for scrollable area */
+.withdrawal-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+  margin:3px;
+  flex: 1;
+  overflow-y: auto; /* Make cards scrollable */
+  overflow-x: hidden;
+  padding: 2px;
+}
+
+.withdrawal-card {
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      #EEEEEE,
+      #FFFFFF 2px
+    );
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid green;
+  outline:1px solid #FFFFFF;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eef4f1;
+}
+
+.order-id {
+  font-weight: 900;
+  color: #0f3d33;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status-processing {
+  background-color: #cce7ff;
+  color: #004085;
+  border: 1px solid #b3d7ff;
+}
+
+.status-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-failed {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.card-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 10px;
+  color: #5a6b67;
+  font-weight: 700;
+}
+
+.detail-value {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f3d33;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+  text-align: center;
+}
+
+.action-btn:active {
+  transform: scale(.98);
+}
+
+.btn-success {
+  background: linear-gradient(180deg, var(--brand) 0%, var(--brand-2) 100%);
+  color:#07241d;
+  border: 1px solid #ffffff;
+  outline:1px solid #0d8f6c;
+}
+
+.btn-processing {
+  background: linear-gradient(180deg, #12463b 0%, #0e3b32 100%);
+  color: #d7ffef;
+  border: 1px solid #ffffff;
+  outline:1px solid #1a5d4c;
+}
+
+.btn-pending {
+  background: linear-gradient(180deg, #ffd166 0%, #ffc145 100%);
+  color: #5a4200;
+  border: 1px solid #ffffff;
+  outline:1px solid #e6ac00;
+}
+
+.btn-failed {
+  background: linear-gradient(180deg, #e05666 0%, #d14553 100%);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  outline:1px solid #b02a37;
+}
+
+.btn-disabled {
+  background: #cccccc;
+  color: #666666;
+  border: 1px solid #bbbbbb;
+  cursor: not-allowed;
+}
+
+.btn-view {
+  background: linear-gradient(180deg, #5a6b67 0%, #4a5a56 100%);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  outline:1px solid #3a4a46;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      #EEEEEE,
+      #FFFFFF 2px
+    );
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid black;
+  outline:1px solid white;
+  animation: pop .18s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eef4f1;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  font-weight: 900;
+  font-family: Fantasy;
+  color:#0f3d33;
+  font-size: 16px;
+  text-shadow: 0 0.3px 0.6px rgba(0, 687, 67, 0.5);
+}
+
+.modal-close {
+  font-size: 26px;
+  width:30px;
+  background: transparent;
+  color:rgba(0,0,0,0.8);
+  border:none;
+  color:#0f3d33;
+  cursor:pointer;
+  line-height: 1;
+}
+
+.user-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.user-detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-detail-label {
+  font-size: 10px;
+  color: #5a6b67;
+  font-weight: 700;
+}
+
+.user-detail-value {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f3d33;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.amounts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.amount-item {
+  background: #f7fffc;
+  border: 1px solid #c8efe4;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.amount-label {
+  font-size: 10px;
+  color: #5a6b67;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.amount-value {
+  font-size: 14px;
+  font-weight: 900;
+  color: #0f3d33;
+}
+
+/* Animations */
+@keyframes pop { 
+  from { opacity:0; transform: translateY(8px) } 
+  to { opacity:1; transform:none } 
+}
+@keyframes fadeIn { 
+  from { opacity:0 } 
+  to { opacity:1 } 
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f3d33;
+  color: #eafbf3;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 10001;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: none;
+}
+
+/* Loading indicator */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(18,184,134,0.3);
+  border-radius: 50%;
+  border-top-color: var(--brand);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Tab system -->
+    <div class="tabs">
+      <button class="tab active" data-status="pending">Pending</button>
+      <button class="tab" data-status="processing">Processing</button>
+      <button class="tab" data-status="success">Success</button>
+      <button class="tab" data-status="failed">Failed</button>
+    </div>
+
+    <!-- Withdrawal cards container -->
+    <div class="orders-container">
+    <div class="withdrawal-cards" id="withdrawalCards">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Details Modal -->
+  <div class="modal" id="userModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">USER DETAILS</div>
+        <button class="modal-close" id="closeUserModal"><i class="fas fa-circle-xmark"></i></button>
+      </div>
+      
+      <div class="user-details">
+        <div class="user-detail-item">
+          <div class="user-detail-label">User UID</div>
+          <div class="user-detail-value" id="modalUserUID">-</div>
+        </div>
+        <div class="user-detail-item">
+          <div class="user-detail-label">Email</div>
+          <div class="user-detail-value" id="modalUserEmail">-</div>
+        </div>
+      </div>
+      
+      <div class="amounts-grid">
+        <div class="amount-item">
+          <div class="amount-label">Pending Amount</div>
+          <div class="amount-value" id="modalPendingAmount">₹0.00</div>
+        </div>
+        <div class="amount-item">
+          <div class="amount-label">Processing Amount</div>
+          <div class="amount-value" id="modalProcessingAmount">₹0.00</div>
+        </div>
+        <div class="amount-item">
+          <div class="amount-label">Success Amount</div>
+          <div class="amount-value" id="modalSuccessAmount">₹0.00</div>
+        </div>
+        <div class="amount-item">
+          <div class="amount-label">Failed Amount</div>
+          <div class="amount-value" id="modalFailedAmount">₹0.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0Ne46PQqmvUnsq89GUJlKfLpWvsHmtbk",
+    authDomain: "kimi-win-90b82.firebaseapp.com",
+    databaseURL: "https://kimi-win-90b82-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kimi-win-90b82",
+    storageBucket: "kimi-win-90b82.appspot.com",
+    messagingSenderId: "889222798634",
+    appId: "1:889222798634:web:86770b996003152f19d253"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const database = firebase.database();
+
+  // Current active tab
+  let currentTab = 'pending';
+  let withdrawalOrders = [];
+  let userData = {};
+  let realtimeListener = null;
+  let isLoading = false;
+
+  // Initialize the page
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load withdrawal orders from Firebase
+    loadWithdrawalOrdersFromFirebase();
+    
+    // Set up tab event listeners
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const status = this.getAttribute('data-status');
+        switchTab(status);
+      });
+    });
+    
+    // Set up modal close button
+    document.getElementById('closeUserModal').addEventListener('click', function() {
+      document.getElementById('userModal').style.display = 'none';
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('userModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  });
+
+  // Show loading function - only when needed
+  function showLoading(show) {
+    if (isLoading === show) return; // Prevent unnecessary DOM updates
+    
+    isLoading = show;
+    const cardsContainer = document.getElementById('withdrawalCards');
+    
+    if (show) {
+      cardsContainer.innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+        </div>
+      `;
+    }
+    // Don't clear content when hiding loading - let the actual content render
+  }
+
+  // Load withdrawal orders from Firebase
+  function loadWithdrawalOrdersFromFirebase() {
+    // Only show loading on initial load, not on real-time updates
+    if (withdrawalOrders.length === 0) {
+      showLoading(true);
+    }
+    
+    database.ref('appusers').once('value').then(snapshot => {
+      withdrawalOrders = [];
+      userData = {};
+      
+      const users = snapshot.val();
+      
+      if (!users) {
+        showNoDataMessage();
+        showLoading(false);
+        return;
+      }
+      
+      // Iterate through all users
+      for (const uid in users) {
+        const user = users[uid];
+        
+        // Store user data for modal
+        userData[uid] = {
+          email: user.email || 'Not available',
+          pendingAmount: 0,
+          processingAmount: 0,
+          successAmount: 0,
+          failedAmount: 0
+        };
+        
+        // Check if user has withdrawal history
+        if (user.withdrawalHistory) {
+          for (const withdrawalId in user.withdrawalHistory) {
+            const withdrawal = user.withdrawalHistory[withdrawalId];
+            
+            // Validate withdrawal data
+            if (!withdrawal) continue;
+            
+            // Get withdrawal details based on method
+            let withdrawalDetails = {};
+            if (withdrawal.method === 'imps') {
+              withdrawalDetails = withdrawal.withdrawalDetails || {};
+            } else if (withdrawal.method === 'upi') {
+              withdrawalDetails = withdrawal.withdrawalDetails || {};
+            }
+            
+            // Create withdrawal order object
+            const withdrawalOrder = {
+              id: withdrawalId,
+              userUID: uid,
+              method: withdrawal.method || 'imps',
+              account: withdrawal.method === 'imps' ? (withdrawalDetails.accountNumber || 'N/A') : (withdrawalDetails.upiId || 'N/A'),
+              ifsc: withdrawal.method === 'imps' ? (withdrawalDetails.ifscCode || 'N/A') : 'UPI',
+              name: withdrawal.method === 'imps' ? (withdrawalDetails.accountName || 'N/A') : (withdrawalDetails.upiName || 'N/A'),
+              amount: parseFloat(withdrawal.amount) || 0,
+              fee: parseFloat(withdrawal.fee) || 0,
+              serviceFee: parseFloat(withdrawal.serviceFee) || 10,
+              date: withdrawal.timestamp ? new Date(withdrawal.timestamp).toISOString() : new Date().toISOString(),
+              status: withdrawal.status || 'pending'
+            };
+            
+            withdrawalOrders.push(withdrawalOrder);
+            
+            // Update user amounts based on status
+            if (withdrawalOrder.status === 'pending') {
+              userData[uid].pendingAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'processing') {
+              userData[uid].processingAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'success') {
+              userData[uid].successAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'failed') {
+              userData[uid].failedAmount += withdrawalOrder.amount;
+            }
+          }
+        }
+      }
+      
+      // Load initial withdrawal cards
+      loadWithdrawalCards(currentTab);
+      
+      // Set up real-time listener for changes
+      setupRealtimeListener();
+      
+      // Hide loading after content is loaded
+      showLoading(false);
+    }).catch(error => {
+      console.error("Error loading withdrawal orders:", error);
+      showToast("Failed to load withdrawal orders");
+      showNoDataMessage();
+      showLoading(false);
+    });
+  }
+
+  // Show no data message
+  function showNoDataMessage() {
+    const cardsContainer = document.getElementById('withdrawalCards');
+    cardsContainer.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: #5a6b67; font-size: 14px;">
+        <i class="fas fa-exclamation-circle" style="font-size: 36px; margin-bottom: 10px;"></i>
+        <div>No withdrawal data available</div>
+      </div>
+    `;
+  }
+
+  // Set up real-time listener for changes
+  function setupRealtimeListener() {
+    // Remove existing listener if any
+    if (realtimeListener) {
+      database.ref('appusers').off('value', realtimeListener);
+    }
+    
+    // Set up new listener - don't show loading for real-time updates
+    realtimeListener = database.ref('appusers').on('value', snapshot => {
+      // Reload data when changes occur without showing loading
+      reloadDataSilently();
+    });
+  }
+
+  // Reload data without showing loading spinner
+  function reloadDataSilently() {
+    database.ref('appusers').once('value').then(snapshot => {
+      withdrawalOrders = [];
+      userData = {};
+      
+      const users = snapshot.val();
+      
+      if (!users) {
+        showNoDataMessage();
+        return;
+      }
+      
+      // Iterate through all users
+      for (const uid in users) {
+        const user = users[uid];
+        
+        // Store user data for modal
+        userData[uid] = {
+          email: user.email || 'Not available',
+          pendingAmount: 0,
+          processingAmount: 0,
+          successAmount: 0,
+          failedAmount: 0
+        };
+        
+        // Check if user has withdrawal history
+        if (user.withdrawalHistory) {
+          for (const withdrawalId in user.withdrawalHistory) {
+            const withdrawal = user.withdrawalHistory[withdrawalId];
+            
+            // Validate withdrawal data
+            if (!withdrawal) continue;
+            
+            // Get withdrawal details based on method
+            let withdrawalDetails = {};
+            if (withdrawal.method === 'imps') {
+              withdrawalDetails = withdrawal.withdrawalDetails || {};
+            } else if (withdrawal.method === 'upi') {
+              withdrawalDetails = withdrawal.withdrawalDetails || {};
+            }
+            
+            // Create withdrawal order object
+            const withdrawalOrder = {
+              id: withdrawalId,
+              userUID: uid,
+              method: withdrawal.method || 'imps',
+              account: withdrawal.method === 'imps' ? (withdrawalDetails.accountNumber || 'N/A') : (withdrawalDetails.upiId || 'N/A'),
+              ifsc: withdrawal.method === 'imps' ? (withdrawalDetails.ifscCode || 'N/A') : 'UPI',
+              name: withdrawal.method === 'imps' ? (withdrawalDetails.accountName || 'N/A') : (withdrawalDetails.upiName || 'N/A'),
+              amount: parseFloat(withdrawal.amount) || 0,
+              fee: parseFloat(withdrawal.fee) || 0,
+              serviceFee: parseFloat(withdrawal.serviceFee) || 10,
+              date: withdrawal.timestamp ? new Date(withdrawal.timestamp).toISOString() : new Date().toISOString(),
+              status: withdrawal.status || 'pending'
+            };
+            
+            withdrawalOrders.push(withdrawalOrder);
+            
+            // Update user amounts based on status
+            if (withdrawalOrder.status === 'pending') {
+              userData[uid].pendingAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'processing') {
+              userData[uid].processingAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'success') {
+              userData[uid].successAmount += withdrawalOrder.amount;
+            } else if (withdrawalOrder.status === 'failed') {
+              userData[uid].failedAmount += withdrawalOrder.amount;
+            }
+          }
+        }
+      }
+      
+      // Reload current tab without showing loading
+      reloadWithdrawalCardsSilently(currentTab);
+    }).catch(error => {
+      console.error("Error reloading withdrawal orders:", error);
+    });
+  }
+
+  // Switch between tabs
+  function switchTab(status) {
+    // Update active tab
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelector(`.tab[data-status="${status}"]`).classList.add('active');
+    
+    // Update current tab and load records
+    currentTab = status;
+    loadWithdrawalCards(status);
+  }
+
+  // Load withdrawal cards based on status
+  function loadWithdrawalCards(status) {
+    const cardsContainer = document.getElementById('withdrawalCards');
+    
+    // Show loading only if we don't have data yet
+    if (withdrawalOrders.length === 0) {
+      showLoading(true);
+    } else {
+      // Show brief loading for tab switches
+      showLoading(true);
+    }
+    
+    // Use setTimeout to allow DOM to update and show loading
+    setTimeout(() => {
+      renderWithdrawalCards(status);
+    }, 50);
+  }
+
+  // Reload withdrawal cards without showing loading
+  function reloadWithdrawalCardsSilently(status) {
+    renderWithdrawalCards(status);
+  }
+
+  // Render withdrawal cards (common function for both loading and silent reload)
+  function renderWithdrawalCards(status) {
+    const cardsContainer = document.getElementById('withdrawalCards');
+    const filteredOrders = withdrawalOrders.filter(order => order.status === status);
+    
+    if (filteredOrders.length === 0) {
+      cardsContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; color: #5a6b67; font-size: 14px;">
+          <i class="fas fa-inbox" style="font-size: 36px; margin-bottom: 10px;"></i>
+          <div>No ${status} withdrawal orders found</div>
+        </div>
+      `;
+      showLoading(false);
+      return;
+    }
+    
+    // Clear container
+    cardsContainer.innerHTML = '';
+    
+    // Use DocumentFragment for better performance
+    const fragment = document.createDocumentFragment();
+    
+    filteredOrders.forEach(order => {
+      const card = createWithdrawalCard(order);
+      fragment.appendChild(card);
+    });
+    
+    cardsContainer.appendChild(fragment);
+    showLoading(false);
+  }
+
+  // Create a withdrawal card
+  function createWithdrawalCard(order) {
+    const card = document.createElement('div');
+    card.className = 'withdrawal-card';
+    
+    // Format date for display
+    const dateObj = new Date(order.date);
+    const formattedDate = dateObj.toLocaleDateString('en-IN') + ' ' + dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    
+    // Determine status badge class
+    let statusClass = '';
+    switch(order.status) {
+      case 'pending': statusClass = 'status-pending'; break;
+      case 'processing': statusClass = 'status-processing'; break;
+      case 'success': statusClass = 'status-success'; break;
+      case 'failed': statusClass = 'status-failed'; break;
+    }
+    
+    // Calculate total amount (amount + fee + serviceFee)
+    const totalAmount = order.amount + order.fee + order.serviceFee;
+    
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="order-id">Order: ${order.id.substring(0, 12)}${order.id.length > 12 ? '...' : ''}</div>
+        <div class="status-badge ${statusClass}">${order.status}</div>
+      </div>
+      
+      <div class="card-details">
+        <div class="detail-item">
+          <div class="detail-label">User UID</div>
+          <div class="detail-value">${order.userUID.substring(0, 10)}${order.userUID.length > 10 ? '...' : ''}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Method</div>
+          <div class="detail-value">${order.method === 'imps' ? 'Bank (IMPS)' : 'UPI'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">${order.method === 'imps' ? 'Account' : 'UPI ID'}</div>
+          <div class="detail-value">${order.account}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">${order.method === 'imps' ? 'IFSC' : 'Type'}</div>
+          <div class="detail-value">${order.ifsc}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Name</div>
+          <div class="detail-value">${order.name}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Amount</div>
+          <div class="detail-value">₹${order.amount.toFixed(2)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Tax (3%)</div>
+          <div class="detail-value">₹${order.fee.toFixed(2)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Service Fee</div>
+          <div class="detail-value">₹${order.serviceFee.toFixed(2)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Total</div>
+          <div class="detail-value">₹${totalAmount.toFixed(2)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Date & Time</div>
+          <div class="detail-value">${formattedDate}</div>
+        </div>
+      </div>
+      
+      <div class="card-actions">
+        <button class="action-btn btn-view" onclick="viewUserDetails('${order.userUID}')">
+          <i class="fas fa-eye"></i> View User
+        </button>
+        ${createActionButtons(order)}
+      </div>
+    `;
+    
+    return card;
+  }
+
+  // Create action buttons based on order status
+  function createActionButtons(order) {
+    let buttons = '';
+    
+    // If status is success or failed, disable all buttons except view
+    if (order.status === 'success' || order.status === 'failed') {
+      buttons = `
+        <button class="action-btn btn-disabled" disabled>
+          <i class="fas fa-check"></i> Approved
+        </button>
+        <button class="action-btn btn-disabled" disabled>
+          <i class="fas fa-times"></i> Reject
+        </button>
+        <button class="action-btn btn-disabled" disabled>
+          <i class="fas fa-sync"></i> Processing
+        </button>
+        <button class="action-btn btn-disabled" disabled>
+          <i class="fas fa-clock"></i> Pending
+        </button>
+      `;
+    } else {
+      // For pending and processing, show appropriate buttons
+      if (order.status === 'pending') {
+        buttons = `
+          <button class="action-btn btn-success" onclick="updateStatus('${order.id}', '${order.userUID}', 'success')">
+            <i class="fas fa-check"></i> Approved
+          </button>
+          <button class="action-btn btn-failed" onclick="updateStatus('${order.id}', '${order.userUID}', 'failed')">
+            <i class="fas fa-times"></i> Reject
+          </button>
+          <button class="action-btn btn-processing" onclick="updateStatus('${order.id}', '${order.userUID}', 'processing')">
+            <i class="fas fa-sync"></i> Processing
+          </button>
+          <button class="action-btn btn-disabled" disabled>
+            <i class="fas fa-clock"></i> Pending
+          </button>
+        `;
+      } else if (order.status === 'processing') {
+        buttons = `
+          <button class="action-btn btn-success" onclick="updateStatus('${order.id}', '${order.userUID}', 'success')">
+            <i class="fas fa-check"></i> Approved
+          </button>
+          <button class="action-btn btn-failed" onclick="updateStatus('${order.id}', '${order.userUID}', 'failed')">
+            <i class="fas fa-times"></i> Reject
+          </button>
+          <button class="action-btn btn-disabled" disabled>
+            <i class="fas fa-sync"></i> Processing
+          </button>
+          <button class="action-btn btn-pending" onclick="updateStatus('${order.id}', '${order.userUID}', 'pending')">
+            <i class="fas fa-clock"></i> Pending
+          </button>
+        `;
+      }
+    }
+    
+    return buttons;
+  }
+
+  // Update withdrawal status in Firebase
+  function updateStatus(orderId, userUID, newStatus) {
+    // Show loading state for the specific action
+    const toast = document.getElementById('toast');
+    toast.textContent = `Updating status to ${newStatus}...`;
+    toast.style.display = 'block';
+    
+    // Update the status in Firebase
+    database.ref(`appusers/${userUID}/withdrawalHistory/${orderId}/status`).set(newStatus)
+      .then(() => {
+        // Show success message
+        showToast(`Order ${orderId.substring(0, 8)}... status updated to ${newStatus}`);
+        
+        // Update local data
+        const orderIndex = withdrawalOrders.findIndex(order => order.id === orderId && order.userUID === userUID);
+        if (orderIndex !== -1) {
+          const oldStatus = withdrawalOrders[orderIndex].status;
+          withdrawalOrders[orderIndex].status = newStatus;
+          
+          // Update user data amounts
+          const user = userData[userUID];
+          if (user) {
+            // Remove amount from old status
+            if (oldStatus === 'pending') {
+              user.pendingAmount -= withdrawalOrders[orderIndex].amount;
+            } else if (oldStatus === 'processing') {
+              user.processingAmount -= withdrawalOrders[orderIndex].amount;
+            } else if (oldStatus === 'success') {
+              user.successAmount -= withdrawalOrders[orderIndex].amount;
+            } else if (oldStatus === 'failed') {
+              user.failedAmount -= withdrawalOrders[orderIndex].amount;
+            }
+            
+            // Add amount to new status
+            if (newStatus === 'pending') {
+              user.pendingAmount += withdrawalOrders[orderIndex].amount;
+            } else if (newStatus === 'processing') {
+              user.processingAmount += withdrawalOrders[orderIndex].amount;
+            } else if (newStatus === 'success') {
+              user.successAmount += withdrawalOrders[orderIndex].amount;
+            } else if (newStatus === 'failed') {
+              user.failedAmount += withdrawalOrders[orderIndex].amount;
+            }
+          }
+        }
+        
+        // Reload the current tab without showing loading
+        reloadWithdrawalCardsSilently(currentTab);
+      })
+      .catch(error => {
+        console.error("Error updating status:", error);
+        showToast("Failed to update status");
+      });
+  }
+
+  // View user details in modal
+  function viewUserDetails(userUID) {
+    const user = userData[userUID];
+    
+    if (user) {
+      document.getElementById('modalUserUID').textContent = userUID;
+      document.getElementById('modalUserEmail').textContent = user.email;
+      document.getElementById('modalPendingAmount').textContent = `₹${user.pendingAmount.toFixed(2)}`;
+      document.getElementById('modalProcessingAmount').textContent = `₹${user.processingAmount.toFixed(2)}`;
+      document.getElementById('modalSuccessAmount').textContent = `₹${user.successAmount.toFixed(2)}`;
+      document.getElementById('modalFailedAmount').textContent = `₹${user.failedAmount.toFixed(2)}`;
+      
+      document.getElementById('userModal').style.display = 'flex';
+    } else {
+      showToast("User data not found");
+    }
+  }
+
+  // Show toast notification
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.display = 'block';
+    
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+</script>
+</body>
+</html>

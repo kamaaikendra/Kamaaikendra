@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dice Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+           box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #1b1c22;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+            width: 100vw;
+            height: 45px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+            z-index: 10000000000001;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-icons-left, .nav-icons-right {
+            display: flex;
+            align-items: center;
+            color: #fdbd02;
+            font-size: 25px;
+        }
+        .nav-icons-left i:active, .nav-icons-right i:active {
+            opacity: 0.6;
+        }
+        .deposit-btn {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .deposit-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Game Area */
+        .game-container {
+            background: linear-gradient(
+  130deg,
+  #A23BEC 0%,
+  #5e31ad 40%,
+  #4c289d 70%,
+  #3a1d8a 100%
+);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding:10px;
+            margin: 5px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 12px;
+            box-shadow: inset 10px 20px 65px 20px rgba(22,10,20,0.3);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Header Controls (Last Results) */
+        .header-controls {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: -6px;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            height: 25px;
+            position: relative;
+            z-index: 50;
+        }
+
+        /* Last Results Container */
+        .last-results-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .last-results-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .last-results-strip {
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+            flex: 1;
+            justify-content: flex-start;
+            align-items: center;
+            height: 20px;
+        }
+
+        .history-item-pill {
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.05);
+            animation: popIn 0.3s ease;
+        }
+        .history-item-pill.win {
+            color: #4caf50;
+        }
+        .history-item-pill.lose {
+            color: #ccc;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .history-toggle-btn {
+            background: #6a34c9;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: white;
+            padding: 5px 8px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+
+        .last-results-dropdown {
+            display: none;
+            position: absolute;
+            top: 20%;
+            left: -3px;
+            background: #6a34c9;
+            border-radius: 12px;
+            padding: 10px;
+            width: 100%;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.6);
+        }
+        
+        .last-results-dropdown.show { display: block; }
+        .last-results-dropdown-title { color: white; font-size: 13px; margin-bottom: 12px; font-weight: 500; text-transform: uppercase;}
+        .last-results-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-start;
+        }
+
+        /* --- NEW DICE BOARD AREA --- */
+        .dice-board-container {
+            background: rgba(2,0,9,0.3);
+            border-radius: 8px;
+            backdrop-filter: blur(2px);
+            padding: 5px 10px;
+            margin: -5px;
+            margin-bottom: 10px;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.45);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+        }
+
+        .dice-result-display {
+            font-size: 55px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom:10px;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: color 0.1s;
+        }
+
+        .dice-tracks-wrapper {
+            position: relative;
+            margin: 0px -10px;
+            padding-bottom: 6px;
+            padding-top: 1px;
+        }
+
+        .dice-tracks {
+            position: relative;
+            height: 60px;
+            overflow: none;
+        }
+
+        .track-top, .track-bottom {
+            display: flex;
+            height:22.5px;
+            width: 100%;
+        }
+        .track-top {
+            margin-bottom:8px;
+            margin-top: 4px;
+        }
+
+        .bar-red {
+            background: repeating-linear-gradient(90deg, #a81123, #a81123 3px, #c7152a 3px, #c7152a 6px);
+        }
+        .bar-green {
+            background: repeating-linear-gradient(90deg, #1db079, #1db079 3px, #24c98c 3px, #24c98c 6px);
+        }
+        .bar-blue {
+            background: repeating-linear-gradient(90deg, #00a0eb, #00a0eb 3px, #00b4ff 3px, #00b4ff 6px);
+        }
+
+        .dice-thumb {
+            position: absolute;
+            top: 50%;
+            left: 50%; /* dynamic */
+            transform: translate(-50%, -50%);
+            width: 26px;
+            height: 26px;
+            background: #ffc107;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition:  0.1s linear;
+            filter: drop-shadow(0 0 12px rgba(255, 0, 155, 0.65));
+        }
+        .dice-thumb .dot {
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        .dice-scale {
+            display: flex;
+            justify-content: space-between;
+            color: #8a8ca0;
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .ticks-overlay {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 0;
+        }
+        .ticks-overlay span {
+            width: 1.2px;
+            height: 7px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- NEW DICE CONTROLS AREA --- */
+        .dice-controls-panel {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(3px);
+            border-radius: 8px;
+            padding: 10px;
+            margin: -5px;
+            border: 1px solid rgba(0,0,0,0.45);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+        }
+
+        .payout-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .payout-input-group {
+            display: flex;
+            flex-direction: column;
+            width: 90px;
+            position: relative;
+        }
+        .payout-input-group label {
+            color: #8a8ca0;
+            font-size: 11px;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        .input-wrap {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0,0,0,0.6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 4px 10px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .input-wrap input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            width: 100%;
+            text-align:center;
+            outline: none;
+        }
+        .input-wrap span {
+            color: #ccc;
+            margin-left: 3px;
+            font-size: 14px;
+        }
+
+        /* Slide-up Popup for Payout Keyboard */
+        .payout-keyboard-popup {
+            display: none;
+            position: absolute;
+            bottom: 75%; 
+            left: 4%;
+            width: 100% auto;
+            background: #50279c;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .payout-keyboard-popup.show { display: block; }
+
+        .slider-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .slider-ticks {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 8px;
+            margin-top: 0px;
+        }
+        .slider-ticks span {
+            width: 1.2px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            outline: none;
+            border: 1px solid rgba(0,0,0,0.8);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 24px;
+            border-radius: 12px;
+            background: #893BFF;
+            border: 1px solid #5a1ec4;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.3);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 3 12 9 6"></polyline><polyline points="15 6 21 12 15 18"></polyline></svg>');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 18px 18px;
+        }
+
+        .chance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background:rgba(2,4,9,0.3);
+            backdrop-filter: blur(3px);
+            padding: 3px 25px;
+            margin:-10px;
+            margin-top: 5px;
+            border-radius: 0px 0px 6px 6px;
+        }
+        .potential-win {
+            color: #8a8ca0;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+        .potential-win span {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .chance-display {
+            color: #8a8ca0;
+            font-size: 13px;
+        }
+        .chance-display span {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        /* parent */
+.slider-group {
+    position: relative;
+}
+
+/* slider stays on top */
+.custom-slider {
+    position: relative;
+    z-index: 2;
+}
+
+/* ticks go under */
+.slider-ticks {
+    position: relative;
+    z-index: 1;
+}
+
+        /* Controls Panel Base */
+        .controls-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 10px 5px;
+            margin: auto -6px -6px -6px;
+            position: relative;
+            z-index: 60;
+        }
+        
+         .action-buttons-wrapper {
+            display: flex;
+            gap: 7px;
+            align-items: stretch;
+            margin-bottom: 12px;
+            height: 55px;
+        }
+        .autoplay-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #008cd1 0%, #005a8c 100%); 
+            border:2px solid black;
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 0px 0 rgba(0,0,0,0);
+            transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .autoplay-btn:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            transform: translateY(2px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+
+        .autoplay-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+        .autoplay-icon {
+    width: 35px;
+    height: 35px;
+    /* This applies the 3D drop-shadow directly to the white shapes inside the SVG */
+    filter: drop-shadow(0px 2px 1px rgba(0,0,0,0.5));
+}
+
+        .autoplay-btn.active-red {
+            background: #e42c42;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        .bet-action-btn {
+            flex: 1;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s;
+            line-height: 1.1;
+            height: 50px;
+            border-radius: 18px;
+            color: white;
+            border: 2px solid black;
+            box-shadow: 
+  2px 2px 6px rgba(0, 0, 0, 0.45),
+  inset -1px -1px 0px rgba(0, 0, 0, 0.35),
+  inset 1px 1px 0px rgba(255,255,255, 0.2);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        }
+        .bet-action-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+        .btn-under { 
+            background: linear-gradient(90deg, #127a55 0%, #1fa877 50%, #127a55 100%);
+        }
+        .btn-over {
+            background: linear-gradient(90deg, #005a8c 0%, #008cd1 50%, #005a8c 100%);
+        }
+
+        /* Bet Input Area */
+        .bet-input-wrapper {
+            position: relative;
+        }
+
+        /* Slide-up Popups */
+        @keyframes slideUpPopup {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .slide-up-popup {
+            display: none;
+            position: absolute;
+            bottom: 75%; 
+            left: 4%;
+            width: 100% auto;
+            background: #50279c;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .slide-up-popup.show { display: block; }
+
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .keyboard-btn {
+            background: #6a34c9;
+            border: 1px solid rgba(0,0,0,0.5);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 500;
+            height: 30px;
+            width: 65px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .keyboard-btn:active { background: #4a1f94; }
+
+        .keyboard-close-bar {
+            background: #391c7a;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            width: 100%;
+            height: 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+         .slide-up-popup2 {
+            display: none;
+            position: absolute;
+            bottom: 85%; 
+            left: 0;
+            width: 100%;
+            background: #2b135c;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            border: 1px solid rgba(0,0,0,0.6);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .slide-up-popup2.show { display: block; }
+        .amounts-title { text-align: center; color: #fff; font-size: 14px; font-weight: 500; margin-bottom:8px; }
+        .amounts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .amount-btn {
+            background: #50279c;
+            border: 1px solid rgba(0,0,0,0.8);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .amount-btn:active { background: #391c7a; }
+
+        .bet-input-container {
+            background: #5e31ad;
+            border: 1px solid rgba(0,0,0,0.8);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.18);
+            border-radius: 30px;
+            padding: 0px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 50px;
+            margin-bottom: 0px;
+        }
+
+        .bet-input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .bet-label {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .bet-input-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.8);
+            width: 84%;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .bet-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .bet-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .bet-control-btn {
+            width: 38px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0, 0.6);
+            background: #5e31ad;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+        .bet-control-btn2 {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0, 0.5);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.25);
+            background: #5e31ad;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .bet-control-btn:active, .bet-control-btn2:active {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Bottom Status Bar */
+        .bottom-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            margin: -5px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .bottom-btn {
+            background: #5e31ad;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 4px 40px;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .help-btn {
+            background: #ffc107;
+            border: 1px solid black;
+            color: black;
+            outline: 2px solid #ffc107;
+            width: 19px;
+            font-size: 18px;
+            height: 19px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: -10px;
+        }
+
+        .balance-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #ccc;
+        }
+
+        .menu-hamburger {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            background: #50279c;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+        .menu-hamburger span { width: 14px; height: 2px; background: #fff; border-radius: 1px; }
+
+        /* Autoplay Modal Specific */
+        #autoplay-modal .modal-content {
+            background: #1c1d22;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 380px;
+            position: relative;
+        }
+        
+        .ap-section {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .ap-section-title {
+            text-align: center; color: #fff; font-size: 14px; margin-bottom: 12px; font-weight: 500;
+        }
+
+        .color-toggles {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+        
+        .color-toggle-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 5px;
+            background: #2a2e35;
+            border: 1px solid rgba(0,0,0,0.5);
+            border-radius: 8px;
+            color: #ccc;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .color-toggle-btn.selected {
+            background: #363c45;
+            color: #fff;
+            border-color: #5a8dec;
+        }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        .autoplay-rounds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .autoplay-round-btn {
+            background: #2a2e35; border: 1px solid rgba(0,0,0,0.5); color: #ccc; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+        .autoplay-round-btn.selected { background: #363c45; color: #fff; border-color: #5a8dec;}
+        .autoplay-round-btn.selected::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #74bc14; border-radius: 50%; }
+        .autoplay-round-btn:not(.selected)::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #555; border-radius: 50%; }
+
+        .autoplay-condition-row {
+            display: flex; justify-content: space-between; align-items: center; background: #2a2e35; padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(0,0,0,0.3);
+        }
+        .auto-toggle {
+            position: relative; width: 36px; height: 20px; background: #555; border-radius: 12px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+        }
+        .auto-toggle::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .auto-toggle.active { background: #74bc14; }
+        .auto-toggle.active::after { left: 18px; }
+
+        .autoplay-input-group {
+            display: flex; align-items: center; background: rgba(0,0,0,0.4); border-radius: 20px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); padding: 3px; width: 130px; justify-content: space-between;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .autoplay-input-group button {
+            background: #3a3f47; border: none; color: #ccc; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px;
+        }
+        .autoplay-input-group button:active { background: #555; }
+        .autoplay-input-group input { width: 60px; background: transparent; border: none; color: #fff; text-align: center; font-size: 14px; font-weight: 700; outline: none; pointer-events: none; }
+
+        .start-auto-btn {
+            background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+            border: none; border-bottom: 2px solid #1b5e20; color: white; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 15px; text-transform: uppercase;
+        }
+
+        /* Modals Generic */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+            background: #1b1c22; width: 95%; max-width: 350px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; animation: slideUp 0.3s ease; border: 1px solid rgba(255,255,255,0.1);
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+        
+        .modal-header { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);}
+        .modal-title { font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase; display: flex; align-items: center; gap: 8px;}
+        .modal-title i { color: #5a8dec; }
+        .modal-close {
+            background: #2a2e35; border: 1px solid rgba(0,0,0,0.5); color: #aaa; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+        .modal-body { padding: 15px; color: #ccc; font-size: 14px; line-height: 1.5; max-height: 70vh; overflow-y: auto; }
+        
+       /* Container and List Reset */
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .menu-list li {
+            padding: 12px 15px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #c2c7cc;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .menu-list li i, .menu-list li svg {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #a1a5b0;
+        }
+
+        #sound-toggle-menu-btn { background: #141518; border-radius: 8px; margin-bottom: 8px; }
+        #freebets-menu-btn, #recordsmenu-btn, #limits-menu-btn, #how-to-play-menu-btn, #rules-menu-btn, #fairnessmenu-btn {
+            background: #141518; border-bottom: 1px solid #232529;
+        }
+        #freebets-menu-btn { border-top-left-radius: 8px; border-top-right-radius: 8px; }
+        #fairnessmenu-btn { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom: none; margin-bottom: 8px; }
+        #closemenu { justify-content: center; color: #8a919e; background: transparent; padding:10px; }
+        #closemenu i { margin-right: 6px; color: #8a919e; }
+        .menu-list li:last-child {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 15px 4px 4px 4px; border-top: 2px solid #292b30; cursor: default;
+        }
+
+        .limits-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .limits-table td { padding: 10px; background: #2a2c30; }
+        .limits-table td:first-child { border-radius: 8px 0 0 8px; color: #aaa; }
+        .limits-table td:last-child { border-radius: 0 8px 8px 0; text-align: right; font-weight: 700; color: #fff; }
+
+        .message-toast {
+            position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 1px solid #445; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .message-toast.show { opacity: 1; }
+
+        .auth-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .auth-popup-content { background: #222428; padding: 25px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; border: 1px solid #5a8dec; }
+        .auth-popup h2 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+        .auth-popup p { color: #5a8dec; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+        .auth-popup-btn { background: linear-gradient(180deg, #1E90FF 0%, #0a4fbc 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; width: 100%; cursor: pointer; }
+
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1b1c22; z-index: 99999; display: flex; justify-content: center; align-items: center; }
+        .spinner div { width: 12px; height: 12px; background: #e42c42; border-radius: 50%; margin: 0 4px; display: inline-block; animation: bounce 0.4s infinite ease-in-out both; }
+        .spinner div:nth-child(1) { animation-delay: -0.32s; }
+        .spinner div:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0.9); } 40% { transform: scale(1); } }
+        
+        .auto-keyboard-popup {
+            position: absolute;
+            top: 32%;
+            left: 15%;
+            background: #24272c;
+            border: 1px solid #1a1c20;
+            padding: 10px;
+            border-radius: 12px;
+            z-index: 200;
+            display: none;
+            width: 70%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .auto-keyboard-popup.show { display: block; }
+        .auto-keyboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+        .auto-keyboard-btn {
+            background: #3a3f47;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 500;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .auto-keyboard-btn:active { background: #2a2e35; }
+        .auto-keyboard-close {
+            background: #1a1c20;
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            width: 100%;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* BET HISTORY STYLES */
+        .list-header { display: flex; padding: 5px 15px; color: #888; font-size: 11px; align-items: center; background: #1b1c1d; }
+        .list-row { display: flex; padding: 8px 15px; align-items: center; font-size: 12px; border-bottom: 1px solid #1b1c1d; color: #ddd; }
+        .list-row.win { background: rgba(40, 167, 69, 0.15); border: 1px solid #28a745; border-radius: 6px; margin: 4px; border-bottom: 1px solid #28a745; }
+        .list-row.win .col-date { color: #fff; }
+        .list-row.lose { background: rgba(167,69,40,0.15); border-radius: 6px; margin: 4px; border: 1px solid rgba(280,20,10,1); }
+        .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 10px; color: #888; }
+        .col-bet { flex: 1.5; text-align: left; }
+        .col-x { flex: 1; text-align: center; }
+        .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+        .x-pill { background: rgba(255,255,255,0.1); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+        .x-pill.blue-bg { background: #1a425c; color: #4db8ff; }
+        .action-icons { display: flex; gap: 5px; color: #28a745; font-size: 12px; margin-left: auto; }
+        .action-icons i { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner">
+            <div></div><div></div><div></div>
+        </div>
+    </div>
+
+    <div class="top-nav">
+        <div class="nav-icons-left">
+            <i class="fas fa-reply" id="top-back-btn" onclick="window.location.href='home.html'"></i>
+        </div>
+        <div class="nav-icons-right">
+            <button class="deposit-btn" id="top-deposit-btn" onclick="window.location.href='deposit.html'">
+                Deposit
+            </button>
+        </div>
+    </div>
+    
+    <div class="game-container">
+        
+        <div class="header-controls">
+            <div class="last-results-wrapper">
+                <div class="last-results-main">
+                    <div class="last-results-strip" id="last-results-strip">
+                        </div>
+                    <button class="history-toggle-btn" id="history-dropdown-btn">
+                        <i class="fas fa-history" style="font-size: 14px;"></i> 
+                        <i class="fas fa-chevron-down" style="font-size:10px; margin-left:5px;"></i>
+                    </button>
+                </div>
+                <div class="last-results-dropdown" id="last-results-dropdown">
+                    <div class="last-results-dropdown-title">LAST RESULTS</div>
+                    <div class="last-results-grid" id="last-results-grid">
+                         </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="flex-grow: 1;"></div>
+
+        <div class="dice-board-container">
+            <div class="dice-result-display" id="dice-result">50.00</div>
+            
+            <div class="dice-tracks-wrapper">
+                <div class="ticks-overlay" style="top: -5px;">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="dice-tracks" id="dice-tracks">
+                    <div class="track-top">
+                        <div class="bar-red" id="bar-top-red" style="width: 51.5%;"></div>
+                        <div class="bar-blue" id="bar-top-blue" style="width: 48.5%;"></div>
+                    </div>
+                    <div class="track-bottom">
+                        <div class="bar-green" id="bar-bottom-green" style="width: 48.5%;"></div>
+                        <div class="bar-red" id="bar-bottom-red" style="width: 51.5%;"></div>
+                    </div>
+                    <div class="dice-thumb" id="dice-thumb" style="left: 50%;"><div class="dot"></div></div>
+                </div>
+                <div class="ticks-overlay" style="top: 60px;">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="dice-scale">
+                    <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+                </div>
+            </div>
+            </div>
+            
+            <div class="dice-controls-panel">
+                <div class="payout-row">
+                    <div class="payout-input-group">
+                        <label>Payout</label>
+                        <div class="input-wrap" id="payout-input-trigger" style="cursor: pointer;">
+                            <input type="text" id="payout-input" value="2.00" readonly style="pointer-events: none;">
+                            <span style="pointer-events: none;">x</span>
+                        </div>
+                        
+                        <div class="payout-keyboard-popup" id="payout-keyboard-popup">
+                            <div class="keyboard-grid">
+                                <button class="keyboard-btn payout-key-val" data-val="1">1</button>
+                                <button class="keyboard-btn payout-key-val" data-val="2">2</button>
+                                <button class="keyboard-btn payout-key-val" data-val="3">3</button>
+                                <button class="keyboard-btn payout-key-val" data-val="4">4</button>
+                                <button class="keyboard-btn payout-key-val" data-val="5">5</button>
+                                <button class="keyboard-btn payout-key-val" data-val="6">6</button>
+                                <button class="keyboard-btn payout-key-val" data-val="7">7</button>
+                                <button class="keyboard-btn payout-key-val" data-val="8">8</button>
+                                <button class="keyboard-btn payout-key-val" data-val="9">9</button>
+                                <button class="keyboard-btn payout-key-val" data-val=".">.</button>
+                                <button class="keyboard-btn payout-key-val" data-val="0">0</button>
+                                <button class="keyboard-btn payout-key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                            </div>
+                            <button class="keyboard-close-bar" id="payout-keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                    </div>
+                    <div class="slider-group">
+                        <div style="width: 100%; position: relative; display: flex; flex-direction: column;">
+                            <input type="range" id="chance-slider" min="0.10" max="96.00" step="0.01" value="48.50" class="custom-slider">
+                            <div class="slider-ticks">
+                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chance-row">
+                    <div class="potential-win">Potential win:<br><span id="potential-win-val">20.00 INR</span></div>
+                    <div class="chance-display">Chance: <span id="chance-val">48.50 %</span></div>
+                </div>
+            </div>
+        
+        <div style="flex-grow: 1;"></div>
+
+        <div class="controls-panel">
+            <div class="action-buttons-wrapper">
+                              <button class="autoplay-btn" id="autoplay-btn">
+    <svg class="autoplay-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 8.5V15.5L15.5 12L10 8.5Z" fill="currentColor"/>
+
+    <g>
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+
+    <g transform="rotate(180 12 12)">
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+</svg>
+</button>
+
+                <button class="bet-action-btn btn-under" id="btn-under">
+                    <i class="fas fa-chevron-down" style="font-size:20px; margin-bottom:5px;"></i>
+                    <span id="btn-under-val" style="font-size:14px; background:rgba(0,0,0,0.3); padding:1px 8px; border-radius:4px; font-weight:500;">48.50</span>
+                </button>
+                <button class="bet-action-btn btn-over" id="btn-over">
+                    <i class="fas fa-chevron-up" style="font-size:20px; margin-bottom:5px;"></i>
+                    <span id="btn-over-val" style="font-size:14px; background:rgba(0,0,0,0.3); padding:1px 8px; border-radius:4px; font-weight:500;">51.48</span>
+                </button>
+            </div>
+
+            <div class="bet-input-wrapper">
+                <div class="slide-up-popup keyboard-popup" id="keyboard-popup">
+                    <div class="keyboard-grid">
+                        <button class="keyboard-btn key-val" data-val="1">1</button>
+                        <button class="keyboard-btn key-val" data-val="2">2</button>
+                        <button class="keyboard-btn key-val" data-val="3">3</button>
+                        <button class="keyboard-btn key-val" data-val="4">4</button>
+                        <button class="keyboard-btn key-val" data-val="5">5</button>
+                        <button class="keyboard-btn key-val" data-val="6">6</button>
+                        <button class="keyboard-btn key-val" data-val="7">7</button>
+                        <button class="keyboard-btn key-val" data-val="8">8</button>
+                        <button class="keyboard-btn key-val" data-val="9">9</button>
+                        <button class="keyboard-btn key-val" data-val=".">.</button>
+                        <button class="keyboard-btn key-val" data-val="0">0</button>
+                        <button class="keyboard-btn key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                    </div>
+                    <button class="keyboard-close-bar" id="keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+                </div>
+
+                <div class="slide-up-popup2 amounts-popup" id="amounts-popup">
+                    <div class="amounts-title">Bet INR</div>
+                    <div class="amounts-grid">
+                        <button class="amount-btn" data-val="20">20.00</button>
+                        <button class="amount-btn" data-val="50">50.00</button>
+                        <button class="amount-btn" data-val="100">100.00</button>
+                        <button class="amount-btn" data-val="200">200.00</button>
+                        <button class="amount-btn" data-val="500">500.00</button>
+                        <button class="amount-btn" data-val="1000">1,000.00</button>
+                    </div>
+                </div>
+                
+               <div class="bet-input-container">
+                    <div class="bet-input-section" id="bet-input-trigger">
+                        <div class="bet-label">Bet INR</div>
+                        <div class="bet-input-box">
+                            <input type="text" class="bet-input" id="bet-amount" value="10.00" readonly>
+                        </div>
+                    </div>
+                    <div class="bet-buttons">
+                        <button class="bet-control-btn" id="half-btn"><i class="fas fa-minus" style="pointer-events: none;"></i></button>
+                        <button class="bet-control-btn2" id="max-btn">
+                            <i class="fas fa-database" style="font-size: 14px; pointer-events: none;"></i>
+                        </button>
+                        <button class="bet-control-btn" id="double-btn"><i class="fas fa-plus" style="pointer-events: none;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="bottom-btn" id="bottom-game-btn">DICE</button>
+            <button class="help-btn" id="help-open-btn">?</button>
+            <div class="balance-display">
+                <span id="balance">0.00</span> INR
+                <button class="menu-hamburger" id="main-menu-btn">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="autoplay-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">AUTO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="auto-keyboard-popup" id="auto-keyboard-popup">
+                <div class="auto-keyboard-grid">
+                    <button class="auto-keyboard-btn auto-key-val" data-val="1">1</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="2">2</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="3">3</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="4">4</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="5">5</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="6">6</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="7">7</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="8">8</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="9">9</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val=".">.</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="0">0</button>
+                    <button class="auto-keyboard-btn auto-key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                </div>
+                <button class="auto-keyboard-close" id="auto-keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="ap-section">
+                    <div class="ap-section-title">Direction</div>
+                    <div class="color-toggles">
+                        <button class="color-toggle-btn selected" data-dir="under">
+                            <div class="color-dot" style="background: #4caf50;"></div> Under: <span id="ap-under-val">48.50</span>
+                        </button>
+                        <button class="color-toggle-btn" data-dir="over">
+                            <div class="color-dot" style="background: #0288d1;"></div> Over: <span id="ap-over-val">51.48</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ap-section">
+                    <div class="ap-section-title">Number of rounds</div>
+                    <div class="autoplay-rounds-grid">
+                        <button class="autoplay-round-btn selected" data-rounds="3">3</button>
+                        <button class="autoplay-round-btn" data-rounds="10">10</button>
+                        <button class="autoplay-round-btn" data-rounds="25">25</button>
+                        <button class="autoplay-round-btn" data-rounds="100">100</button>
+                        <button class="autoplay-round-btn" data-rounds="200">200</button>
+                        <button class="autoplay-round-btn" data-rounds="500">500</button>
+                    </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:13px; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-loss-toggle"></div>
+                        Stop if cash decreases by
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-loss-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-loss-val" value="0.00" readonly>
+                        <button id="auto-loss-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:13px; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-win-toggle"></div>
+                        Stop if single win exceeds
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-win-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-win-val" value="0.00" readonly>
+                        <button id="auto-win-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <button class="start-auto-btn" id="start-auto-btn">START AUTO</button>
+            </div>
+        </div>
+    </div>
+
+   <div class="modal-overlay" id="menu-modal">
+    <div class="modal-content" style="background:#1b1d21; border-radius:12px; position:absolute; bottom:40px; padding: 16px; animation:none;">
+        
+        <div style="padding: 4px 4px 12px 4px; color: #e5e7eb; font-size: 12px;">
+            Email id: <span id="useremailID"></span>
+        </div>
+
+        <ul class="menu-list">
+            <li id="sound-toggle-menu-btn">
+                <i class="fas fa-volume-up"></i> Sound 
+                <div id="sound-toggle-ui" style="margin-left:auto; width:34px; height:18px; background:#4caf50; border-radius:12px; position:relative; transition: background 0.2s;">
+                    <div id="sound-toggle-circle" style="width:14px; height:14px; background:#fff; border-radius:50%; position:absolute; top:2px; right:2px; transition: right 0.2s, left 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.5);"></div>
+                </div>
+            </li>
+            
+            <li id="freebets-menu-btn" class="menu-option-item"><i class="far fa-star"></i> Free Bets</li>
+            <li id="recordsmenu-btn" class="menu-option-item"><i class="fas fa-history"></i> Bet History</li>
+            <li id="limits-menu-btn" class="menu-option-item"><i class="fas fa-money-bill-wave"></i> Game Limits</li>
+            <li id="how-to-play-menu-btn" class="menu-option-item"><i class="far fa-question-circle"></i> How to Play</li>
+            <li id="rules-menu-btn" class="menu-option-item"><i class="far fa-file-alt"></i> Game Rules</li>
+            <li id="fairnessmenu-btn" class="menu-option-item"><i class="fas fa-balance-scale"></i> Provably Fair Settings</li>
+            
+            <li id="closemenu" class="menu-option-item"><i class="fas fa-home"></i> Back to Home</li>
+            
+            <li>
+                <div style="display: flex; align-items: center; gap: 8px; color: #a1a5b0; font-size: 13px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    <span>Provably Fair Game</span>
+                </div>
+                <div style="color: #a1a5b0; font-size: 13px;">
+                    © <strong style="text-decoration: underline; color: #ffffff; text-underline-offset: 4px; text-decoration-thickness: 2px; font-weight: 800;">SPRIBE</strong>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    <div class="modal-overlay" id="how-to-play-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-gamepad"></i> HOW TO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <div style="font-size:20px; font-weight:700; color:#5a8dec; margin-bottom:15px; display:flex; justify-content:center; align-items:center;">
+                    <i class="dice-icon" style="width:30px; height:30px;"></i> DICE
+                </div>
+                
+                <div style="margin: 20px 0; position:relative; width:100%; height:80px;">
+                    <svg viewBox="0 0 100 50" style="width: 100%; height:100%; drop-shadow: 0 5px 10px rgba(0,0,0,0.5);">
+                        <path d="M 10 40 A 40 40 0 0 1 90 40" fill="none" stroke="#a81123" stroke-width="12" stroke-linecap="butt"/>
+                        <path d="M 10 40 A 40 40 0 0 1 50 11.7" fill="none" stroke="#1db079" stroke-width="12" stroke-linecap="butt"/>
+                        <path d="M 50 11.7 A 40 40 0 0 1 90 40" fill="none" stroke="#00a0eb" stroke-width="12" stroke-linecap="butt"/>
+                        <circle cx="75" cy="20" r="6" fill="#ffc107" stroke="#000" stroke-width="1"/>
+                        <circle cx="75" cy="20" r="2" fill="#000"/>
+                        <text x="50" y="38" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">75.00</text>
+                    </svg>
+                </div>
+
+                <p style="margin-bottom:15px; color:#fff;">The dice will roll a number ranging from 0.00 to 99.99.</p>
+                <p style="color:#ccc;">Set your odds using the payout bar, then bet whether the next roll will be under or over your set figure.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="limits-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME LIMITS</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:15px;">Game limits are managed by operator. Current game limits for this game are below:</p>
+                <table class="limits-table">
+                    <tr><td>Maximum bet INR:</td><td>40,000.00</td></tr>
+                    <tr><td>Minimum bet INR:</td><td>10.00</td></tr>
+                    <tr><td>Maximum win for one bet INR:</td><td>800,000.00</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME RULES</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:18px; font-weight:700; color:#5a8dec; text-align:center; margin-bottom:15px; display:flex; justify-content:center; align-items:center;">
+                    <i class="dice-icon"></i> DICE
+                </div>
+                <p>- Dice is a quick and straightforward game with fast gameplay and instant results;</p>
+                <p>- A goal of the player is to guess, will the next outcome be over or under of selected number;</p>
+                <p>- Player can bet to roll under set number (green button) or to roll over set number (blue button) If prediction was correct, win amount will be the bet amount multiplied by payout multiplier;</p>
+                <p>- Set number and odds of the game can be changed by dragging payout line or entering custom payout multiplier;</p>
+                <p>- Outcomes of previous rounds are appearing in the "Last results" section, on top of the target number;</p>
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">GAME INTERFACE</p><br>
+                <p>- Bets can be made from the bet panel, by selecting predefined bet amounts, or entering your own. Click (-) and (+) buttons to move between bet options;</p>
+                <p>- Player balance shows available funds to play;</p>
+                <p>- Sound can be turned off and back on from the game menu;</p>
+                <p>- Bet history can be accessed from the game menu;</p>
+                <p>- Game information and rules can be accessed from the game menu;</p>
+                <p>- Provably Fair settings can be accessed from the game menu;</p>
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">AUTO PLAY</p><br>
+                <p style="margin-bottom:5px; font-weight:500;">Note: this feature might be unavailable in some casinos.</p>
+                <p>- Auto Play panel is activated by pressing the "Auto Play" button.</p>
+                <p>- In the Auto Play panel, the "Stop if cash decreases by" option stops Auto Play, if the balance is decreased by the Selected amount.</p>
+                <p>- In the Auto Play panel, the "Stop if single win exceeds" option stops Auto Play, if a single win exceeds the selected amount.</p>
+                <p>- After Start, remaining Number of rounds is displayed on the counter. The player can stop Auto Play at any time, by clicking the counter.</p>
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">ADDITIONAL INFORMATION</p><br>
+                <p>- In the event of a malfunction of the gaming hardware/software, all effected game bets and payouts are rendered void and all effected bets are refunded.</p>
+                <p>- If the internet connection is interrupted when the bet is active, the game will auto cash out with the original bet amount or the current multiplier, and the winning amount will be added to your balance</p>
+                <p style="margin-top:5px; font-weight:500; color:#e42c42;">Note: Any Usage Of Illegal Tools to manipulate the game results may lead to account suspension.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content" style="max-width: 380px; max-height: 80vh; display: flex; flex-direction: column; background: #1b1c22;">
+            <div class="modal-header">
+                <div class="modal-title">BET HISTORY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="list-header">
+                <div class="col-date">Date</div>
+                <div class="col-bet">Bet INR</div>
+                <div class="col-x">X</div>
+                <div class="col-cashout">Cash out INR</div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div id="history-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 15px; background: rgba(0,0,0,0.3); margin-top: auto;">
+                    <button id="load-more-history-btn" style="background: #3a3f47; color: #ccc; border: 1px solid rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 16px; font-size: 12px; cursor: pointer; display: none;">Load more</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="fairness-modal" onclick="closeModalOnBG(event, 'fairness-modal')">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <div class="modal-title">PROVABLY FAIR SETTINGS</div>
+                <button class="modal-close" onclick="closeModal('fairness-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p style="color: #aaa; margin-bottom: 10px;">
+                    This game uses Provably Fair technology to determine game result. This tool gives you ability to change your seed and check fairness of the game.
+                </p>
+                <a href="#" style="color: #4caf50; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block;">
+                    <i class="far fa-question-circle"></i> What is Provably Fair
+                </a>
+                
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
+                        <div>
+                            <div style="color: #fff; font-weight: bold;">Next client seed:</div>
+                            <div style="color: #888; font-size: 11px;">Generated on Your side</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 8px; color: #888; margin-bottom: 8px;">
+                            <input type="radio" name="seed_type" style="accent-color: #4caf50;"> Random on every new game
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; color: #888;">
+                            <input type="radio" name="seed_type" checked style="accent-color: #4caf50;"> Add nonce
+                        </label>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <span id="client-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ZT6tUHTD300bl...
+                            </span>
+                            <i class="far fa-copy" style="color: #ccc; cursor: pointer;" onclick="copySeed('client-seed')"></i>
+                        </div>
+                        <button onclick="updateSeeds()" style="background: #3a3f47; border: 1px solid rgba(0,0,0,0.5); color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <i class="fas fa-server" style="font-size: 24px; color: #ccc;"></i>
+                        <div>
+                            <div style="color: #fff; font-weight: bold;">Next server seed SHA256:</div>
+                            <div style="color: #888; font-size: 11px;">Encrypted seed, generated on our side</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <span id="server-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                0xiaci5bskddmg...
+                            </span>
+                            <i class="far fa-copy" style="color: #ccc; cursor: pointer;" onclick="copySeed('server-seed')"></i>
+                        </div>
+                        <button onclick="updateSeeds()" style="background: #3a3f47; border: 1px solid rgba(0,0,0,0.5); color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p style="color: #888; font-size: 12px; margin-top: 15px;">
+                    You can check fairness of each bet from 
+                    <a href="#" style="color: #4caf50; text-decoration: none;">Game History</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="insufficient-balance-modal">
+        <div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #e42c42;">
+            <div class="modal-header" style="border-bottom: none; background:transparent;">
+                <div class="modal-title" style="color: #e42c42; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-wallet"></i> LOW BALANCE
+                </div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 0px;">
+                <i class="fas fa-coins" style="font-size: 50px; color: #ffc107; margin-bottom: 15px;"></i>
+                <p style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: 500;">Insufficient Balance</p>
+                <p style="color: #ccc; font-size: 13px; margin-bottom: 20px;">Please add cash to your wallet to place this bet and continue playing.</p>
+                <button id="popup-add-cash-btn" style="background: linear-gradient(180deg, #e42c42 0%, #a81123 100%); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">Add Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-popup" id="auth-popup">
+        <div class="auth-popup-content">
+            <h2>Authentication Required !!</h2>
+            <p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p>
+            <button class="auth-popup-btn" id="sign-in-btn">Sign In to Play</button>
+        </div>
+    </div>
+
+    <div class="message-toast" id="message-toast">Message</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+      <script>
+        // ====================== SOUND EFFECTS ====================== //
+        class SoundPool {
+            constructor(maxSize = 10) {
+                this.pool = [];
+                this.maxSize = maxSize;
+                this.sounds = {};
+                this.init();
+            }
+
+            async init() {
+                this.soundUrls = {
+                    betBtn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav', 
+                    menuOpen: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click2.wav',   
+                    genericClick: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',  
+                    betControl: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click4.wav',   
+                    autoplayStart: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/startbetbtn.mp3', 
+                    toggleOn: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnon.mp3',      
+                    toggleOff: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnoff.mp3',     
+                    keypad: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click5.wav',        
+                    winSpin: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Wincard.m4a',       
+                    loseSpin: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/YellowBallLosTile.mp3',
+                    sliderSound: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/SlideOnce.mp3', 
+                    diceRollSound: 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/dice-rolling.mp3'       
+                };
+                await this.preloadSounds();
+            }
+
+            async preloadSounds() {
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        this.sounds[key] = { audioContext, audioBuffer, url };
+                    } catch (error) {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+                        this.sounds[key] = { audioContext, audioBuffer: buffer, url: null };
+                    }
+                }
+            }
+
+            play(soundName, volume = 0.5, loop = false) {
+                if (!this.sounds[soundName]) return;
+                let audioContext = this.sounds[soundName].audioContext;
+                if (audioContext.state === 'suspended') audioContext.resume();
+                const source = audioContext.createBufferSource();
+                source.buffer = this.sounds[soundName].audioBuffer;
+                source.loop = loop;
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = volume;
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                source.start(0);
+                source.onended = () => { try { source.disconnect(); gainNode.disconnect(); } catch(e) {} };
+                return source;
+            }
+        }
+
+        const soundPool = new SoundPool();
+
+        function playSound(key, volume = 0.5, loop = false) {
+            if (!gameState.soundEnabled) return null;
+            if (soundPool.sounds[key]) {
+                try { return soundPool.play(key, volume, loop); } catch (error) {}
+            }
+            return null;
+        }
+
+        // --- Core Game Data Structures ---
+        const gameState = {
+            soundEnabled: true,
+            balance: 0,
+            betAmount: 10,
+            userAuthenticated: false,
+            historyQueue: [], 
+            currentHistoryLimit: 50,
+            isHistoryLoading: false,
+            
+            // --- HYBRID SYSTEM UPDATE: Add tracking variables ---
+            lifetimeWagered: 0, 
+            lifetimeWon: 0,
+            globalMode: 'NORMAL',
+            
+            // Dice specific math
+            targetChance: 48.50,
+            payout: 2.00,
+            activeBetDirection: null, // 'under' or 'over'
+            currentRoll: 50.00,
+            
+            autoplayActive: false,
+            autoplayDirs: ['under'], 
+            autoplayTargetRounds: 3,
+            autoplayTotalRounds: 0,
+            autoplayRoundsPlayed: 0,
+            autoplayDirIndex: 0,
+            autoplayInitialBalance: 0,
+            stopLossAmount: 0,
+            stopLossActive: false,
+            stopWinAmount: 0,
+            stopWinActive: false,
+            autoplayTimeout: null,
+            
+            isSpinning: false,
+            isBetPending: false 
+        };
+
+        // Firebase Setup
+        const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // DOM Elements
+        const balanceElement = document.getElementById('balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const msgToast = document.getElementById('message-toast');
+
+        function showMessage(msg) {
+            msgToast.textContent = msg;
+            msgToast.classList.add('show');
+            setTimeout(() => msgToast.classList.remove('show'), 2500);
+        }
+
+        async function init() {
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 800);
+            
+            const userEmailSpan = document.getElementById('useremailID');
+            if(userEmailSpan) userEmailSpan.textContent = localStorage.getItem('email') || 'Guest User';
+
+            checkAuthentication();
+            setupEventListeners();
+            updateDiceUI();
+            
+            // --- HYBRID SYSTEM UPDATE: Initialize the global mode listener ---
+            await setupGlobalPlatformListener();
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Listen for Admin Panel Traffic Light changes for DICE ---
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                database.ref('platformControl/globalModes/dice').on('value', snap => {
+                    if (snap.exists()) {
+                        gameState.globalMode = snap.val(); 
+                    } else {
+                        gameState.globalMode = 'NORMAL';
+                    }
+                });
+                resolve(); // Siri Fix: Resolved instantly to avoid race condition delays
+            });
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Presence Tracking for Live Users ---
+        function trackGamePresence(uid) {
+            const presenceRef = database.ref(`gamePresence/dice/${uid}`);
+            
+            database.ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() === false) {
+                    return;
+                }
+                presenceRef.onDisconnect().remove().then(function() {
+                    presenceRef.set(true);
+                });
+            });
+
+            // Extra fallback for explicit tab closures
+            window.addEventListener('beforeunload', () => {
+                presenceRef.remove();
+            });
+        }
+
+        function checkAuthentication() {
+            const uid = localStorage.getItem('uid');
+            if (uid) {
+                gameState.userAuthenticated = true;
+                document.getElementById('auth-popup').style.display = 'none';
+                loadUserData(uid);
+                trackGamePresence(uid); // Siri Fix: Start tracking live user connection
+            } else {
+                gameState.userAuthenticated = false;
+                document.getElementById('auth-popup').style.display = 'flex';
+                document.getElementById('sign-in-btn').onclick = () => { window.location.href = 'index.html'; }
+            }
+        }
+
+        function loadUserData(uid) {
+            database.ref('appusers/' + uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    gameState.balance = data.totalBalance || 0;
+                    
+                    // --- HYBRID SYSTEM UPDATE: Keep lifetime stats synced ---
+                    gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                    gameState.lifetimeWon = data.lifetimeWon || 0;
+                    
+                    balanceElement.textContent = gameState.balance.toFixed(2);
+                }
+            });
+        }
+
+        // --- DICE MATH & UI LOGIC ---
+        function updateDiceUI() {
+            gameState.payout = 97 / gameState.targetChance;
+            document.getElementById('payout-input').value = gameState.payout.toFixed(2);
+            document.getElementById('chance-slider').value = gameState.targetChance.toFixed(2);
+            document.getElementById('chance-val').innerText = gameState.targetChance.toFixed(2) + " %";
+            
+            const winVal = (gameState.betAmount * gameState.payout).toFixed(2);
+            document.getElementById('potential-win-val').innerText = winVal + " INR";
+            
+            document.getElementById('btn-under-val').innerText = gameState.targetChance.toFixed(2);
+            document.getElementById('ap-under-val').innerText = gameState.targetChance.toFixed(2);
+            
+            const overVal = 99.98 - gameState.targetChance;
+            document.getElementById('btn-over-val').innerText = overVal.toFixed(2);
+            document.getElementById('ap-over-val').innerText = overVal.toFixed(2);
+            
+            // Update Bar Layouts based on SPRIBE style
+            document.getElementById('bar-top-red').style.width = overVal + "%";
+            document.getElementById('bar-top-blue').style.width = gameState.targetChance + "%";
+            
+            document.getElementById('bar-bottom-green').style.width = gameState.targetChance + "%";
+            document.getElementById('bar-bottom-red').style.width = (100 - gameState.targetChance) + "%";
+        }
+
+        function handlePayoutInput() {
+            let p = parseFloat(document.getElementById('payout-input').value) || 2.00;
+            if (p < 1.01) p = 1.01;
+            if (p > 970.00) p = 970.00;
+            gameState.targetChance = 97 / p;
+            updateDiceUI();
+        }
+
+        let sliderSoundTimeout = null;
+        let sliderSoundSource = null;
+
+        function handleSliderInput() {
+            let c = parseFloat(document.getElementById('chance-slider').value) || 48.50;
+            if (c < 0.10) c = 0.10;
+            if (c > 96.00) c = 96.00;
+            gameState.targetChance = c;
+            updateDiceUI();
+
+            // Slider Sound Logic
+            if (!sliderSoundSource && gameState.soundEnabled) {
+                sliderSoundSource = playSound('sliderSound', 0.5, true);
+            }
+            clearTimeout(sliderSoundTimeout);
+            sliderSoundTimeout = setTimeout(() => {
+                if (sliderSoundSource) {
+                    try { sliderSoundSource.stop(); } catch(e) {}
+                    sliderSoundSource = null;
+                }
+            }, 150); 
+        }
+
+        // Logic & Interaction
+        function setupEventListeners() {
+            // [Unchanged UI event listener code preserved exactly as provided]
+            document.getElementById('chance-slider').addEventListener('input', handleSliderInput);
+
+            document.getElementById('history-dropdown-btn').onclick = () => {
+                playSound('menuOpen');
+                document.getElementById('last-results-dropdown').classList.toggle('show');
+            };
+
+            document.getElementById('btn-under').onclick = () => placeBet('under');
+            document.getElementById('btn-over').onclick = () => placeBet('over');
+
+            const autoplayBtn = document.getElementById('autoplay-btn');
+            autoplayBtn.onclick = () => {
+                playSound('genericClick');
+                if(gameState.autoplayActive) {
+                    stopAutoplay();
+                } else {
+                    document.getElementById('autoplay-modal').classList.add('show');
+                }
+            };
+            
+            document.querySelectorAll('.color-toggle-btn').forEach(btn => {
+                btn.onclick = () => {
+                    btn.classList.toggle('selected');
+                    const dir = btn.dataset.dir;
+                    if(btn.classList.contains('selected')) {
+                        playSound('toggleOn');
+                        if(!gameState.autoplayDirs.includes(dir)) gameState.autoplayDirs.push(dir);
+                    } else {
+                        playSound('toggleOff');
+                        gameState.autoplayDirs = gameState.autoplayDirs.filter(d => d !== dir);
+                    }
+                };
+            });
+            document.querySelectorAll('.autoplay-round-btn').forEach(btn => {
+                btn.onclick = () => {
+                    playSound('genericClick');
+                    document.querySelectorAll('.autoplay-round-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    gameState.autoplayTargetRounds = parseInt(btn.dataset.rounds);
+                };
+            });
+            const autoLossVal = document.getElementById('auto-stop-loss-val');
+            const autoWinVal = document.getElementById('auto-stop-win-val');
+            
+            document.getElementById('auto-stop-loss-toggle').onclick = function() {
+                this.classList.toggle('active');
+                if(this.classList.contains('active')) playSound('toggleOn'); else playSound('toggleOff');
+            };
+            document.getElementById('auto-stop-win-toggle').onclick = function() {
+                this.classList.toggle('active');
+                if(this.classList.contains('active')) playSound('toggleOn'); else playSound('toggleOff');
+            };
+            function adjustAutoInput(inputEl, delta) {
+                let val = parseFloat(inputEl.value) || 0;
+                val = Math.max(0, val + delta);
+                inputEl.value = val.toFixed(2);
+                playSound('betControl');
+            }
+            document.getElementById('auto-loss-inc').onclick = () => adjustAutoInput(autoLossVal, 1.00);
+            document.getElementById('auto-loss-dec').onclick = () => adjustAutoInput(autoLossVal, -1.00);
+            document.getElementById('auto-win-inc').onclick = () => adjustAutoInput(autoWinVal, 1.00);
+            document.getElementById('auto-win-dec').onclick = () => adjustAutoInput(autoWinVal, -1.00);
+            
+            let activeAutoInput = null;
+            let currentAutoInputStr = "";
+            const autoKeyboardPopup = document.getElementById('auto-keyboard-popup');
+            
+            document.querySelectorAll('.autoplay-input-group').forEach(group => {
+                group.onclick = (e) => {
+                    if(e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                    activeAutoInput = group.querySelector('input');
+                    currentAutoInputStr = "";
+                    autoKeyboardPopup.classList.add('show');
+                };
+            });
+            
+            document.querySelectorAll('.auto-key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSound('keypad');
+                    const val = btn.dataset.val;
+                    if(val === '.' && currentAutoInputStr.includes('.')) return;
+                    currentAutoInputStr += val;
+                    if(activeAutoInput) activeAutoInput.value = currentAutoInputStr;
+                };
+            });
+            
+            document.querySelector('.auto-key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playSound('keypad');
+                currentAutoInputStr = currentAutoInputStr.slice(0, -1);
+                if(activeAutoInput) activeAutoInput.value = currentAutoInputStr || "0.00";
+            };
+            
+            document.getElementById('auto-keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                autoKeyboardPopup.classList.remove('show');
+                if(activeAutoInput) {
+                    activeAutoInput.value = (parseFloat(activeAutoInput.value) || 0).toFixed(2);
+                }
+            };
+
+            document.getElementById('start-auto-btn').onclick = () => {
+                if(!gameState.userAuthenticated) { showMessage('Please Login'); return; }
+                if(gameState.autoplayDirs.length === 0) { showMessage('Select at least one direction'); return; }
+                playSound('autoplayStart');
+                document.getElementById('autoplay-modal').classList.remove('show');
+                startAutoplay();
+            };
+
+            const betInputTrigger = document.getElementById('bet-input-trigger');
+            const amountsPopup = document.getElementById('amounts-popup');
+            const keyboardPopup = document.getElementById('keyboard-popup');
+            
+            const payoutInputTrigger = document.getElementById('payout-input-trigger');
+            const payoutKeyboardPopup = document.getElementById('payout-keyboard-popup');
+            const payoutInputEl = document.getElementById('payout-input');
+            let currentPayoutStr = "";
+            
+            function closePopups() {
+                amountsPopup.classList.remove('show');
+                keyboardPopup.classList.remove('show');
+                if(payoutKeyboardPopup) payoutKeyboardPopup.classList.remove('show');
+                validateBet();
+                
+                let p = parseFloat(payoutInputEl.value) || 2.00;
+                if (p < 1.01) p = 1.01;
+                if (p > 970.00) p = 970.00;
+                payoutInputEl.value = p.toFixed(2);
+                handlePayoutInput();
+            }
+            
+            payoutInputTrigger.onclick = (e) => {
+                e.stopPropagation();
+                if(gameState.autoplayActive || gameState.isSpinning) return;
+                closePopups();
+                playSound('genericClick');
+                payoutKeyboardPopup.classList.add('show');
+                currentPayoutStr = "";
+            };
+
+            document.querySelectorAll('.payout-key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSound('keypad');
+                    const val = btn.dataset.val;
+                    if(val === '.' && currentPayoutStr.includes('.')) return;
+                    currentPayoutStr += val;
+                    payoutInputEl.value = currentPayoutStr;
+                    handlePayoutInput();
+                };
+            });
+
+            document.querySelector('.payout-key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playSound('keypad');
+                currentPayoutStr = currentPayoutStr.slice(0, -1);
+                payoutInputEl.value = currentPayoutStr || "1.01";
+                handlePayoutInput();
+            };
+
+            document.getElementById('payout-keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                closePopups();
+            };
+
+            betInputTrigger.onclick = (e) => {
+                e.stopPropagation();
+                if(gameState.autoplayActive || gameState.isSpinning) return;
+                closePopups();
+                playSound('genericClick');
+                keyboardPopup.classList.add('show');
+                currentInputStr = "";
+            };
+            document.getElementById('max-btn').onclick = (e) => {
+                e.stopPropagation();
+                if(gameState.autoplayActive || gameState.isSpinning) return;
+                closePopups();
+                playSound('betControl');
+                amountsPopup.classList.add('show');
+            };
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.onclick = () => {
+                    betAmountInput.value = parseFloat(btn.dataset.val).toFixed(2);
+                    closePopups();
+                    playSound('genericClick');
+                };
+            });
+            
+            document.getElementById('half-btn').onclick = () => {
+                if(gameState.autoplayActive || gameState.isSpinning) return;
+                let val = parseFloat(betAmountInput.value) || 10;
+                betAmountInput.value = Math.max(10, val/2).toFixed(2);
+                playSound('betControl');
+                validateBet();
+            };
+            document.getElementById('double-btn').onclick = () => {
+                if(gameState.autoplayActive || gameState.isSpinning) return;
+                let val = parseFloat(betAmountInput.value) || 10;
+                betAmountInput.value = Math.min(40000, val*2).toFixed(2);
+                playSound('betControl');
+                validateBet();
+            };
+            
+            let currentInputStr = "";
+            document.querySelectorAll('.key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSound('keypad');
+                    const val = btn.dataset.val;
+                    if(val === '.' && currentInputStr.includes('.')) return;
+                    currentInputStr += val;
+                    betAmountInput.value = currentInputStr;
+                };
+            });
+            document.querySelector('.key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playSound('keypad');
+                currentInputStr = currentInputStr.slice(0, -1);
+                betAmountInput.value = currentInputStr || "0";
+            };
+            document.getElementById('keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                closePopups();
+            };
+
+            document.addEventListener('click', (e) => {
+                if(!e.target.closest('.bet-input-wrapper') && !e.target.closest('.payout-input-group')) closePopups();
+                if(!e.target.closest('.last-results-wrapper')) document.getElementById('last-results-dropdown').classList.remove('show');
+            });
+            
+            document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if(e.target === el || el.classList.contains('modal-close')) {
+                        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+                        playSound('genericClick');
+                    }
+                });
+            });
+
+            // Menu interactions
+            const soundToggleBtn = document.getElementById('sound-toggle-menu-btn');
+            const soundToggleUI = document.getElementById('sound-toggle-ui');
+            const soundToggleCircle = document.getElementById('sound-toggle-circle');
+            
+            if(!gameState.soundEnabled) {
+                soundToggleUI.style.background = '#555';
+                soundToggleCircle.style.right = '18px';
+            }
+            soundToggleBtn.onclick = () => {
+                gameState.soundEnabled = !gameState.soundEnabled;
+                if(gameState.soundEnabled) {
+                    soundToggleUI.style.background = '#4caf50';
+                    soundToggleCircle.style.right = '2px';
+                    playSound('toggleOn');
+                } else {
+                    soundToggleUI.style.background = '#555';
+                    soundToggleCircle.style.right = '18px';
+                    gameState.soundEnabled = true; playSound('toggleOff'); gameState.soundEnabled = false;
+                }
+            };
+            
+            document.getElementById('main-menu-btn').onclick = () => { playSound('menuOpen'); document.getElementById('menu-modal').classList.add('show'); };
+            document.getElementById('help-open-btn').onclick = () => { playSound('genericClick'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('how-to-play-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('rules-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('rules-modal').classList.add('show'); };
+            document.getElementById('limits-menu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('limits-modal').classList.add('show'); };
+            document.getElementById('fairnessmenu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('fairness-modal').classList.add('show'); };
+            document.getElementById('recordsmenu-btn').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('history-modal').classList.add('show'); loadBetHistory(false); };
+            document.getElementById('load-more-history-btn').onclick = () => { playSound('genericClick'); loadBetHistory(true); };
+            document.getElementById('closemenu').onclick = () => { playSound('genericClick'); document.getElementById('menu-modal').classList.remove('show'); };
+        }
+
+        function validateBet() {
+            let val = parseFloat(betAmountInput.value) || 10;
+            if(val < 10) val = 10;
+            if(val > 40000) val = 40000;
+            gameState.betAmount = val;
+            betAmountInput.value = val.toFixed(2);
+            updateDiceUI();
+        }
+
+        function updateBalance(amount) {
+            const uid = localStorage.getItem('uid');
+            if(!uid) return Promise.resolve(gameState.balance);
+            
+            return database.ref('appusers/' + uid).transaction((userData) => {
+                if (userData) {
+                    let total = userData.totalBalance || 0;
+                    let withdrawable = userData.withdrawableBalance || 0;
+                    
+                    if (amount < 0) { 
+                        let betAmount = Math.abs(amount);
+                        let unwithdrawable = total - withdrawable;
+                        if (unwithdrawable < 0) unwithdrawable = 0;
+                        
+                        if (betAmount <= unwithdrawable) {
+                            unwithdrawable -= betAmount;
+                        } else {
+                            let remainingBet = betAmount - unwithdrawable;
+                            withdrawable -= remainingBet;
+                        }
+                        
+                        userData.totalBalance = total - betAmount;
+                        userData.withdrawableBalance = Math.max(0, withdrawable);
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record wager amount ---
+                        userData.lifetimeWagered = (userData.lifetimeWagered || 0) + betAmount;
+                        
+                    } else if (amount > 0) { 
+                        userData.totalBalance = total + amount;
+                        userData.withdrawableBalance = withdrawable + amount;
+                        
+                        // --- HYBRID SYSTEM UPDATE: Record win amount ---
+                        userData.lifetimeWon = (userData.lifetimeWon || 0) + amount;
+                    }
+                }
+                return userData;
+            }).then((result) => {
+                if (result.committed) {
+                    return result.snapshot.val().totalBalance;
+                }
+                return gameState.balance;
+            });
+        }
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            return {
+                time: `${hours}:${minutes}`,
+                date: `${day}-${month}-${year}`
+            };
+        }
+
+        function saveToMyBets(betAmount, winAmount) {
+            const uid = localStorage.getItem('uid');
+            if (!uid) return;
+            const dt = getFormattedDateTime();
+            
+            const record = {
+                gameName: "Dice",
+                time: dt.time,
+                date: dt.date,
+                timestamp: Date.now(),
+                betAmount: betAmount,
+                winAmount: winAmount
+            };
+            
+            database.ref(`appusers/${uid}/betHistory`).push(record).catch(err => console.error(err));
+        }
+
+        // Gameplay Logic
+        function placeBet(direction) {
+            validateBet(); 
+
+            if (gameState.isSpinning || gameState.isBetPending) return;
+            if (!gameState.userAuthenticated) { 
+                document.getElementById('auth-popup').style.display = 'flex'; 
+                if(gameState.autoplayActive) stopAutoplay();
+                return; 
+            }
+            
+            if (gameState.betAmount > gameState.balance) { 
+                showMessage('Insufficient Balance'); 
+                const modal = document.getElementById('insufficient-balance-modal');
+                if (modal) {
+                    modal.classList.add('show'); 
+                }
+                if (gameState.autoplayActive) stopAutoplay();
+                return; 
+            }
+            
+            document.getElementById('dice-result').style.color = '#ffffff';
+
+            playSound('betBtn');
+            gameState.activeBetDirection = direction;
+            setControlsLock(true);
+            gameState.isBetPending = true; 
+            
+            updateBalance(-gameState.betAmount).then(b => {
+                gameState.balance = b;
+                balanceElement.textContent = b.toFixed(2);
+                startSpinning();
+            }).catch(e => {
+                gameState.isBetPending = false;
+                if(!gameState.autoplayActive) setControlsLock(false);
+            });
+        }
+
+        let diceRollSoundSource = null;
+
+        // --- HYBRID SYSTEM UPDATE: Probability Matrix specific to Dice Math ---
+        function getDynamicLossChance() {
+            let baseChance = 0.50; 
+            let rtp = 0;
+
+            if (gameState.lifetimeWagered >= 50) {
+                rtp = gameState.lifetimeWon / gameState.lifetimeWagered;
+            } else {
+                rtp = 0.50; 
+            }
+
+            if (rtp > 0.90) baseChance = 0.85;       
+            else if (rtp > 0.60) baseChance = 0.60;  
+            else if (rtp < 0.30) baseChance = 0.10;  
+            else baseChance = 0.45;                  
+
+            let finalChance = baseChance;
+
+            if (gameState.globalMode === 'RECOVERY') {
+                finalChance = baseChance + 0.30; 
+            } 
+            else if (gameState.globalMode === 'PAYOUT') {
+                finalChance = baseChance - 0.95; 
+            }
+
+            if (finalChance > 0.95) finalChance = 0.95; 
+            if (finalChance < 0.05) finalChance = 0.05;
+
+            return finalChance;
+        }
+
+        function startSpinning() {
+            gameState.isSpinning = true;
+            document.getElementById('dice-result').style.color = '#ffffff'; 
+            
+            diceRollSoundSource = playSound('diceRollSound', 0.5, true); 
+            
+            // --- HYBRID SYSTEM UPDATE: Degrader Execution Loop ---
+            const forceLossChance = getDynamicLossChance();
+            let roll = parseFloat((Math.random() * 99.99).toFixed(2));
+            const dir = gameState.activeBetDirection;
+
+            // We loop a few times to ensure the redraw isn't a natural win if they hit the forceLoss threshold
+            for (let i = 0; i < 20; i++) {
+                let isTempWin = false;
+                
+                if (dir === 'under' && roll < gameState.targetChance) isTempWin = true;
+                if (dir === 'over' && roll > (99.98 - gameState.targetChance)) isTempWin = true;
+
+                if (isTempWin && Math.random() < forceLossChance) {
+                    roll = parseFloat((Math.random() * 99.99).toFixed(2)); // Secretly redraw the dice
+                } else {
+                    break; 
+                }
+            }
+            
+            gameState.currentRoll = roll;
+            // --- END HYBRID DEGRADER ---
+            
+            const resultDisplay = document.getElementById('dice-result');
+            const thumb = document.getElementById('dice-thumb');
+            
+            let startVal = parseFloat(resultDisplay.innerText) || 50.00;
+            let endVal = gameState.currentRoll;
+            
+            let startTime = null;
+            const duration = 600; 
+            
+            function animate(time) {
+                if(!startTime) startTime = time;
+                const progress = Math.min((time - startTime) / duration, 1);
+                
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const current = startVal + (endVal - startVal) * ease;
+                
+                resultDisplay.innerText = current.toFixed(2);
+                thumb.style.left = current + "%";
+                
+                if(progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    if (diceRollSoundSource) {
+                        try { diceRollSoundSource.stop(); } catch(e) {}
+                        diceRollSoundSource = null;
+                    }
+                    gameState.isSpinning = false;
+                    processResult();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function processResult() {
+            gameState.isBetPending = false; 
+            const dir = gameState.activeBetDirection;
+            const roll = gameState.currentRoll;
+            
+            let isWin = false;
+            
+            if (dir === 'under' && roll < gameState.targetChance) isWin = true;
+            if (dir === 'over' && roll > (99.98 - gameState.targetChance)) isWin = true;
+
+            const resultDisplay = document.getElementById('dice-result');
+
+            let winnings = 0;
+            if (isWin) {
+                playSound('winSpin');
+                resultDisplay.style.color = '#00ff00'; 
+                winnings = gameState.betAmount * gameState.payout;
+                updateBalance(winnings).then(b => {
+                    gameState.balance = b;
+                    balanceElement.textContent = b.toFixed(2);
+                });
+                
+                if(gameState.autoplayActive && gameState.stopWinActive && gameState.stopWinAmount > 0) {
+                    if(winnings > gameState.stopWinAmount) {
+                        showMessage("Single Win Exceeds Limit");
+                        stopAutoplay();
+                    }
+                }
+            } else {
+                playSound('loseSpin');
+                resultDisplay.style.color = 'orangered'; 
+            }
+            
+            saveToMyBets(gameState.betAmount, winnings);
+            addToHistoryStrip(roll, isWin);
+            
+            if(!gameState.autoplayActive) {
+                setControlsLock(false);
+            }
+        }
+
+        function addToHistoryStrip(roll, isWin) {
+            gameState.historyQueue.unshift({ roll, isWin });
+            if(gameState.historyQueue.length > 30) gameState.historyQueue.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const createHtml = (h) => {
+                const statusClass = h.isWin ? 'win' : 'lose';
+                return `<div class="history-item-pill ${statusClass}">${h.roll.toFixed(2)}</div>`;
+            };
+            
+            const stripHtml = gameState.historyQueue.slice(0, 10).map(createHtml).join('');
+            document.getElementById('last-results-strip').innerHTML = stripHtml;
+            
+            const gridHtml = gameState.historyQueue.map(createHtml).join('');
+            document.getElementById('last-results-grid').innerHTML = gridHtml;
+        }
+
+        function loadBetHistory(isLoadMore = false) {
+            const uid = localStorage.getItem('uid');
+            const historyList = document.getElementById('history-list');
+            const loadMoreBtn = document.getElementById('load-more-history-btn');
+            
+            if (!uid) {
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Please login to view history</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            if (gameState.isHistoryLoading) return;
+            gameState.isHistoryLoading = true;
+
+            if (!isLoadMore) {
+                gameState.currentHistoryLimit = 50;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Loading history...</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            } else {
+                gameState.currentHistoryLimit += 50;
+                const loadingText = document.createElement('div');
+                loadingText.id = 'history-loading-text';
+                loadingText.style.cssText = 'text-align:center; padding: 10px; color:#888; font-size: 12px;';
+                loadingText.innerText = 'Loading more...';
+                historyList.appendChild(loadingText);
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            }
+
+            let query = database.ref(`appusers/${uid}/betHistory`)
+                                .orderByChild('gameName')
+                                .equalTo('Dice')
+                                .limitToLast(gameState.currentHistoryLimit);
+
+            query.once('value').then(snapshot => {
+                gameState.isHistoryLoading = false;
+                historyList.innerHTML = ''; 
+
+                if (!snapshot.exists()) {
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>';
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    return;
+                }
+
+                const records = [];
+                snapshot.forEach(child => {
+                    records.push({ key: child.key, ...child.val() });
+                });
+
+                if (records.length === 0) {
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>';
+                    return;
+                }
+
+                if (records.length < gameState.currentHistoryLimit) {
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                } else {
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+                }
+
+                records.reverse(); 
+
+                records.forEach(bet => {
+                    const isWin = bet.winAmount > 0;
+                    const calcMultiplier = isWin ? (bet.winAmount / bet.betAmount) : 0;
+                    
+                    const item = document.createElement('div');
+                    item.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                    item.innerHTML = `
+                        <div class="col-date">${bet.time}<br><span>${bet.date}</span></div>
+                        <div class="col-bet">${bet.betAmount.toFixed(2)}</div>
+                        <div class="col-x">
+                            ${isWin ? `<span class="x-pill blue-bg">${calcMultiplier.toFixed(2)}x</span>` : `<span style="color: #4db8ff; font-weight: bold; font-size: 12px;">0.00x</span>`}
+                        </div>
+                        <div class="col-cashout">
+                            <span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span>
+                            <div class="action-icons">
+                                <i class="fas fa-shield-alt"></i>
+                                <i class="far fa-comment"></i>
+                            </div>
+                        </div>
+                    `;
+                    historyList.appendChild(item);
+                });
+            }).catch(err => {
+                gameState.isHistoryLoading = false;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#e53935;">Error loading history</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            });
+        }
+
+        // Autoplay Loop
+        function startAutoplay() {
+            gameState.autoplayActive = true;
+            gameState.autoplayTotalRounds = gameState.autoplayTargetRounds;
+            gameState.autoplayRoundsPlayed = 0;
+            gameState.autoplayDirIndex = 0;
+            gameState.autoplayInitialBalance = gameState.balance;
+            
+            gameState.stopLossAmount = parseFloat(document.getElementById('auto-stop-loss-val').value) || 0;
+            gameState.stopLossActive = document.getElementById('auto-stop-loss-toggle').classList.contains('active');
+            gameState.stopWinAmount = parseFloat(document.getElementById('auto-stop-win-val').value) || 0;
+            gameState.stopWinActive = document.getElementById('auto-stop-win-toggle').classList.contains('active');
+            
+            const abtn = document.getElementById('autoplay-btn');
+            abtn.classList.add('active-red');
+            abtn.innerHTML = `<i class="fas fa-stop"></i>`;
+            
+            runAutoplayLoop();
+        }
+
+        function stopAutoplay() {
+            gameState.autoplayActive = false;
+            clearTimeout(gameState.autoplayTimeout);
+            
+            const abtn = document.getElementById('autoplay-btn');
+            abtn.classList.remove('active-red');
+            abtn.innerHTML = `<i class="fas fa-sync-alt"></i>`;
+            if(!gameState.isSpinning) setControlsLock(false);
+        }
+        
+        function setControlsLock(locked) {
+            document.getElementById('btn-under').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('btn-over').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('bet-input-trigger').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('payout-input-trigger').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('half-btn').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('double-btn').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('max-btn').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('payout-input').disabled = locked;
+            document.getElementById('chance-slider').disabled = locked;
+            
+            if(locked) {
+                document.querySelectorAll('.bet-action-btn').forEach(b=>b.style.opacity = '0.6');
+                document.getElementById('chance-slider').style.opacity = '0.6';
+            } else {
+                document.querySelectorAll('.bet-action-btn').forEach(b=>b.style.opacity = '1');
+                document.getElementById('chance-slider').style.opacity = '1';
+            }
+        }
+
+        async function runAutoplayLoop() {
+            if(!gameState.autoplayActive || gameState.autoplayRoundsPlayed >= gameState.autoplayTotalRounds) { 
+                stopAutoplay(); 
+                return; 
+            }
+            
+            if(gameState.stopLossActive && gameState.stopLossAmount > 0 && (gameState.autoplayInitialBalance - gameState.balance) >= gameState.stopLossAmount) {
+                showMessage("Stop Loss Reached"); 
+                stopAutoplay(); 
+                return;
+            }
+            
+            if (gameState.isSpinning || gameState.isBetPending) {
+                gameState.autoplayTimeout = setTimeout(() => {
+                    if(gameState.autoplayActive) requestAnimationFrame(runAutoplayLoop);
+                }, 500);
+                return;
+            }
+            
+            const dir = gameState.autoplayDirs[gameState.autoplayDirIndex % gameState.autoplayDirs.length];
+            placeBet(dir);
+            
+            gameState.autoplayDirIndex++;
+            gameState.autoplayRoundsPlayed++;
+            
+            gameState.autoplayTimeout = setTimeout(() => {
+                if(gameState.autoplayActive) requestAnimationFrame(runAutoplayLoop);
+            }, 1400); // Wait for spin (600ms) + delay
+        }
+
+        function generateRandomSeed(length = 16) {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = "";
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function updateSeeds() {
+            document.getElementById("client-seed").textContent = generateRandomSeed(16);
+            document.getElementById("server-seed").textContent = generateRandomSeed(16);
+        }
+
+        function copySeed(id) {
+            const text = document.getElementById(id).textContent;
+            navigator.clipboard.writeText(text);
+            showMessage('Copied!');
+        }
+
+        updateSeeds();
+        setInterval(updateSeeds, 15000);
+
+        window.onload = init;
+    </script>
+</body>
+</html>

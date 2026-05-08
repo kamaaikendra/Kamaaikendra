@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goshare x Kamaaikendra</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+    * {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+*{
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+body{
+    background: 
+    radial-gradient(
+      circle at center,
+      rgba(125, 44, 155, 0.99),
+      rgba(128, 11, 155, 0.99)
+    ),
+    url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png');  background-blend-mode: overlay; /* Optional: blends the layers */
+  background-size: 100% 100%;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+  background-size: 100% 100%;
+    height:100vh;
+    max-height: 100vh;
+    min-height: 100%;
+    display:flex;
+    flex-direction:column;
+}
+.topbar{
+    background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+    box-shadow: 0 5px 10px rgba(190, 50, 280, 0.01);
+    top: 0;
+    left:0;
+    right:0;
+    height:45px;
+    position: fixed;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px;
+    z-index: 10000;
+}
+.topbar a{
+    color:#fdbd01;
+    font-size:22px;
+    text-decoration:none;
+    cursor:pointer;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+.topbar a:active{
+    transform:scale(1.2);
+}
+.embed-container{
+    top: 45px;
+    left:0;
+    right:0;
+    position: fixed;
+    height:95%;
+    width:100%;
+}
+iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+    <a href="home.html">
+        <i class="fas fa-reply"></i>
+    </a>
+    <a href="#" onclick="refreshPage()">
+        <i class="fas fa-rotate-right"></i>
+    </a>
+</div>
+<div class="embed-container">
+    <iframe id="webframe" src="https://s1.0g57.com/go/73422074"></iframe>
+</div>
+<script>
+function refreshPage(){
+    document.getElementById("webframe").contentWindow.location.reload();
+}
+</script>
+</body>
+</html>

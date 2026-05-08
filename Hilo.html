@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hilo Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #121212;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+            width: 100vw;
+            height: 45px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+            z-index: 10000000000001;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-icons-left, .nav-icons-right {
+            display: flex;
+            align-items: center;
+            color: #fdbd02;
+            font-size: 25px;
+        }
+        .nav-icons-left i:active, .nav-icons-right i:active {
+            opacity: 0.6;
+        }
+        .deposit-btn {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .deposit-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Game Area */
+        .game-container {
+            background: 
+  radial-gradient(ellipse at 55% 60%, #fdbd01 0%, transparent 100%),
+  linear-gradient(35deg, #F88017 0%, #FF7900 100%);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 10px;
+            margin: 5px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 12px;
+            box-shadow: inset 20px 20px 65px 20px rgba(20,10,15,0.3);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Hilo Top Sections */
+        .hilo-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-bottom: 10px;
+            gap: 10px;
+            height: 75px;
+            padding: 0px;
+        }
+        .hilo-history {
+            width: 72%;
+            background: rgba(0,0,0,0.4);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            overflow-x: auto;
+            flex-direction: row; 
+            justify-content: flex-start;
+            gap: 5px; 
+            white-space: nowrap;
+        }
+        .hilo-history::-webkit-scrollbar { display: none; }
+        
+        .hilo-mult-badge {
+            width: 26%;
+            background: rgba(0,0,0,0.4);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0;
+            gap: 5px;
+        }
+        .hilo-mult-badge .cards-icon { 
+            color: #fff; 
+            font-size: 16px; 
+            display:flex; 
+            align-items:center; 
+            gap: 8px; 
+            font-weight: 500; 
+        }
+        .hilo-mult-badge .cards-icon i { font-size: 14px; }
+        .hilo-mult-badge .mult-val { 
+            color: #000; 
+            font-weight: 900; 
+            font-size: 13px; 
+            background: #2ebd00; 
+            padding: 3px 12px; 
+            border-radius: 12px; 
+            margin-top: 0;
+        }
+
+        /* History Cards Styling */
+        .history-card-wrap {
+            position: relative;
+            margin-right: 0; 
+            transition: all 0.3s;
+            flex-shrink: 0; 
+        }
+        .history-card-wrap img {
+            width: 35px;
+            height: 55px;
+            border-radius: 4px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+            background: #fff;
+        }
+        .history-guess-icon {
+            position: absolute;
+            top: 20.5px;
+            left: -7px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            color: #fff;
+            z-index: 2;
+            border: 1px solid #000;
+        }
+        .guess-down { background: #1E90FF; }
+        .guess-up { background: #ff8c00; }
+        .guess-same { background: #6c757d; } 
+
+        /* Hilo Board Section */
+        .hilo-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap:10px;
+            margin-bottom: 10px;
+            height: 160px;
+            width:100%;
+            padding-right: 50px;
+        }
+        .hilo-guide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            padding: 0;
+            margin-right: 15px;
+        }
+        .guide-box {
+            border: 1.6px solid rgba(255,255,255,0.4);
+            border-radius: 4px;
+            padding: 10px 5px;
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transform: rotate(-90deg);
+        }
+        .guide-box i { font-size: 12px; }
+        .guide-v {
+            color: rgba(255,255,255,0.5);
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: lowercase;
+            margin: -5px 0;
+        }
+
+        .hilo-cards {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .hilo-cards img {
+            width: 85px;
+            height: 130px;
+            border-radius: 5px;
+            box-shadow: 0 2px 1px rgba(0,0,0,0.3);
+            background: #fff;
+        }
+        .hilo-card-back {
+            width: 65px;
+            height: 100px;
+            border-radius: 5px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 25%, transparent 25%) -7.5px 0,
+                        linear-gradient(225deg, rgba(255,255,255,0.1) 25%, transparent 25%) -7.5px 0,
+                        linear-gradient(315deg, rgba(255,255,255,0.1) 25%, transparent 25%),
+                        linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+            background-size: 15px 15px;
+            background-color: #0b57d0;
+            border: 4px solid #fff;
+            box-shadow: 
+                0 2px 0 0 #ccc,
+                0 2px 0 0.5px #fff,
+                0 5px 0 0 #ccc,
+                0 5px 0 0.5px #fff,
+                0 8px 0 0 #ccc,
+                0 8px 0 0px #fff;
+            margin-bottom: 15px;
+        }
+
+        /* Animation specific deck wrapper */
+        .deck-wrapper {
+            position: relative;
+            width: 65px;
+            height: 100px;
+            margin-bottom: 15px; 
+        }
+        .deck-wrapper > .hilo-card-back {
+            margin-bottom: 0; 
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .flip-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 1000px;
+            z-index: 10;
+            display: none;
+        }
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        .flip-container.is-flipped .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 5px;
+        }
+        .flip-front {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 25%, transparent 25%) -7.5px 0,
+                        linear-gradient(225deg, rgba(255,255,255,0.1) 25%, transparent 25%) -7.5px 0,
+                        linear-gradient(315deg, rgba(255,255,255,0.1) 25%, transparent 25%),
+                        linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+            background-size: 15px 15px;
+            background-color: #0b57d0;
+            border: 4px solid #fff;
+            box-sizing: border-box;
+        }
+        .flip-back {
+            transform: rotateY(180deg);
+            background: #fff;
+            box-shadow: 0 2px 1px rgba(0,0,0,0.3);
+            border: 3px solid transparent; 
+            box-sizing: border-box;
+        }
+        .flip-back img {
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+            object-fit:fill; 
+        }
+        .flip-back.error-border {
+            border-color: #ff0000;
+        }
+
+        /* Refresh Button */
+        .hilo-refresh {
+            text-align: center;
+            margin-bottom: 10px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .hilo-refresh button {
+            background:rgba(0,0,0,0.4);
+            border: 2px solid #fff;
+            color: #fff;
+            width: auto;
+            padding: 0 10px;
+            height: 30px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: none;
+        }
+        .hilo-refresh button:active { transform: scale(0.95); }
+
+        /* Actions & Multipliers */
+        .hilo-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+            visibility: hidden; 
+        }
+        .hilo-btn {
+            flex: 1;
+            height: 45px;
+            border-radius: 18px;
+            border:1.2px solid black;
+            color: #fff;
+            font-weight: 400;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4),inset 0 -2px 0 rgba(0,0,0,0.2);
+            transition: all 0.1s;
+        }
+        .hilo-btn:active:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: none; 
+        }
+        .hilo-btn:disabled {
+            display: flex; 
+            cursor: not-allowed;
+            filter: grayscale(50%); 
+        }
+        .btn-down { background: linear-gradient(180deg, #1E90FF 0%, #005cbf 100%); }
+        .btn-up { background: linear-gradient(180deg, #ff8c00 0%, #d35400 100%); }
+        .btn-same { background: linear-gradient(180deg, #6c757d 0%, #495057 100%); } 
+        .arrow-icons {
+            display: flex; 
+            font-size: 25px;
+            font-weight:900;
+  font-weight: 900; /* or 500 if already bold */
+  -webkit-text-stroke: 0.7px rgba(255, 255, 255, 0.4);
+  text-shadow: 0.5px 0.5px 0 rgba(0, 0, 0, 0.2);
+            margin-bottom: 0px;
+        }
+
+        .hilo-mults {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 4px;
+            visibility: hidden; 
+        }
+        .mult-wrapper { 
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .mult-box {
+            text-align: center;
+            background:rgba(0,0,0,0.3);
+            color: #fff;
+            font-weight: 800;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* Bottom Controls Panel */
+        .controls-panel {
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            padding: 8px 5px;
+            margin: auto -7px;
+            position: relative;
+            z-index: 60;
+        }
+
+        .action-buttons-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .bet-action-btn {
+            flex-grow: 1;
+            height: 50px;
+            border-radius: 20px;
+            font-size: 16px;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.7);
+            font-weight: 700;
+            color: #fff;
+            border: 2px solid black;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+
+        .bet-action-btn:disabled {
+            filter: brightness(0.8);
+            cursor: not-allowed;
+        }
+
+        .btn-green {
+            background: linear-gradient(90deg, #468c00 0%, #74bc14 50%, #468c00 100%);
+        }
+        
+        .btn-orange {
+            background: linear-gradient(90deg, #b85c00 0%, #ff8c00 50%, #b85c00 100%);
+            display: none;
+        }
+
+        #cashout-val {
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        /* Bet Input Area */
+        .bet-input-wrapper {
+            position: relative;
+        }
+
+        @keyframes slideUpPopup {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .slide-up-popup {
+            display: none;
+            position: absolute;
+            bottom: 75%; 
+            left: 4%;
+            width: 85%;
+            background: rgba(390,140,0,1);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .slide-up-popup.show { display: block; }
+
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .keyboard-btn {
+            background:rgba(189,110,15,0.5);
+            border: 1px solid rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 1px 2px rgba(255,155,5,0.1);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 500;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .keyboard-btn:active { background: rgba(255,255,255,0.2); }
+
+        .keyboard-close-bar {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: #fff;
+            width: 100%;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+         .slide-up-popup2 {
+            display: none;
+            position: absolute;
+            bottom: 85%; 
+            left:0;
+            width: 100%;
+            background: rgba(190,110,0,1);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            border: 1px solid rgba(0,0,0,0.6);
+            animation: slideUpPopup 0.2s ease-out forwards;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .slide-up-popup2.show { display: block; }
+        .amounts-title { text-align: center; color: #fff; font-size: 14px; font-weight: 500; margin-bottom: 12px; }
+        .amounts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .amount-btn {
+            background: rgba(289,120,0,0.2);
+            border: 1px solid rgba(0,0,0,0.6);
+            box-shadow: inset 0 1px 1px rgba(255,175,15,0.1);
+            color: #fff;
+            padding: 5px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .amount-btn:active { background: rgba(255,255,255,0.2); }
+
+        .bet-input-container {
+            background:rgba(390,135,0,1);
+            border: 1px solid rgba(0,0,0,0.6);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.3);
+            border-radius: 30px;
+            padding: 0px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .bet-input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .bet-label {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .bet-input-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.5);
+            width: 80%;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .bet-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .bet-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .bet-control-btn, .bet-control-btn2 {
+            width: 38px;
+            height: 35px;
+            border-radius: 30px;
+            border: 1px solid rgba(0,0,0, 0.5);
+            background: rgba(290,130,0,1);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        
+        .bet-control-btn:active, .bet-control-btn2:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Bottom Status Bar */
+        .bottom-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            margin:-5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .bottom-btn {
+            background: rgba(380,135,0,0.9);
+            border: 1px solid rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 4px 45px;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: inset 0 1px 1px rgba(255,155,25,0.3);
+        }
+
+        .help-btn {
+            background: rgba(290,125,0,0.9);
+            border: 1px solid black;
+            color: black;
+            outline: 2px solid rgba(290,125,0,0.8);
+            width: 20px;
+            font-size: 18px;
+            height: 20px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 300;
+            cursor: pointer;
+            margin-left: -10px;
+        }
+
+        .balance-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .menu-hamburger {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            background:rgba(350,120,0,0.8);
+        }
+
+        .menu-hamburger span {
+            width: 12px;
+            height: 2px;
+            background: #fff;
+            border-radius: 1px;
+        }
+
+        /* Modals Generic */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000000000; 
+            display: none;
+            justify-content: center; 
+            align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content { 
+            background: #222428; 
+            width: 95%; 
+            max-width: 350px;
+            border-radius: 12px;
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; 
+            animation: slideUp 0.3s ease; 
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+        .modal-header {
+            padding: 15px; 
+            border-bottom: 1px solid #333; 
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .modal-title { 
+            font-size: 15px; 
+            font-weight: 500; 
+            color: #fff; 
+            text-transform: uppercase; 
+        }
+        .modal-close {
+            background: #333;
+            border:1px solid rgba(0,0,0,0.5); 
+            color: #aaa; 
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        .modal-body {
+            padding: 15px; 
+            color: #ccc;
+            font-size: 13px; 
+            line-height: 1.5;
+            max-height: 70vh;
+            overflow-y: auto; 
+        }
+
+        /* Container and List Reset */
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-list li {
+            padding: 10px 15px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #c2c7cc;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .menu-list li i, .menu-list li svg {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #a1a5b0;
+        }
+
+        #sound-toggle-menu-btn { background: #141518; border-radius: 8px; margin-bottom: 8px; }
+        #freebets-menu-btn, #recordsmenu-btn, #limits-menu-btn, #how-to-play-menu-btn, #rules-menu-btn, #fairnessmenu-btn {
+            background: #141518; border-bottom: 1px solid #232529;
+        }
+        #freebets-menu-btn { border-top-left-radius: 8px; border-top-right-radius: 8px; }
+        #fairnessmenu-btn { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom: none; margin-bottom: 8px; }
+        #closemenu { justify-content: center; color: #8a919e; background: transparent; padding:10px; }
+        .menu-list li:last-child {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 15px 4px 4px 4px; border-top: 2px solid #292b30; cursor: default;
+        }
+
+        .limits-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .limits-table td { padding: 8px; background: #2a2c30; }
+        .limits-table td:first-child { border-radius: 8px 0 0 8px; color: #aaa; }
+        .limits-table td:last-child { border-radius: 0 8px 8px 0; text-align: right; font-weight: 700; color: #fff; }
+
+        .message-toast {
+            position: fixed; 
+            top: 60px;
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(0,0,0,0.7);
+            color: white; 
+            padding: 8px 16px; 
+            width:90%;
+            border-radius: 20px; 
+            font-size: 13px; 
+            text-align: center;
+            font-weight: 500; 
+            z-index: 2000; 
+            opacity: 0; 
+            transition: opacity 0.3s; 
+            pointer-events: none; 
+        }
+        .message-toast.show { opacity: 1; }
+
+        .auth-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .auth-popup-content { 
+            background: #222428; padding: 25px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; border: 1px solid #e42c42;
+        }
+        .auth-popup h2 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+        .auth-popup p { color: #e42c42; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+        .auth-popup-btn { 
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; width: 100%; cursor: pointer;
+        }
+        #loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 99999; display: flex; justify-content: center; align-items: center;
+        }
+        .spinner div { 
+            width: 12px; height: 12px; background: #e42c42; border-radius: 50%; margin: 0 4px; display: inline-block; animation: bounce 0.4s infinite ease-in-out both; 
+        }
+        .spinner div:nth-child(1) { animation-delay: -0.32s; }
+        .spinner div:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0.9); } 40% { transform: scale(1); } }
+
+        /* Bet History */
+        .list-header { display: flex; padding: 5px 15px; color: #888; font-size: 11px; align-items: center; background: #1b1c1d; }
+        .list-row { display: flex; padding: 8px 15px; align-items: center; font-size: 12px; border-bottom: 1px solid #1b1c1d; color: #ddd; }
+        .list-row.win { background: rgba(40, 167, 69, 0.15); border: 1px solid #28a745; border-radius: 6px; margin: 4px; border-bottom: 1px solid #28a745; }
+        .list-row.win .col-date { color: #fff; }
+        .list-row.lose { background: rgba(167,69,40,0.15); border-radius: 6px; margin: 4px; border: 1px solid rgba(280,20,10,1); }
+        .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 10px; color: #888; }
+        .col-bet { flex: 1.5; text-align: left; }
+        .col-x { flex: 1; text-align: center; }
+        .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+        .x-pill { background: rgba(255,255,255,0.1); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+        .x-pill.blue-bg { background: #1E90FF; color: #fff; }
+
+    </style>
+</head>
+<body>
+        <div id="site-loader-wrapper">
+ <div id="site-loader-container" class="site-loader-container">
+        <div class="site-loader-powered-text">
+          <div class="site-loader-powered-img"></div>
+        </div>
+        <div class="site-loader-brand site-loader-brand-img"></div>
+        <div class="site-loader-dots">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+</div>
+
+<style>
+  #site-loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    z-index: 99999999999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .site-loader-powered-text {
+    padding: 4px 0;
+  }
+  .site-loader-powered-img {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ0AAAATCAYAAACKnA9+AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAd/SURBVHgB7Vrdcds4EIYdJ3mMUsHxKjilgtAVRM7PTN4sV+CoAlsV2K7A9Ftm8qdUYKaCUyoIOzjdWyaJ7fs+epe3RAAK1o/nZi7fDC2CBHYX2MXuYumN58+f55eXl7kLY7axsVHdvXt3+vr168olQOj1Me4PNHukcXV19fnevXuTEI3BYNDb3Nx8pW30KyL9MvQbavv9+/eHHfxzv9/Tp085NnMJAJ/y7du3ZYhvABXeV9rfx7NnzwaYf9+loYK8hTYg82GkX60X8n3z5s3ULYA5cnXq3cqFftN3795NXAe8eVRboqCD2AAI5r59+0Yhi4uLi9FkMpmF+lE5d+7cOVWFc5wFaByRBiYythMhPQi1764NlP1I/9injwXOrZwwrjKkaPDfxc+Q91iQ5j3udyFT7hIAGvwp+WdraytD+2Bef8yBRrDny4R3A/J2CRB5C/OoUy/QR80XzbE11hTMk8vq3deZlQ39ZtB9GbML2ezNPOBUft90iQDxIRb1T3om/514g/N5SiUNTOT85cuXmff8o96Lh/wJeP7EtulNXRh5iO4tgMZ5Tg/ibhcZrlPw/RDSzbKgzr5///7BPsM86RTUyFqRKoDG4KDDOoptegw+0hJ5wWs9ArFtPDszXTKfgYTHc9cOXWOOra06QIOGZxfIeiT0DSrNDwW+EYosmZUDi1NGaJ1QrtiFcYWLwF8fPNrDVRnapzHlcx26+OIauTj2bF+0Rx7fAWQ6cguA66HzCumMaw+P1ehdvNrYkNj3HQmBjcAIps8ZrusxW7YTmP0VcKPlzs4OY/y+MsB1aMZYwo7K8PKMijQQDgt6AnmmxlvTwfMJ2qfyrscJWDlevHjRRyjJrFBcCCrXunXw7puwXuFdMN9hHhLLweYhkm+WkP+Lyo+QzA1SBvhWi/KFMZQe7xLXseRLGuqGWOezm/KAXDOPNu9LGM1vGr38CIRwfoz3T+R9D96QBr+j7+kA8M46qBPlkRReMdjmWD3PqofmfhxLbGUhWrtDb2g4NARtwxO2vB0MLjfNxq2Lcq2cjfez3nPdgPyVlb8j9K8cPCh5XunArQig9anrPeY8Nn0HPMRpG5uQcmTS5AGpsaHknC4EYZJpmyfPrv6SCyh62A19866ZoL+rvFA6MmNyr59V9m3mc4RNpFeeW3UBHr7Qe3qeVeV2Vg8hA6QjCRm8pDlD09U6m3Z4jUFOcE3769ev9QLbHU3PMq+sIidV9snYxm7g+NpDYOEmoLcvwtPT7ZnJ9IXHFF6vCcVoP9Y+4s4bedCvjMmBcQ9COYgitTwU4229noeV8lVQ+VhX6kSNLXOyrouAMiLa7Gt+LWWRItQXfQ7FKfRo8FKyak7FPDz4Y+d6Ou4aEDsyRKYmj2p2FBj97RLgKSTTGwm/DV1VjnjTnvD4JKGYfVu7mvmc4RE9wsu4Yyzql9jlEkHelA+8PzizFqxvRYa86uLbZZDzwHxR72Uz3wQHMNorvWQNmI/VBwZs4O3YQKYW+DnRNnREhzDUth4eLHxP1/cKeQ9IAEpqFpQnHRcADyFuSdBYdHdh4jl+ChtC6Q1FBobO+rkm7TafW2ephEqxbRsBBONFPdaSmLnVg3rfZRHateuHLTBtQh96t8wZR0JbCa1Fy+gkRHTtkmgREowfujTYfGPm8WfeoC6dobPgr5xIZ3oqg/GVLIwS+GX/kvmcnlxjpRKFeMrKrRa1V7AJc4AvPWA07GnasiCadRUjSQbzMpsXEljXoRSPM1yn2Gy92NwYVXCSHYGOredV9+/fD/ZPyenqkyVPKoGjeKU3saKuDy/3qew7KZ0cSb9cQnsu7SaR5QlZcxj0fyz9lG60VGJkOLtpBd/IXBg6uft3Z590GZz0/xj7fLcMvPm7Hz9+3Mh4I6Uc5ol8pqWsA/ApYmkLP4XB8KZGjpOYx48Wh/XCIj0Ewe3IJyf7LLNH5hBsfkb4uY/kB5XSg0EN9B0WZuLJeia/fa9f6dYIrMWeXq59KjtYJidbBnb+LmHTpUI2ZpNnwxvmc4bMIvcttIxOi8P2ch2Q+lSp7Xk1Ikkya8ROu14+1hxgWBx1bVnLUL95taVVgkqx85cC6a1CyhP2U1Pp/uNYqk5HeAXCnN8A/R1P9w9XTYNrnsPL7YXo6WFB0BMeP/23g1cSabynb5zrRleBdN0gL+8TZBU6LS4K6IzG3Kwt1rxyK0BSna4LUiPiRPVTzIAnTxhf6a5drOZl9gARPeEhH5liIW3NqVU4VkjyWl6ZfzJIqRVKv12MfRx7T2+ZmvNx/lYO8fZlhO8Tflpycb4z8A1+f4UX5Ud9bXJNWTvtefRHi5ycQ3J5+SqxsrC9tNERTI5heLxVN9+Lfbh31ye8wxgtMaapNSbP+zWwpRMCSvjsEnA1579hoAT+FC4R9HbG6OoCaSgHTqgOVM58cfHG5l3jQv9WlYoUuRBBtt2KsHR4VdCQ+LE/klPUBV3+90LK6c3L62axxWTpxGsHjXPdoHx23jZ3XSMqOVyNwO/RogbXAS3Cj0l/lbXHDbcm8D9DWFTmfzAgNFRdXwh+4f+FfwC7IgjVt8cPngAAAABJRU5ErkJggg==);
+    width: 80px;
+    height: 10px;
+    background-size: 80px 10px;
+  }
+  .site-loader-brand-img {
+    background-image: url(data:image/png;base64,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);
+  }
+  .site-loader-brand {
+    display: block;
+    width: 137px;
+    height: 48px;
+    background-size: 137px 48px;
+    margin-bottom: 12px;
+  }
+  .site-loader-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .site-loader-container > .site-loader-dots {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+  }
+  .site-loader-container > .site-loader-dots div {
+    position: absolute;
+    border-radius: 50%;
+    background: #f01d14;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+  }
+
+  .site-loader-container > .site-loader-dots {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+  }
+
+  .site-loader-container > .site-loader-dots div {
+    position: absolute;
+    border-radius: 50%;
+    background: #f01d14;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+  }
+
+  .site-loader-container > .site-loader-dots div:nth-child(1) {
+    -webkit-animation: site-loader-anim1 0.9s infinite ease-in-out;
+    animation: site-loader-anim1 0.9s infinite ease-in-out;
+    opacity: 0;
+  }
+
+  .site-loader-container > .site-loader-dots div:nth-child(2) {
+    -webkit-animation: site-loader-anim2 0.9s infinite ease-in-out;
+    animation: site-loader-anim2 0.9s infinite ease-in-out;
+    opacity: 0;
+  }
+
+  .site-loader-container > .site-loader-dots div:nth-child(3) {
+    -webkit-animation: site-loader-anim3 0.9s infinite ease-in-out;
+    animation: site-loader-anim3 0.9s infinite ease-in-out;
+    opacity: 0.5;
+  }
+
+  @-webkit-keyframes site-loader-anim1 {
+    0%,
+    33% {
+      -webkit-transform: translateX(-4px) scale(0.33);
+      opacity: 0.5;
+    }
+    100% {
+      -webkit-transform: translateX(11px) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes site-loader-anim2 {
+    0%,
+    33% {
+      -webkit-transform: translateX(11px) scale(1);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateX(26px) scale(0.33);
+      opacity: 0.5;
+    }
+  }
+
+  @-webkit-keyframes site-loader-anim3 {
+    0%,
+    33% {
+      -webkit-transform: translateX(26px) scale(0.33);
+    }
+    100% {
+      -webkit-transform: translateX(-4px) scale(0.33);
+    }
+  }
+
+  @keyframes site-loader-anim1 {
+    0%,
+    33% {
+      -webkit-transform: translateX(-4px) scale(0.33);
+      transform: translateX(-4px) scale(0.33);
+      opacity: 0.5;
+    }
+    100% {
+      -webkit-transform: translateX(11px) scale(1);
+      transform: translateX(11px) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes site-loader-anim2 {
+    0%,
+    33% {
+      -webkit-transform: translateX(11px) scale(1);
+      transform: translateX(11px) scale(1);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateX(26px) scale(0.33);
+      transform: translateX(26px) scale(0.33);
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes site-loader-anim3 {
+    0%,
+    33% {
+      -webkit-transform: translateX(26px) scale(0.33);
+      transform: translateX(26px) scale(0.33);
+    }
+    100% {
+      -webkit-transform: translateX(-4px) scale(0.33);
+      transform: translateX(-4px) scale(0.33);
+    }
+  }
+</style>
+
+<script>
+  // Function to show the loading overlay
+  function displaySiteLoader() {
+    const loaderElement = document.getElementById('site-loader-wrapper');
+    if (loaderElement) {
+      loaderElement.style.display = 'flex';
+    }
+  }
+  
+  // Function to hide the loading overlay
+  function removeSiteLoader() {
+    const loaderElement = document.getElementById('site-loader-wrapper');
+    if (loaderElement) {
+      loaderElement.style.display = 'none';
+    }
+  }
+  
+  // Show the loading overlay when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    displaySiteLoader();
+    
+    // Generate a random delay between 3-5 seconds
+    const dynamicWaitTime = Math.floor(Math.random() * 2000) + 3000; // 3000-5000ms
+    
+    // Hide the overlay after the random delay
+    setTimeout(removeSiteLoader, dynamicWaitTime);
+  });
+</script>
+    <div id="loading-overlay">
+        <div class="spinner">
+            <div></div><div></div><div></div>
+        </div>
+    </div>
+
+    <div class="top-nav">
+        <div class="nav-icons-left">
+            <i class="fas fa-reply" id="top-deposit-btn" onclick="window.location.href='home.html'"></i>
+        </div>
+        <div class="nav-icons-right">
+            <button class="deposit-btn" id="top-deposit-btn" onclick="window.location.href='deposit.html'">
+                Deposit
+            </button>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="hilo-top-bar">
+            <div class="hilo-history" id="hilo-history">
+            </div>
+            <div class="hilo-mult-badge">
+                <span class="cards-icon"><i class="fas fa-layer-group"></i> <span id="history-count">0</span></span>
+                <span class="mult-val" id="current-mult-display">0.00x</span>
+            </div>
+        </div>
+    <div style="flex-grow:1;"></div>
+        <div class="hilo-board">
+            <div class="hilo-guide">
+                <div class="guide-box">A <i class="fas fa-spade"></i></div>
+                <div class="guide-v">v</div>
+                <div class="guide-box">2 <i class="fas fa-spade"></i></div>
+            </div>
+            <div class="hilo-cards">
+                <img id="current-card-img" src="" alt="Card">
+                <div class="deck-wrapper">
+                    <div class="hilo-card-back"></div>
+                    <div class="flip-container" id="anim-flip-container">
+                        <div class="flip-inner" id="anim-flip-inner">
+                            <div class="flip-front"></div>
+                            <div class="flip-back" id="anim-flip-back">
+                                <img id="anim-card-img" src="" alt="Revealed Card">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hilo-refresh">
+            <button id="refresh-card-btn">
+                <i class="fas fa-undo"></i>
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:14px; height:18px; border:1.5px solid #fff; border-radius:3px; margin-left:4px;">
+                    <div style="width:6px; height:6px; background:#fff; transform:rotate(45deg);"></div>
+                </span>
+            </button>
+        </div>
+    <div style="flex-grow:1;"></div>
+        <div class="hilo-actions">
+            <button class="hilo-btn btn-down" id="btn-low" disabled>
+                <div class="arrow-icons"><i class="fas fa-chevron-down"></i></div>
+                <span>Low or same</span>
+            </button>
+            <button class="hilo-btn btn-up" id="btn-high" disabled>
+                <div class="arrow-icons"><i class="fas fa-chevron-up"></i></div>
+                <span>High or same</span>
+            </button>
+        </div>
+
+        <div class="hilo-mults">
+            <div class="mult-wrapper">
+                <div class="mult-box" id="mult-low-box">0.00x</div>
+            </div>
+            <div class="mult-wrapper">
+                <div class="mult-box" id="mult-high-box">0.00x</div>
+            </div>
+        </div>
+
+        <div style="flex-grow: 1;"></div>
+        
+        <div class="controls-panel">
+            <div class="action-buttons-wrapper">
+                <button class="bet-action-btn btn-green" id="start-btn">  <svg class="play-icon" viewBox="0 0 24 24" width="35" height="30" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" style="position: absolute; left: 20px;">
+                        <path d="M 13.7 15.6 L 18.3 13 Q 20 12 18.3 11 L 7.7 5 Q 6 4 6 6.5 L 6 17.5 Q 6 20 8.5 18.6"></path>
+                    </svg> BET</button>
+                <button class="bet-action-btn btn-orange" id="cashout-btn">
+                    CASH OUT
+                    <span id="cashout-val">0.00 INR</span>
+                </button>
+            </div>
+
+            <div class="bet-input-wrapper">
+                <div class="slide-up-popup keyboard-popup" id="keyboard-popup">
+                    <div class="keyboard-grid">
+                        <button class="keyboard-btn key-val" data-val="1">1</button>
+                        <button class="keyboard-btn key-val" data-val="2">2</button>
+                        <button class="keyboard-btn key-val" data-val="3">3</button>
+                        <button class="keyboard-btn key-val" data-val="4">4</button>
+                        <button class="keyboard-btn key-val" data-val="5">5</button>
+                        <button class="keyboard-btn key-val" data-val="6">6</button>
+                        <button class="keyboard-btn key-val" data-val="7">7</button>
+                        <button class="keyboard-btn key-val" data-val="8">8</button>
+                        <button class="keyboard-btn key-val" data-val="9">9</button>
+                        <button class="keyboard-btn key-val" data-val=".">.</button>
+                        <button class="keyboard-btn key-val" data-val="0">0</button>
+                        <button class="keyboard-btn key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                    </div>
+                    <button class="keyboard-close-bar" id="keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+                </div>
+
+                <div class="slide-up-popup2 amounts-popup" id="amounts-popup">
+                    <div class="amounts-title">Bet INR</div>
+                    <div class="amounts-grid">
+                        <button class="amount-btn" data-val="20">20.00</button>
+                        <button class="amount-btn" data-val="50">50.00</button>
+                        <button class="amount-btn" data-val="100">100.00</button>
+                        <button class="amount-btn" data-val="200">200.00</button>
+                        <button class="amount-btn" data-val="500">500.00</button>
+                        <button class="amount-btn" data-val="1000">1,000.00</button>
+                    </div>
+                </div>
+                
+                <div class="bet-input-container">
+                    <div class="bet-input-section" id="bet-input-trigger">
+                        <div class="bet-label">Bet INR</div>
+                        <div class="bet-input-box">
+                            <input type="text" class="bet-input" id="bet-amount" value="10" readonly>
+                        </div>
+                    </div>
+                    <div class="bet-buttons">
+                        <button class="bet-control-btn" id="half-btn"><i class="fas fa-minus" style="pointer-events: none;"></i></button>
+                        <button class="bet-control-btn2" id="max-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="pointer-events: none;">
+                                <ellipse cx="12" cy="6" rx="7" ry="2.5"></ellipse>
+                                <path d="M5 12a7 2.5 0 0 0 14 0"></path>
+                                <path d="M5 18a7 2.5 0 0 0 14 0"></path>
+                            </svg>
+                        </button>
+                        <button class="bet-control-btn" id="double-btn"><i class="fas fa-plus" style="pointer-events: none;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="bottom-btn" id="bottom-game-btn">HILO</button>
+            <button class="help-btn" id="help-open-btn">?</button>
+            <div class="balance-display">
+                <span id="balance">0.00</span> INR
+                <button class="menu-hamburger" id="main-menu-btn">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menu-modal">
+        <div class="modal-content" style="background:#1b1d21; border-radius:12px; position:absolute; bottom:40px; padding: 16px; animation:none;">
+            <div style="padding: 4px 4px 12px 4px; color: #e5e7eb; font-size: 12px;">
+                Email id: <span id="useremailID"></span>
+            </div>
+            <ul class="menu-list">
+                <li id="sound-toggle-menu-btn">
+                    <i class="fas fa-volume-up"></i> Sound 
+                    <div id="sound-toggle-ui" style="margin-left:auto; width:32px; height:18px; background:#62a628; border-radius:12px; position:relative; transition: background 0.2s;">
+                        <div id="sound-toggle-circle" style="width:15px; height:15px; background:#fff; border-radius:50%; position:absolute; top:1.5px; right:1.5px; transition: right 0.2s, left 0.2s;"></div>
+                    </div>
+                </li>
+                <li id="freebets-menu-btn" class="menu-option-item"><i class="far fa-star"></i> Free Bets</li>
+                <li id="recordsmenu-btn" class="menu-option-item"><i class="fas fa-history"></i> Bet History</li>
+                <li id="limits-menu-btn" class="menu-option-item"><i class="fas fa-money-bill-wave"></i> Game Limits</li>
+                <li id="how-to-play-menu-btn" class="menu-option-item"><i class="far fa-question-circle"></i> How to Play</li>
+                <li id="rules-menu-btn" class="menu-option-item"><i class="far fa-file-alt"></i> Game Rules</li>
+                <li id="fairnessmenu-btn" class="menu-option-item"><i class="fas fa-balance-scale"></i> Provably Fair Settings</li>
+                <li id="closemenu" class="menu-option-item"><i class="fas fa-home"></i> Back to Home</li>
+                <li>
+                    <div style="display: flex; align-items: center; gap: 8px; color: #a1a5b0; font-size: 13px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#82E022" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="M7.5 12.5L11 16L17.5 8.5"></path>
+                            <path d="M7 9v-1.5q0-1.5 1.5-2l1-.4"></path>
+                            <path d="M11 4.5v0"></path>
+                            <path d="M17 13.5c-1 2-2 3.5-3.5 4.5"></path>
+                            <path d="M12.5 19.5v0"></path>
+                        </svg>
+                        <span>Provably Fair Game</span>
+                    </div>
+                    <div style="color: #a1a5b0; font-size: 13px;">
+                        © <strong style="text-decoration: underline; color: #ffffff; text-underline-offset: 4px; text-decoration-thickness: 2px; font-weight: 800;">SPRIBE</strong>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="how-to-play-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">HOW TO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <div style="font-size:18px; color:#fff; margin-bottom:20px;">HILO</div>
+                <p style="margin-bottom:15px; color:#fff;">Guess whether your next card will be higher or lower than the last shown.</p>
+                <p>With each correct turn your winnings increase, and you can cash out after each step, or go for more!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="limits-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME LIMITS</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:15px;">Game limits are managed by operator. Current game limits for this game are below:</p>
+                <table class="limits-table">
+                    <tr><td>Maximum bet INR:</td><td>40,000.00</td></tr>
+                    <tr><td>Minimum bet INR:</td><td>10.00</td></tr>
+                    <tr><td>Maximum win for one bet INR:</td><td>800,000.00</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME RULES</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:16px; color:#fff; text-align:center; margin-bottom:15px;">HILO</div>
+                <p>- The goal of the game is to predict whether the next card will be higher or lower than the current card displayed.</p><br>
+                <p>- If the next card drawn is exactly the same rank, it counts as a WIN for both "High or same" and "Low or same".</p><br>
+                <p>- Card rankings: 2 is the lowest, Ace (A) is the highest.</p><br>
+                <p>- After any winning prediction, you may Cash Out your current accumulated multiplier or continue guessing to multiply your winnings further.</p>
+                <hr style="border:0; border-top:1px solid #444; margin:15px 0;">
+                <p style="color:#fff; font-weight:700;">GAME INTERFACE</p><br>
+                <p>- Bets can be made from the bet panel, by selecting predefined bet amounts, or entering your own;</p>
+                <p>- You can refresh your starting card before placing a bet.</p>
+                <p>- Player balance shows available funds to play;</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="fairness-modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <div class="modal-title">PROVABLY FAIR SETTINGS</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p style="color: #aaa; margin-bottom: 10px;">
+                    This game uses Provably Fair technology to determine game result. This tool gives you ability to change your seed and check fairness of the game.
+                </p>
+                <div style="background: #1a1c20; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
+                        <div>
+                            <div style="color: #fff; font-weight: bold;">Next client seed:</div>
+                            <div style="color: #888; font-size: 11px;">Generated on Your side</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; background: #2a2c30; border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span id="client-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">ZT6tUHTD300bl...</span>
+                        </div>
+                        <button onclick="updateSeeds()" style="background: #333; border: none; color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content" style="max-width: 380px; max-height: 80vh; display: flex; flex-direction: column; background: #121418;">
+            <div class="modal-header">
+                <div class="modal-title">BET HISTORY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="list-header">
+                <div class="col-date">Date</div>
+                <div class="col-bet">Bet INR</div>
+                <div class="col-x">X</div>
+                <div class="col-cashout">Cash out INR</div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div id="history-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 15px; background: #1b1c1d; margin-top: auto;">
+                    <button id="load-more-history-btn" class="generic-btn" onclick="playAudioFile('generic-btn-sfx'); loadBetHistory(true)" style="background: #2b2b2c; color: #aaa; border: none; padding: 8px 16px; border-radius: 16px; font-size: 12px; cursor: pointer; display: none;">Load more</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="insufficient-balance-modal">
+        <div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #ff9800;">
+            <div class="modal-header" style="border-bottom: none;">
+                <div class="modal-title" style="color: #ff9800; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-wallet"></i> LOW BALANCE
+                </div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 0px;">
+                <i class="fas fa-coins" style="font-size: 50px; color: #ffc107; margin-bottom: 15px;"></i>
+                <p style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: 500;">Insufficient Balance</p>
+                <p style="color: #ccc; font-size: 13px; margin-bottom: 20px;">Please add cash to your wallet to place this bet and continue playing.</p>
+                <button id="popup-add-cash-btn" style="background: linear-gradient(180deg, #ff9800 0%, #e65100 100%); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border-bottom: 2px solid #bf360c;">Add Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-popup" id="auth-popup">
+        <div class="auth-popup-content">
+            <h2>Authentication Required !!</h2>
+            <p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p>
+            <button class="auth-popup-btn generic-btn" id="sign-in-btn">Sign In to Play</button>
+        </div>
+    </div>
+
+    <div class="message-toast" id="message-toast">Message</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+      <script>
+        // Sound System
+        class SoundPool {
+            constructor() {
+                this.sounds = {};
+                this.soundUrls = {
+                    'tile-click-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/tilereveal.mp3',
+                    'win-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/cashoutsuccess.mp3',
+                    'lose-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/minesgameover.mp3',
+                    'menu-option-click-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click6.wav',
+                    'menu-btn-click-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    'keyboard-btn-sfx': 'https://audio.jukehost.co.uk/w8Ex4MhHu1vTYq1UfUKvwIIpAdh4k4LZ',
+                    'generic-btn-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click.wav',
+                    'modal-open-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click4.wav',
+                    'modal-close-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    'toggle-on-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnon.mp3',
+                    'toggle-off-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnoff.mp3',
+                    'bet-click-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/HiloBetBtn.mp3',
+                    'card-reveal-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/HiloCardReveal.mp3',
+                    'card-refresh-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Hilocardrefresh.mp3'
+                };
+                this.init();
+            }
+            async init() {
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        this.sounds[key] = { audioContext, audioBuffer };
+                    } catch (e) {}
+                }
+            }
+            play(soundName, volume = 0.5) {
+                if (!this.sounds[soundName]) return;
+                let audioContext = this.sounds[soundName].audioContext;
+                if (audioContext.state === 'suspended') audioContext.resume();
+                const source = audioContext.createBufferSource();
+                source.buffer = this.sounds[soundName].audioBuffer;
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = volume;
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                source.start(0);
+            }
+        }
+        const soundPool = new SoundPool();
+
+        function playAudioFile(id, volume = 0.5) {
+            if (!gameState.soundEnabled) return;
+            try { soundPool.play(id, volume); } catch (e) {}
+        }
+
+        // --- Hilo Specific Logic ---
+        const cardsDeck = [];
+        const suits = ['S', 'H', 'D', 'C'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K', 'A'];
+        for (let suit of suits) {
+            for (let i = 0; i < values.length; i++) {
+                cardsDeck.push({ suit: suit, val: values[i], rank: i + 2 });
+            }
+        }
+        function getRandomCard() {
+            return cardsDeck[Math.floor(Math.random() * cardsDeck.length)];
+        }
+        function getCardImage(card) {
+            return `https://deckofcardsapi.com/static/img/${card.val}${card.suit}.png`;
+        }
+
+        const preloadedCardImages = {};
+        function preloadAllCards() {
+            const loadPromises = cardsDeck.map(card => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    const url = getCardImage(card);
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); 
+                    img.src = url;
+                    preloadedCardImages[url] = img; 
+                });
+            });
+            return Promise.all(loadPromises);
+        }
+
+        const hiloState = {
+            currentCard: null,
+            totalTrueOdds: 1.0,
+            cashoutMult: 0.00,
+            history: [],
+            isPlaying: false,
+            isAnimating: false
+        };
+
+        const gameState = {
+            soundEnabled: true,
+            balance: 0,
+            betAmount: 10,
+            userAuthenticated: false,
+            lifetimeWagered: 0, 
+            lifetimeWon: 0,
+            globalMode: 'NORMAL' // --- HYBRID SYSTEM UPDATE: Defaults to NORMAL ---
+        };
+
+        const msgToast = document.getElementById('message-toast');
+        let toastTimeout;
+        function showMessage(msg, persistent = false) {
+            msgToast.textContent = msg;
+            msgToast.classList.add('show');
+            clearTimeout(toastTimeout);
+            if (!persistent) {
+                toastTimeout = setTimeout(() => msgToast.classList.remove('show'), 2500);
+            }
+        }
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function dealNewCardAnim(nextCard, callback) {
+            hiloState.isAnimating = true;
+            const animContainer = document.getElementById('anim-flip-container');
+            const animImg = document.getElementById('anim-card-img');
+            const mainImg = document.getElementById('current-card-img');
+            const flipBack = document.getElementById('anim-flip-back');
+
+            mainImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+            mainImg.style.transform = 'translateX(-40px)';
+            mainImg.style.opacity = '0';
+
+            animImg.src = getCardImage(nextCard);
+            animContainer.style.transition = 'none';
+            animContainer.style.left = '0px';
+            animContainer.style.top = '0px';
+            animContainer.style.width = '100%';
+            animContainer.style.height = '100%';
+            animContainer.style.display = 'block';
+            animContainer.style.transform = 'none';
+            animContainer.classList.remove('is-flipped');
+            flipBack.classList.remove('error-border');
+
+            void animContainer.offsetWidth;
+
+            animContainer.style.transition = 'left 0.4s ease-out, top 0.4s ease-out, width 0.4s ease-out, height 0.4s ease-out, transform 0.4s ease-out';
+            animContainer.classList.add('is-flipped');
+            animContainer.style.left = '-100px'; 
+            animContainer.style.top = '-15px'; 
+            animContainer.style.width = '85px';
+            animContainer.style.height = '130px';
+
+            setTimeout(() => {
+                hiloState.currentCard = nextCard;
+                mainImg.src = getCardImage(nextCard);
+                mainImg.style.transition = 'none';
+                mainImg.style.transform = 'translateX(0)';
+                mainImg.style.opacity = '1';
+                mainImg.style.visibility = 'visible';
+                animContainer.style.display = 'none';
+                
+                if(callback) callback();
+                hiloState.isAnimating = false;
+            }, 400);
+        }
+
+        async function init() {
+            const userEmailSpan = document.getElementById('useremailID');
+            if(userEmailSpan) {
+                userEmailSpan.textContent = localStorage.getItem('email') || localStorage.getItem('userEmail') || 'Guest User';
+            }
+
+            setupEventListeners();
+            
+            await Promise.all([
+                preloadAllCards(),
+                checkAuthentication(),
+                setupGlobalPlatformListener() // --- HYBRID SYSTEM UPDATE: Initialize the global listener ---
+            ]);
+            
+            hiloState.currentCard = getRandomCard();
+            document.getElementById('current-card-img').src = getCardImage(hiloState.currentCard);
+            updateHiloUI();
+
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Listen for Admin Panel Traffic Light changes ---
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                // Listens to a central node that controls the whole platform's game modes
+                database.ref('platformControl/globalModes/hilo').on('value', snap => {
+                    if (snap.exists()) {
+                        gameState.globalMode = snap.val(); // 'RECOVERY', 'NORMAL', or 'PAYOUT'
+                    } else {
+                        gameState.globalMode = 'NORMAL';
+                    }
+                });
+                resolve(); // Siri Fix: Resolved instantly to avoid race condition delays
+            });
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Presence Tracking for Live Users ---
+        function trackGamePresence(uid) {
+            const presenceRef = database.ref(`gamePresence/hilo/${uid}`);
+            
+            database.ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() === false) {
+                    return;
+                }
+                presenceRef.onDisconnect().remove().then(function() {
+                    presenceRef.set(true);
+                });
+            });
+
+            // Extra fallback for explicit tab closures
+            window.addEventListener('beforeunload', () => {
+                presenceRef.remove();
+            });
+        }
+
+        function checkAuthentication() {
+            return new Promise((resolve) => {
+                const uid = localStorage.getItem('uid');
+                if (uid) {
+                    gameState.userAuthenticated = true;
+                    
+                    database.ref('appusers/' + uid).once('value').then(snap => {
+                        if (snap.exists()) {
+                            let data = snap.val();
+                            gameState.balance = data.totalBalance || 0;
+                            gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                            gameState.lifetimeWon = data.lifetimeWon || 0;
+                            document.getElementById('balance').textContent = gameState.balance.toFixed(2);
+                        }
+                        resolve();
+                    }).catch(() => resolve());
+
+                    database.ref('appusers/' + uid).on('value', snap => {
+                        if (snap.exists()) {
+                            let data = snap.val();
+                            gameState.balance = data.totalBalance || 0;
+                            gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                            gameState.lifetimeWon = data.lifetimeWon || 0;
+                            document.getElementById('balance').textContent = gameState.balance.toFixed(2);
+                        }
+                    });
+                    document.getElementById('auth-popup').style.display = 'none';
+                    trackGamePresence(uid); // Siri Fix: Start tracking live user connection
+                } else {
+                    document.getElementById('auth-popup').style.display = 'flex';
+                    document.getElementById('sign-in-btn').onclick = () => window.location.href = 'index.html';
+                    resolve();
+                }
+            });
+        }
+
+        function updateHiloUI() {
+            document.getElementById('bet-amount').value = gameState.betAmount.toFixed(2);
+
+            const startBtn = document.getElementById('start-btn');
+            const cashoutBtn = document.getElementById('cashout-btn');
+            const leftBtn = document.getElementById('btn-low');
+            const rightBtn = document.getElementById('btn-high');
+            const leftMult = document.getElementById('mult-low-box');
+            const rightMult = document.getElementById('mult-high-box');
+            const refreshBtn = document.getElementById('refresh-card-btn');
+            const actionsBlock = document.querySelector('.hilo-actions');
+            const multsBlock = document.querySelector('.hilo-mults');
+
+            let rank = hiloState.currentCard.rank;
+            
+            if (rank === 14) { 
+                leftBtn.className = 'hilo-btn btn-down';
+                leftBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-chevron-down"></i></div><span>Low</span>';
+                leftBtn.onclick = () => makeHiloGuess('strictly_low');
+                leftMult.textContent = ((13/12) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+
+                rightBtn.className = 'hilo-btn btn-same';
+                rightBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-equals"></i></div><span>Same</span>';
+                rightBtn.onclick = () => makeHiloGuess('strictly_same');
+                rightMult.textContent = ((13/1) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+
+            } else if (rank === 2) { 
+                leftBtn.className = 'hilo-btn btn-same';
+                leftBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-equals"></i></div><span>Same</span>';
+                leftBtn.onclick = () => makeHiloGuess('strictly_same');
+                leftMult.textContent = ((13/1) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+
+                rightBtn.className = 'hilo-btn btn-up';
+                rightBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-chevron-up"></i></div><span>High</span>';
+                rightBtn.onclick = () => makeHiloGuess('strictly_high');
+                rightMult.textContent = ((13/12) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+
+            } else { 
+                leftBtn.className = 'hilo-btn btn-down';
+                leftBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-chevron-down"></i></div><span>Low or same</span>';
+                leftBtn.onclick = () => makeHiloGuess('low_or_same');
+                leftMult.textContent = ((13/(rank-1)) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+
+                rightBtn.className = 'hilo-btn btn-up';
+                rightBtn.innerHTML = '<div class="arrow-icons"><i class="fas fa-chevron-up"></i></div><span>High or same</span>';
+                rightBtn.onclick = () => makeHiloGuess('high_or_same');
+                rightMult.textContent = ((13/(15-rank)) * 0.97 * hiloState.totalTrueOdds).toFixed(2) + 'x';
+            }
+
+            if (hiloState.isPlaying) {
+                actionsBlock.style.visibility = 'visible';
+                multsBlock.style.visibility = 'visible';
+                refreshBtn.style.visibility = 'hidden';
+                startBtn.style.display = 'none';
+                cashoutBtn.style.display = 'flex';
+                leftBtn.disabled = false;
+                rightBtn.disabled = false;
+
+                if (hiloState.cashoutMult > 0) {
+                    cashoutBtn.disabled = false;
+                    document.getElementById('cashout-val').textContent = (gameState.betAmount * hiloState.cashoutMult).toFixed(2) + " INR";
+                    document.getElementById('current-mult-display').textContent = hiloState.cashoutMult.toFixed(2) + 'x';
+                } else {
+                    cashoutBtn.disabled = true;
+                    document.getElementById('cashout-val').textContent = "0.00 INR";
+                    document.getElementById('current-mult-display').textContent = "0.00x";
+                }
+            } else {
+                actionsBlock.style.visibility = 'hidden';
+                multsBlock.style.visibility = 'hidden';
+                refreshBtn.style.visibility = 'visible';
+                startBtn.style.display = 'flex';
+                cashoutBtn.style.display = 'none';
+                leftBtn.disabled = true;
+                rightBtn.disabled = true;
+            }
+        }
+
+        function addHistoryCard(card, guessType) {
+            hiloState.history.push(card);
+            let wrap = document.createElement('div');
+            wrap.className = 'history-card-wrap';
+            
+            let iconClass = '';
+            let iconHtml = '';
+            
+            if (guessType === 'low') {
+                iconClass = 'guess-down';
+                iconHtml = '<i class="fas fa-chevron-down"></i>';
+            } else if (guessType === 'high') {
+                iconClass = 'guess-up';
+                iconHtml = '<i class="fas fa-chevron-up"></i>';
+            } else if (guessType === 'same') {
+                iconClass = 'guess-same';
+                iconHtml = '<i class="fas fa-equals"></i>';
+            }
+
+            wrap.innerHTML = `
+                <div class="history-guess-icon ${iconClass}">${iconHtml}</div>
+                <img src="${getCardImage(card)}" />
+            `;
+            
+            const historyContainer = document.getElementById('hilo-history');
+            historyContainer.appendChild(wrap); 
+            historyContainer.scrollLeft = historyContainer.scrollWidth; 
+            
+            document.getElementById('history-count').textContent = hiloState.history.length;
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Combined Global State + Personal RTP ---
+        function getDynamicLossChance() {
+            let baseChance = 0.50; // Neutral starting point
+            let rtp = 0;
+
+            if (gameState.lifetimeWagered >= 50) {
+                rtp = gameState.lifetimeWon / gameState.lifetimeWagered;
+            } else {
+                rtp = 0.50; // Assume neutral for brand new players to let Global Mode dictate
+            }
+
+            // Step 1: Calculate Personal Base Chance
+            if (rtp > 0.90) baseChance = 0.85;       // Whale Tier
+            else if (rtp > 0.60) baseChance = 0.60;  // Profit Tier
+            else if (rtp < 0.30) baseChance = 0.10;  // Hook Tier (Losing badly)
+            else baseChance = 0.45;                  // Normal Tier
+
+            // Step 2: Apply Global Traffic Light Modifiers
+            let finalChance = baseChance;
+
+            if (gameState.globalMode === 'RECOVERY') {
+                // Platform is down. Make game ruthless for everyone.
+                // Winning players get crushed, losing players still bleed.
+                finalChance = baseChance + 0.30; 
+            } 
+            else if (gameState.globalMode === 'PAYOUT') {
+                // Platform is up. Let people win.
+                finalChance = baseChance - 0.95; 
+            }
+            // If 'NORMAL', finalChance remains equal to baseChance
+
+            // Step 3: Hard Caps (Clamp values between 5% and 95%)
+            if (finalChance > 0.95) finalChance = 0.95; 
+            if (finalChance < 0.05) finalChance = 0.05;
+
+            return finalChance;
+        }
+
+        async function makeHiloGuess(type) {
+            if(!hiloState.isPlaying) return;
+            if(hiloState.isAnimating) return;
+            
+            hiloState.isAnimating = true;
+            playAudioFile('generic-btn-sfx');
+
+            let oldCard = hiloState.currentCard;
+            let nextCard = getRandomCard();
+
+            // --- HYBRID DEGRADER EXECUTION ---
+            const forceLossChance = getDynamicLossChance(); 
+
+            for (let i = 0; i < 20; i++) {
+                let isTempWin = false;
+                
+                if (type === 'strictly_low' && nextCard.rank < oldCard.rank) isTempWin = true;
+                else if (type === 'strictly_high' && nextCard.rank > oldCard.rank) isTempWin = true;
+                else if (type === 'strictly_same' && nextCard.rank === oldCard.rank) isTempWin = true;
+                else if (type === 'low_or_same' && nextCard.rank <= oldCard.rank) isTempWin = true;
+                else if (type === 'high_or_same' && nextCard.rank >= oldCard.rank) isTempWin = true;
+
+                if (isTempWin && Math.random() < forceLossChance) {
+                    nextCard = getRandomCard(); 
+                } else {
+                    break; 
+                }
+            }
+            // --- END HYBRID DEGRADER EXECUTION ---
+
+            let isWin = false;
+            let stepOdds = 1.0;
+            let guessResultType = '';
+
+            if (type === 'strictly_low') {
+                if (nextCard.rank < oldCard.rank) isWin = true;
+                stepOdds = 13 / 12;
+                guessResultType = 'low';
+            } else if (type === 'strictly_high') {
+                if (nextCard.rank > oldCard.rank) isWin = true;
+                stepOdds = 13 / 12;
+                guessResultType = 'high';
+            } else if (type === 'strictly_same') {
+                if (nextCard.rank === oldCard.rank) isWin = true;
+                stepOdds = 13 / 1;
+                guessResultType = 'same';
+            } else if (type === 'low_or_same') {
+                if (nextCard.rank <= oldCard.rank) isWin = true;
+                stepOdds = 13 / (oldCard.rank - 1);
+                guessResultType = nextCard.rank === oldCard.rank ? 'same' : 'low';
+            } else if (type === 'high_or_same') {
+                if (nextCard.rank >= oldCard.rank) isWin = true;
+                stepOdds = 13 / (15 - oldCard.rank);
+                guessResultType = nextCard.rank === oldCard.rank ? 'same' : 'high';
+            }
+
+            const animContainer = document.getElementById('anim-flip-container');
+            const animImg = document.getElementById('anim-card-img');
+            const mainImg = document.getElementById('current-card-img');
+            const flipBack = document.getElementById('anim-flip-back');
+
+            animImg.src = getCardImage(nextCard);
+            animContainer.style.transition = 'none';
+            animContainer.style.left = '0px';
+            animContainer.style.top = '0px';
+            animContainer.style.width = '100%';
+            animContainer.style.height = '100%';
+            animContainer.style.display = 'block';
+            animContainer.classList.remove('is-flipped');
+            flipBack.classList.remove('error-border');
+
+            void animContainer.offsetWidth;
+
+            animContainer.style.transition = 'transform 0.4s ease';
+            animContainer.classList.add('is-flipped');
+            
+            playAudioFile('card-reveal-sfx');
+
+            setTimeout(() => {
+                if(isWin) {
+                    playAudioFile('tile-click-sound');
+                    hiloState.totalTrueOdds *= stepOdds;
+                    hiloState.cashoutMult = hiloState.totalTrueOdds * 0.97;
+                    
+                    addHistoryCard(oldCard, guessResultType);
+                    
+                    animContainer.style.transition = 'left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease';
+                    mainImg.style.visibility = 'hidden';
+                    
+                    animContainer.style.left = '-100px'; 
+                    animContainer.style.top = '-15px'; 
+                    animContainer.style.width = '85px';
+                    animContainer.style.height = '130px';
+
+                    setTimeout(() => {
+                        hiloState.currentCard = nextCard;
+                        mainImg.src = getCardImage(nextCard);
+                        mainImg.style.visibility = 'visible';
+                        animContainer.style.display = 'none';
+                        updateHiloUI();
+                        hiloState.isAnimating = false;
+                    }, 400);
+
+                } else {
+                    playAudioFile('lose-sound');
+                    flipBack.classList.add('error-border');
+                    
+                    addHistoryCard(oldCard, guessResultType); 
+                    document.getElementById('current-mult-display').textContent = "0.00x";
+                    hiloState.isPlaying = false;
+                    updateHiloUI();
+
+                    const uid = localStorage.getItem('uid');
+                    const now = new Date();
+                    const rec = {
+                        gameName: "Hilo",
+                        time: String(now.getHours()).padStart(2, '0')+":"+String(now.getMinutes()).padStart(2, '0'),
+                        date: String(now.getDate()).padStart(2, '0')+"-"+String(now.getMonth()+1).padStart(2, '0')+"-"+String(now.getFullYear()).slice(-2),
+                        timestamp: Date.now(),
+                        betAmount: gameState.betAmount,
+                        winAmount: 0
+                    };
+                    database.ref(`appusers/${uid}/betHistory`).push(rec);
+
+                    setTimeout(() => {
+                        animContainer.style.display = 'none';
+                        flipBack.classList.remove('error-border');
+                        hiloState.history = [];
+                        document.getElementById('hilo-history').innerHTML = '';
+                        document.getElementById('history-count').textContent = '0';
+                        updateHiloUI();
+                        hiloState.isAnimating = false;
+                    }, 1500);
+                }
+            }, 400);
+        }
+
+        function setupEventListeners() {
+            let isProcessingStart = false; 
+
+            document.getElementById('sound-toggle-menu-btn').onclick = (e) => {
+                e.stopPropagation();
+                gameState.soundEnabled = !gameState.soundEnabled;
+                const ui = document.getElementById('sound-toggle-ui');
+                const circle = document.getElementById('sound-toggle-circle');
+                if(gameState.soundEnabled) {
+                    playAudioFile('toggle-on-sfx');
+                    ui.style.background = '#62a628';
+                    circle.style.right = '1.5px';
+                    circle.style.left = 'auto';
+                } else {
+                    try { soundPool.play('toggle-off-sfx'); } catch(err){}
+                    ui.style.background = '#4a5059';
+                    circle.style.left = '1.5px';
+                    circle.style.right = 'auto';
+                }
+            };
+
+            document.getElementById('start-btn').onclick = async () => {
+                if (isProcessingStart || hiloState.isPlaying) return; 
+
+                if(!gameState.userAuthenticated) {
+                    playAudioFile('generic-btn-sfx');
+                    document.getElementById('auth-popup').style.display = 'flex';
+                    return;
+                }
+
+                if (gameState.betAmount < 10) {
+                    playAudioFile('modal-open-sfx');
+                    showMessage('Minimum bet is 10 INR');
+                    return;
+                }
+
+                if(gameState.betAmount > gameState.balance) {
+                    playAudioFile('modal-open-sfx');
+                    document.getElementById('insufficient-balance-modal').classList.add('show');
+                    return;
+                }
+                
+                isProcessingStart = true; 
+                playAudioFile('bet-click-sfx'); 
+
+                const uid = localStorage.getItem('uid');
+                
+                try {
+                    await database.ref('appusers/' + uid).transaction(u => {
+                        if (u) {
+                            let total = u.totalBalance || 0;
+                            let withdrawable = u.withdrawableBalance || 0;
+                            let betAmount = gameState.betAmount;
+                            
+                            let unwithdrawable = total - withdrawable;
+                            if (unwithdrawable < 0) unwithdrawable = 0;
+                            
+                            if (betAmount <= unwithdrawable) {
+                                unwithdrawable -= betAmount;
+                            } else {
+                                let remainingBet = betAmount - unwithdrawable;
+                                withdrawable -= remainingBet;
+                            }
+                            
+                            u.totalBalance = total - betAmount;
+                            u.withdrawableBalance = Math.max(0, withdrawable);
+                            
+                            u.lifetimeWagered = (u.lifetimeWagered || 0) + betAmount;
+                        }
+                        return u;
+                    });
+                    
+                    if (hiloState.isPlaying) {
+                        await database.ref('appusers/' + uid).transaction(u => {
+                            if (u) {
+                                u.totalBalance = (u.totalBalance || 0) + gameState.betAmount;
+                                u.lifetimeWagered = Math.max(0, (u.lifetimeWagered || 0) - gameState.betAmount); 
+                            }
+                            return u;
+                        });
+                        isProcessingStart = false;
+                        return; 
+                    }
+
+                    showMessage(`-${gameState.betAmount.toFixed(2)} INR`);
+
+                    hiloState.isPlaying = true;
+                    hiloState.totalTrueOdds = 1.0;
+                    hiloState.cashoutMult = 0.00;
+                    hiloState.history = [];
+                    document.getElementById('hilo-history').innerHTML = '';
+                    document.getElementById('history-count').textContent = '0';
+                    document.getElementById('current-mult-display').textContent = '0.00x';
+                    updateHiloUI();
+                } catch (error) {
+                    console.error("Bet processing failed:", error);
+                } finally {
+                    isProcessingStart = false; 
+                }
+            };
+
+            document.getElementById('cashout-btn').onclick = async () => {
+                if(!hiloState.isPlaying || hiloState.cashoutMult <= 0 || hiloState.isAnimating) return;
+                playAudioFile('win-sound');
+
+                let winAmt = gameState.betAmount * hiloState.cashoutMult;
+                const uid = localStorage.getItem('uid');
+
+                await database.ref('appusers/' + uid).transaction(u => {
+                    if (u) {
+                        u.totalBalance = (u.totalBalance || 0) + winAmt;
+                        u.withdrawableBalance = (u.withdrawableBalance || 0) + winAmt;
+                        
+                        u.lifetimeWon = (u.lifetimeWon || 0) + winAmt;
+                    }
+                    return u;
+                });
+
+                showMessage(`+${winAmt.toFixed(2)} INR`);
+
+                hiloState.isPlaying = false;
+                updateHiloUI();
+
+                const now = new Date();
+                const rec = {
+                    gameName: "Hilo",
+                    time: String(now.getHours()).padStart(2, '0')+":"+String(now.getMinutes()).padStart(2, '0'),
+                    date: String(now.getDate()).padStart(2, '0')+"-"+String(now.getMonth()+1).padStart(2, '0')+"-"+String(now.getFullYear()).slice(-2),
+                    timestamp: Date.now(),
+                    betAmount: gameState.betAmount,
+                    winAmount: winAmt
+                };
+                database.ref(`appusers/${uid}/betHistory`).push(rec);
+
+                setTimeout(() => {
+                    let nextCard = getRandomCard();
+                    dealNewCardAnim(nextCard, () => {
+                        hiloState.history = [];
+                        document.getElementById('hilo-history').innerHTML = '';
+                        document.getElementById('history-count').textContent = '0';
+                        hiloState.cashoutMult = 0.00;
+                        document.getElementById('current-mult-display').textContent = '0.00x';
+                        updateHiloUI();
+                    });
+                }, 1500);
+            };
+
+            document.getElementById('refresh-card-btn').onclick = () => {
+                if(hiloState.isPlaying || hiloState.isAnimating) return;
+                playAudioFile('card-refresh-sfx'); 
+                let nextCard = getRandomCard();
+                dealNewCardAnim(nextCard, () => {
+                    updateHiloUI();
+                });
+            };
+
+            const closeModals = () => { 
+                let anyClosed = false;
+                document.querySelectorAll('.modal-overlay').forEach(m => {
+                    if(m.classList.contains('show')) { m.classList.remove('show'); anyClosed = true; }
+                });
+                if(anyClosed) playAudioFile('modal-close-sfx');
+            };
+
+            document.querySelectorAll('.modal-close, #closemenu').forEach(btn => btn.onclick = (e) => { 
+                e.stopPropagation();
+                if(btn.id === 'closemenu') playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+            });
+
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.onclick = (e) => {
+                    if (e.target.classList.contains('modal-overlay')) closeModals();
+                };
+            });
+
+            document.getElementById('main-menu-btn').onclick = () => { playAudioFile('menu-btn-click-sfx'); document.getElementById('menu-modal').classList.add('show'); };
+            document.getElementById('how-to-play-menu-btn').onclick = () => { playAudioFile('menu-option-click-sfx'); closeModals(); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('rules-menu-btn').onclick = () => { playAudioFile('menu-option-click-sfx'); closeModals(); document.getElementById('rules-modal').classList.add('show'); };
+            document.getElementById('limits-menu-btn').onclick = () => { playAudioFile('menu-option-click-sfx'); closeModals(); document.getElementById('limits-modal').classList.add('show'); };
+            document.getElementById('recordsmenu-btn').onclick = () => { playAudioFile('menu-option-click-sfx'); closeModals(); document.getElementById('history-modal').classList.add('show'); loadBetHistory(); };
+            document.getElementById('fairnessmenu-btn').onclick = () => { playAudioFile('menu-option-click-sfx'); closeModals(); document.getElementById('fairness-modal').classList.add('show'); };
+            document.getElementById('help-open-btn').onclick = () => { playAudioFile('modal-open-sfx'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            
+            const closeBetPopups = () => {
+                document.getElementById('keyboard-popup').classList.remove('show');
+                document.getElementById('amounts-popup').classList.remove('show');
+            };
+            document.getElementById('bet-input-trigger').onclick = (e) => {
+                if(hiloState.isPlaying) return;
+                e.stopPropagation(); playAudioFile('keyboard-open-sfx'); closeBetPopups(); document.getElementById('keyboard-popup').classList.add('show');
+            };
+            document.getElementById('max-btn').onclick = (e) => {
+                if(hiloState.isPlaying) return;
+                e.stopPropagation(); playAudioFile('menu-btn-click-sfx'); closeBetPopups(); document.getElementById('amounts-popup').classList.add('show');
+            };
+            document.querySelectorAll('.amount-btn').forEach(b => {
+                b.onclick = () => { playAudioFile('menu-option-click-sfx'); document.getElementById('bet-amount').value = parseFloat(b.dataset.val).toFixed(2); gameState.betAmount = parseFloat(b.dataset.val); updateHiloUI(); closeBetPopups(); };
+            });
+            let inStr = "";
+            document.querySelectorAll('.key-val').forEach(b => {
+                b.onclick = (e) => { e.stopPropagation(); playAudioFile('keyboard-btn-sfx'); inStr+=b.dataset.val; document.getElementById('bet-amount').value = inStr; };
+            });
+            document.querySelector('.key-backspace').onclick = (e) => {
+                e.stopPropagation(); playAudioFile('keyboard-btn-sfx'); inStr = inStr.slice(0,-1); document.getElementById('bet-amount').value = inStr||"10";
+            };
+            document.getElementById('keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation(); playAudioFile('generic-btn-sfx'); gameState.betAmount = parseFloat(document.getElementById('bet-amount').value||10); updateHiloUI(); closeBetPopups();
+            };
+            
+            document.getElementById('half-btn').onclick = () => { if(hiloState.isPlaying) return; playAudioFile('generic-btn-sfx'); gameState.betAmount=Math.max(10, gameState.betAmount-10); updateHiloUI(); };
+            document.getElementById('double-btn').onclick = () => { if(hiloState.isPlaying) return; playAudioFile('generic-btn-sfx'); gameState.betAmount=Math.min(40000, gameState.betAmount+10); updateHiloUI(); };
+
+            document.getElementById('popup-add-cash-btn').onclick = () => {
+                playAudioFile('generic-btn-sfx');
+                closeModals();
+                window.location.href = 'deposit.html';
+            };
+        }
+
+        let currentHistoryLimit = 50;
+        function loadBetHistory(isLoadMore = false) {
+            const uid = localStorage.getItem('uid');
+            const historyList = document.getElementById('history-list');
+            if (!uid) return;
+            
+            if (!isLoadMore) {
+                currentHistoryLimit = 50;
+                historyList.innerHTML = '';
+            } else {
+                currentHistoryLimit += 50;
+            }
+
+            database.ref(`appusers/${uid}/betHistory`)
+                .orderByChild('gameName').equalTo('Hilo')
+                .limitToLast(currentHistoryLimit).once('value').then(snap => {
+                historyList.innerHTML = '';
+                if (!snap.exists()) {
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>';
+                    return;
+                }
+                const records = [];
+                snap.forEach(c => { records.push(c.val()); });
+                records.reverse();
+
+                records.forEach(bet => {
+                    const isWin = bet.winAmount > 0;
+                    const mult = isWin ? (bet.winAmount / bet.betAmount) : 0;
+                    const item = document.createElement('div');
+                    item.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                    item.innerHTML = `
+                        <div class="col-date">${bet.time}<br><span>${bet.date}</span></div>
+                        <div class="col-bet">${bet.betAmount.toFixed(2)}</div>
+                        <div class="col-x"><span class="x-pill ${isWin?'blue-bg':''}">${mult.toFixed(2)}x</span></div>
+                        <div class="col-cashout"><span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span></div>
+                    `;
+                    historyList.appendChild(item);
+                });
+                document.getElementById('load-more-history-btn').style.display = records.length >= currentHistoryLimit ? 'inline-block' : 'none';
+            });
+        }
+
+        function generateRandomSeed(length = 16) {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = "";
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function updateSeeds() {
+            document.getElementById("client-seed").textContent = generateRandomSeed(16);
+        }
+
+        updateSeeds();
+        setInterval(updateSeeds, 15000);
+
+        window.onload = init;
+    </script>
+</body>
+</html>

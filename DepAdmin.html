@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Admin Panel - KIMI WIN</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Disable text selection */
+    * {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        box-sizing: border-box;
+    }
+
+    /* Enhanced page setup */
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #0c0f1d 0%, #1a1f3a 100%);
+      padding: 10px;
+      margin: 0;
+      padding-bottom: 70px; /* Space for bottom nav */
+      position: relative;
+    }
+
+    /* Futuristic background elements */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(41, 196, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      position: relative;
+    }
+
+    .admin-title {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #29c4ff, #ff6b6b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin: 0;
+      letter-spacing: 1px;
+      font-family: fantasy;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: rgba(12, 15, 29, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-top: 1px solid rgba(41, 196, 255, 0.2);
+        z-index: 1000;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #a0a0c0;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: bold;
+        font-family: fantasy;
+        transition: all 0.3s ease;
+        padding: 5px;
+        width: 30%;
+        border-radius: 10px;
+    }
+
+    .nav-item i {
+        font-size: 18px;
+        margin-bottom: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item.active {
+        color: #29c4ff;
+        background: rgba(41, 196, 255, 0.1);
+    }
+
+    .nav-item.active i {
+        transform: translateY(-2px);
+        text-shadow: 0 0 10px rgba(41, 196, 255, 0.5);
+    }
+
+    /* Tab Content Containers */
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- DEPOSITS TAB STYLES --- */
+    .admin-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .admin-search-box, .admin-filter-select, .form-input {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(41, 196, 255, 0.3);
+        background: rgba(22, 25, 40, 0.8);
+        color: white;
+        font-family: fantasy;
+        font-size: 11px;
+        font-weight: 900;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+    .admin-search-box:focus, .admin-filter-select:focus, .form-input:focus {
+        outline: 1px solid #fdbd05;
+        border-color: #29c4ff;
+        box-shadow: 0 0 0 2px rgba(41, 196, 255, 0.2);
+    }
+
+    .admin-filters-row {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .admin-refresh-btn, .action-btn {
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid #fdbd02;
+        background: #6698FF;
+        color: black;
+        font-family: fantasy;
+        font-size: 11px;
+        font-weight: 900;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.1s ease;
+        box-shadow: 0 1px 4px rgba(41, 196, 255, 0.3);
+    }
+
+    .admin-refresh-btn:active, .action-btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 4px rgba(41, 196, 255, 0.3);
+        color: rgba(255,255,255,0.7);
+    }
+
+    .action-btn.danger {
+        background: #ff6b6b;
+        border-color: #d32f2f;
+        color: white;
+    }
+    .action-btn.success {
+        background: #00c853;
+        border-color: #00a344;
+        color: white;
+    }
+
+    .admin-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card {
+        background: rgba(22, 25, 60, 0.7);
+        border-radius: 10px;
+        padding: 6px 8px;
+        text-align: center;
+        border: 1px solid rgba(41, 196, 255, 0.2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-value {
+        font-size: 13px;
+        font-weight: 900;
+        color: #29c4ff;
+        margin-bottom: 4px;
+        text-shadow: 0 0 10px rgba(41, 196, 255, 0.5);
+        font-family: fantasy;
+    }
+
+    .stat-label {
+        font-size: 9px;
+        color: #a0a0c0;
+        font-weight: 500;
+    }
+
+    .admin-table-container {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+        background: rgba(22, 25, 40, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(41, 196, 255, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px;
+        max-height: 50vh;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    .admin-table thead {
+        background: #87CEFA;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .admin-table th {
+        padding: 5px 6px;
+        text-align: center;
+        color: black;
+        font-weight: 900;
+        text-transform: uppercase;
+        border-right: 1px solid black;
+        font-size: 9px;
+        font-family: fantasy;
+    }
+
+    .admin-table tbody tr {
+        background: rgba(30, 33, 50, 0.4);
+        border-bottom: 1px solid rgba(41, 196, 255, 0.3);
+    }
+
+    .admin-table tbody tr:nth-child(even) { background: rgba(35, 38, 58, 0.7); }
+    .admin-table td {
+        padding: 5px;
+        text-align: center;
+        font-size: 9px;
+        font-family: fantasy;
+        font-weight: 700;
+        border-right: 1px solid rgba(41, 196, 255, 0.3);
+    }
+
+    .status-badge {
+        padding: 3px 6px;
+        border-radius: 4px;
+        color: white;
+        font-size: 8px;
+    }
+    .bg-pending { background: #ffab00; }
+    .bg-processing { background: #2979ff; }
+    .bg-success { background: #00c853; }
+    .bg-failed { background: #ff3d00; }
+
+    /* --- SETTINGS CARDS (Payments & Vouchers) --- */
+    .admin-card {
+        background: rgba(22, 25, 40, 0.7);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(41, 196, 255, 0.2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(41, 196, 255, 0.2);
+        padding-bottom: 10px;
+    }
+
+    .card-title {
+        font-size: 14px;
+        font-weight: 900;
+        color: #fdbd01;
+        font-family: fantasy;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .form-group label {
+        display: block;
+        font-size: 10px;
+        color: #a0a0c0;
+        margin-bottom: 5px;
+        font-family: fantasy;
+        text-transform: uppercase;
+    }
+
+    .amounts-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .amount-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .amount-tag button { background: none; border: none; color: white; cursor: pointer; }
+
+    .qr-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .qr-item {
+        background: rgba(0,0,0,0.5);
+        border: 1px solid rgba(41,196,255,0.3);
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+    }
+    .qr-item img {
+        width: 100%;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 4px;
+        margin-bottom: 5px;
+    }
+    .qr-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+    }
+
+    .voucher-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .voucher-card {
+        background: linear-gradient(135deg, rgba(41,196,255,0.1), rgba(120,119,198,0.2));
+        border: 1px solid #29c4ff;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .voucher-card.expired {
+        opacity: 0.6;
+        border-color: #ff6b6b;
+    }
+    .voucher-info h4 { margin: 0 0 5px 0; color: white; font-family: fantasy; font-size: 14px;}
+    .voucher-info p { margin: 0; color: #a0a0c0; font-size: 10px; font-weight: bold; }
+
+    /* Modals & Toasts */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        padding: 15px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+        background: linear-gradient(135deg, #1a1f3a 0%, #0c0f1d 100%);
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid rgba(41, 196, 255, 0.3);
+        position: relative;
+    }
+    .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: #00c853;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 900;
+        z-index: 100000;
+        transition: transform 0.3s ease;
+        text-align: center;
+        font-family: fantasy;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #ff3d00; }
+
+  </style>
+</head>
+
+<body>
+  <div class="admin-header">
+    <h1 class="admin-title">KIMI WIN ADMIN CORE</h1>
+  </div>
+  
+  <div id="tab-deposits" class="tab-content active">
+      <div class="admin-controls">
+        <input type="text" id="adminSearch" class="admin-search-box" placeholder="Search UTR, UID, Amount...">
+        <div class="admin-filters-row">
+          <select id="statusFilter" class="admin-filter-select">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="success">Success</option>
+            <option value="failed">Failed</option>
+          </select>
+          <button class="admin-refresh-btn" onclick="refreshAdminData()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+      </div>
+      
+      <div class="admin-stats">
+        <div class="stat-card"><div class="stat-value" id="totalDeposits">0</div><div class="stat-label">Total Req</div></div>
+        <div class="stat-card"><div class="stat-value" id="pendingDeposits">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-value" id="successDeposits">0</div><div class="stat-label">Success</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalAmount">₹0</div><div class="stat-label">Total Volume</div></div>
+      </div>
+      
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>UID</th>
+              <th>Amt</th>
+              <th>UTR</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+  </div>
+
+  <div id="tab-payments" class="tab-content">
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-id-card"></i> UPI Configuration</div></div>
+          <div class="form-group">
+              <label>Universal UPI ID</label>
+              <div style="display: flex; gap: 5px;">
+                  <input type="text" id="upiId" class="form-input" placeholder="merchant@upi">
+                  <button class="action-btn success" onclick="saveUpiId()"><i class="fas fa-save"></i></button>
+              </div>
+          </div>
+      </div>
+
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-list-ol"></i> Fixed Amounts</div></div>
+          <div id="predefinedAmountsList" class="amounts-list"></div>
+          <div style="display: flex; gap: 5px;">
+              <input type="number" id="newAmount" class="form-input" placeholder="Amount (e.g. 100)">
+              <button class="action-btn" onclick="addPredefinedAmount()"><i class="fas fa-plus"></i></button>
+          </div>
+      </div>
+
+      <div class="admin-card">
+          <div class="card-header">
+              <div class="card-title"><i class="fas fa-qrcode"></i> Specific Amount QR</div>
+              <button class="action-btn" onclick="showAddQrModal()" style="padding: 4px 8px; font-size: 10px;"><i class="fas fa-plus"></i> Add</button>
+          </div>
+          <div id="qrCodesList" class="qr-grid"></div>
+      </div>
+
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-image"></i> Fallback QR Code</div></div>
+          <div class="form-group">
+              <label>Fallback Image URL</label>
+              <input type="text" id="fallbackQr" class="form-input" placeholder="https://...">
+          </div>
+          <button class="action-btn success" style="width: 100%;" onclick="saveFallbackQr()"><i class="fas fa-save"></i> Save Fallback</button>
+      </div>
+  </div>
+
+  <div id="tab-vouchers" class="tab-content">
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-ticket-alt"></i> Create Deposit Voucher</div></div>
+          
+          <div class="form-group">
+              <label>Offer Title</label>
+              <input type="text" id="vTitle" class="form-input" placeholder="e.g. Weekend Boom">
+          </div>
+          
+          <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;">
+                  <label>Reward Type</label>
+                  <select id="vType" class="form-input" onchange="toggleVoucherFields()">
+                      <option value="percentage">Percentage Bonus (%)</option>
+                      <option value="flat">Flat Cash Bonus (₹)</option>
+                  </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                  <label>Target Audience</label>
+                  <select id="vTarget" class="form-input" onchange="toggleVoucherFields()">
+                      <option value="global">All Users (Global)</option>
+                      <option value="custom">Specific Users (Custom)</option>
+                  </select>
+              </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;" id="divPercent">
+                  <label>Extra (%)</label>
+                  <input type="number" id="vPercent" class="form-input" placeholder="e.g. 15">
+              </div>
+              <div class="form-group" style="flex: 1; display: none;" id="divMaxReward">
+                  <label>Max Reward (₹)</label>
+                  <input type="number" id="vMaxReward" class="form-input" placeholder="Optional limit">
+              </div>
+              <div class="form-group" style="flex: 1; display: none;" id="divFlat">
+                  <label>Bonus Amount (₹)</label>
+                  <input type="number" id="vFlatAmt" class="form-input" placeholder="e.g. 50">
+              </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;">
+                  <label>Min Deposit Req (₹)</label>
+                  <input type="number" id="vMinDep" class="form-input" placeholder="e.g. 100">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                  <label>Usage Limit/User</label>
+                  <input type="number" id="vLimit" class="form-input" placeholder="e.g. 1">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <label>Expiry Date (Optional)</label>
+              <input type="datetime-local" id="vExpiry" class="form-input">
+          </div>
+
+          <div class="form-group" id="divUids" style="display: none;">
+              <label>Target User UIDs (Comma separated)</label>
+              <textarea id="vUids" class="form-input" placeholder="UID1, UID2, UID3..." rows="3" style="resize: vertical;"></textarea>
+          </div>
+
+          <button class="action-btn success" style="width: 100%; margin-top: 10px;" onclick="createVoucher()"><i class="fas fa-paper-plane"></i> Publish Offer</button>
+      </div>
+
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-globe"></i> Active Global Offers</div></div>
+          <div id="globalVouchersList" class="voucher-list"></div>
+      </div>
+
+      <div class="admin-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-user-tag"></i> Custom Targeted Offers</div></div>
+          <div id="customVouchersList" class="voucher-list"></div>
+      </div>
+  </div>
+
+  <div class="bottom-nav">
+      <div class="nav-item active" onclick="switchTab('deposits', this)">
+          <i class="fas fa-file-invoice-dollar"></i> Requests
+      </div>
+      <div class="nav-item" onclick="switchTab('payments', this)">
+          <i class="fas fa-qrcode"></i> Sources
+      </div>
+      <div class="nav-item" onclick="switchTab('vouchers', this)">
+          <i class="fas fa-gifts"></i> Offers
+      </div>
+  </div>
+
+  <div id="updateStatusModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="card-header">
+        <h3 class="card-title">Update Deposit</h3>
+        <button class="action-btn danger" style="padding: 2px 8px;" onclick="closeModal('updateStatusModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div style="margin-bottom: 15px; color: white; font-size: 11px; font-family: fantasy;">
+        <p>UID: <span id="mUid" style="color: #29c4ff;"></span></p>
+        <p>UTR: <span id="mUtr" style="color: #fdbd01;"></span></p>
+        <p>Amount: ₹<span id="mAmt"></span> (+₹<span id="mBonus"></span> Bonus)</p>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <button class="action-btn" style="background:#2979ff;" onclick="submitUpdate('processing')">Processing</button>
+          <button class="action-btn" style="background:#ffab00;" onclick="submitUpdate('pending')">Pending</button>
+          <button class="action-btn" style="background:#00c853;" onclick="submitUpdate('success')">Success</button>
+          <button class="action-btn" style="background:#ff3d00;" onclick="submitUpdate('failed')">Failed</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="addQrModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="card-header">
+            <h3 class="card-title">Add QR Target</h3>
+            <button class="action-btn danger" style="padding: 2px 8px;" onclick="closeModal('addQrModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" id="mQrAmt" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" id="mQrUrl" class="form-input">
+        </div>
+        <button class="action-btn success" style="width: 100%; margin-top: 10px;" onclick="saveQrCode()"><i class="fas fa-save"></i> Save</button>
+      </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+<script>
+  // Firebase initialization
+  const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // Navigation Logic
+  function switchTab(tabId, element) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      element.classList.add('active');
+  }
+
+  function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.className = isError ? 'toast error show' : 'toast show';
+      setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  // ================== TAB 1: DEPOSITS LOGIC ==================
+  let allDeposits = [];
+  let selectedDepId = null;
+
+  function loadAllDeposits() {
+    database.ref('depositRequests').on('value', snap => {
+        allDeposits = [];
+        let tAmt=0, pCount=0, sCount=0;
+        snap.forEach(c => {
+            const d = c.val();
+            d.id = c.key;
+            allDeposits.push(d);
+            tAmt += d.amount || 0;
+            if(d.status === 'pending') pCount++;
+            if(d.status === 'success') sCount++;
+        });
+        document.getElementById('totalDeposits').innerText = allDeposits.length;
+        document.getElementById('pendingDeposits').innerText = pCount;
+        document.getElementById('successDeposits').innerText = sCount;
+        document.getElementById('totalAmount').innerText = `₹${tAmt}`;
+        allDeposits.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+        renderDeposits();
+    });
+  }
+
+  function renderDeposits() {
+      const tb = document.getElementById('adminTableBody');
+      tb.innerHTML = '';
+      const filterS = document.getElementById('statusFilter').value;
+      const search = document.getElementById('adminSearch').value.toLowerCase();
+
+      let filtered = allDeposits.filter(d => {
+          if(filterS !== 'all' && d.status !== filterS) return false;
+          if(search && !(d.uid.toLowerCase().includes(search) || d.utr.includes(search))) return false;
+          return true;
+      });
+
+      filtered.forEach(d => {
+          const statusColors = { pending:'bg-pending', processing:'bg-processing', success:'bg-success', failed:'bg-failed' };
+          const row = document.createElement('tr');
+          row.innerHTML = `
+              <td>${d.uid.substring(0,6)}..</td>
+              <td style="color:#fdbd01;">₹${d.amount}</td>
+              <td onclick="navigator.clipboard.writeText('${d.utr}'); showToast('Copied!')">${d.utr} <i class="fas fa-copy"></i></td>
+              <td>${new Date(d.timestamp).toLocaleDateString()}</td>
+              <td><span class="status-badge ${statusColors[d.status]||'bg-pending'}">${d.status}</span></td>
+              <td>
+                  <button class="action-btn" style="padding:4px;" onclick="openDepUpdate('${d.id}')"><i class="fas fa-edit"></i></button>
+              </td>
+          `;
+          tb.appendChild(row);
+      });
+  }
+
+  function refreshAdminData() { loadAllDeposits(); loadPayments(); loadVouchers(); showToast('Refreshed'); }
+
+  function openDepUpdate(id) {
+      const d = allDeposits.find(x => x.id === id);
+      if(!d) return;
+      selectedDepId = id;
+      document.getElementById('mUid').innerText = d.uid;
+      document.getElementById('mUtr').innerText = d.utr;
+      document.getElementById('mAmt').innerText = d.amount;
+      document.getElementById('mBonus').innerText = d.bonusAmount || 0;
+      document.getElementById('updateStatusModal').classList.add('active');
+  }
+
+  function submitUpdate(status) {
+      if(!selectedDepId) return;
+      const d = allDeposits.find(x => x.id === selectedDepId);
+      if(d.status === 'success' || d.status === 'failed') return showToast('Final status cannot be changed', true);
+      
+      let updates = {};
+      updates[`depositRequests/${selectedDepId}/status`] = status;
+      if(status === 'success') {
+          updates[`appusers/${d.uid}/totalBalance`] = firebase.database.ServerValue.increment(d.amount + (d.bonusAmount||0));
+          
+          // Increment voucher usage tracking specifically for this user
+          if (d.voucherId) {
+             updates[`appusers/${d.uid}/voucherStats/hasDeposited`] = true;
+             updates[`appusers/${d.uid}/voucherStats/usedVouchers/${d.voucherId}`] = firebase.database.ServerValue.increment(1);
+          }
+          
+          updates[`depositRequests/${selectedDepId}/processed`] = true;
+      }
+      if(status === 'failed') updates[`depositRequests/${selectedDepId}/processed`] = true;
+
+      database.ref().update(updates).then(() => {
+          showToast('Updated to ' + status);
+          closeModal('updateStatusModal');
+      }).catch(e => showToast(e.message, true));
+  }
+
+  // ================== TAB 2: PAYMENTS LOGIC ==================
+  function loadPayments() {
+      database.ref('config').on('value', snap => {
+          const cfg = snap.val() || {};
+          document.getElementById('upiId').value = cfg.universalUpiId || '';
+          document.getElementById('fallbackQr').value = cfg.customAmountQrFallback || '';
+          
+          // Render Predefined
+          const pList = document.getElementById('predefinedAmountsList');
+          pList.innerHTML = '';
+          (cfg.predefinedAmounts || []).sort((a,b)=>a-b).forEach(amt => {
+              pList.innerHTML += `<div class="amount-tag">₹${amt} <button onclick="delAmount(${amt})"><i class="fas fa-times"></i></button></div>`;
+          });
+
+          // Render QRs
+          const qList = document.getElementById('qrCodesList');
+          qList.innerHTML = '';
+          const qrs = cfg.amountQrCodes || {};
+          Object.keys(qrs).forEach(amt => {
+              qList.innerHTML += `
+                <div class="qr-item">
+                    <div style="color:#29c4ff; font-weight:bold; font-family:fantasy; font-size:12px;">₹${amt}</div>
+                    <img src="${qrs[amt]}" onerror="this.src='https://via.placeholder.com/100?text=Invalid'">
+                    <button class="action-btn danger" style="width:100%; padding:4px;" onclick="delQr(${amt})"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+              `;
+          });
+      });
+  }
+
+  function saveUpiId() { database.ref('config/universalUpiId').set(document.getElementById('upiId').value).then(()=>showToast('Saved')); }
+  function saveFallbackQr() { database.ref('config/customAmountQrFallback').set(document.getElementById('fallbackQr').value).then(()=>showToast('Saved')); }
+  
+  function addPredefinedAmount() {
+      const amt = parseInt(document.getElementById('newAmount').value);
+      if(!amt) return;
+      database.ref('config/predefinedAmounts').once('value', s => {
+          let arr = s.val() || [];
+          if(!arr.includes(amt)) arr.push(amt);
+          database.ref('config/predefinedAmounts').set(arr).then(()=>{ document.getElementById('newAmount').value=''; showToast('Added'); });
+      });
+  }
+  function delAmount(amt) {
+      database.ref('config/predefinedAmounts').once('value', s => {
+          let arr = (s.val() || []).filter(x => x !== amt);
+          database.ref('config/predefinedAmounts').set(arr).then(()=>showToast('Deleted'));
+      });
+  }
+
+  function showAddQrModal() { document.getElementById('addQrModal').classList.add('active'); }
+  function saveQrCode() {
+      const amt = document.getElementById('mQrAmt').value;
+      const url = document.getElementById('mQrUrl').value;
+      if(!amt || !url) return showToast('Fill all fields', true);
+      database.ref(`config/amountQrCodes/${amt}`).set(url).then(()=>{
+          closeModal('addQrModal');
+          document.getElementById('mQrAmt').value=''; document.getElementById('mQrUrl').value='';
+          showToast('QR Added');
+      });
+  }
+  function delQr(amt) { database.ref(`config/amountQrCodes/${amt}`).remove().then(()=>showToast('QR Removed')); }
+
+  // ================== TAB 3: VOUCHERS LOGIC ==================
+  
+  function toggleVoucherFields() {
+      const vType = document.getElementById('vType').value;
+      const vTarget = document.getElementById('vTarget').value;
+      
+      document.getElementById('divPercent').style.display = vType === 'percentage' ? 'block' : 'none';
+      document.getElementById('divMaxReward').style.display = vType === 'percentage' ? 'block' : 'none';
+      document.getElementById('divFlat').style.display = vType === 'flat' ? 'block' : 'none';
+      
+      document.getElementById('divUids').style.display = vTarget === 'custom' ? 'block' : 'none';
+  }
+
+  function loadVouchers() {
+      // Global Vouchers Listener
+      database.ref('config/vouchers').on('value', snap => {
+          renderVoucherList(snap.val() || {}, 'globalVouchersList', 'global');
+      });
+      
+      // Custom Target Vouchers Master Listener
+      database.ref('admin/custom_vouchers_master').on('value', snap => {
+          renderVoucherList(snap.val() || {}, 'customVouchersList', 'custom');
+      });
+  }
+
+  function renderVoucherList(vouchersObj, containerId, targetType) {
+      const vList = document.getElementById(containerId);
+      if(!vList) return;
+      vList.innerHTML = '';
+      const now = Date.now();
+      
+      Object.keys(vouchersObj).forEach(vid => {
+          const v = vouchersObj[vid];
+          const isExpired = (v.expiryDate && now > v.expiryDate) || !v.active;
+          
+          let descString = '';
+          if (v.type === 'flat') {
+              descString = `<span style="color:#29c4ff;">Flat ₹${v.bonusAmount}</span> on Min ₹${v.minDeposit}`;
+          } else {
+              descString = `<span style="color:#29c4ff;">${v.percentage}% Extra</span> on Min ₹${v.minDeposit} ${v.maxReward ? '(Max ₹'+v.maxReward+')' : ''}`;
+          }
+          
+          let uidsInfo = v.targetedUids ? `<br><span style="color:#fdbd01; font-size:9px;">Distributed to ${v.targetedUids.length} Users</span>` : '';
+
+          vList.innerHTML += `
+            <div class="voucher-card ${isExpired ? 'expired' : ''}">
+                <div class="voucher-info">
+                    <h4>${v.title} <span style="color:#00ff3c; font-size:10px;">[${(v.type || 'N/A').toUpperCase()}]</span></h4>
+                    <p>${descString}</p>
+                    <p style="margin-top:4px;">Limit: ${v.usageLimit} uses/user ${v.expiryDate ? ' | Exp: '+new Date(v.expiryDate).toLocaleDateString() : ''} ${uidsInfo}</p>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <button class="action-btn danger" style="padding:4px; font-size:9px;" onclick="delVoucher('${vid}', '${targetType}', '${v.targetedUids ? v.targetedUids.join(',') : ''}')"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+          `;
+      });
+  }
+
+  function createVoucher() {
+      const title = document.getElementById('vTitle').value;
+      const vType = document.getElementById('vType').value;
+      const vTarget = document.getElementById('vTarget').value;
+      
+      const minDep = parseFloat(document.getElementById('vMinDep').value) || 0;
+      const limit = parseInt(document.getElementById('vLimit').value) || 1;
+      const expInput = document.getElementById('vExpiry').value;
+      
+      if(!title) return showToast('Offer Title is required', true);
+
+      const vid = 'VOU_' + Date.now();
+      let vData = {
+          title: title, 
+          type: vType,
+          minDeposit: minDep,
+          usageLimit: limit, 
+          active: true,
+          expiryDate: expInput ? new Date(expInput).getTime() : null,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      if (vType === 'percentage') {
+          vData.percentage = parseFloat(document.getElementById('vPercent').value);
+          vData.maxReward = parseFloat(document.getElementById('vMaxReward').value) || null;
+          if(!vData.percentage) return showToast('Percentage is required', true);
+      } else {
+          vData.bonusAmount = parseFloat(document.getElementById('vFlatAmt').value);
+          if(!vData.bonusAmount) return showToast('Bonus Amount is required', true);
+      }
+
+      // GLOBAL VOUCHER LOGIC
+      if (vTarget === 'global') {
+          database.ref(`config/vouchers/${vid}`).set(vData).then(()=>{
+              showToast('Global Offer Published!');
+              clearVoucherForm();
+          }).catch(e => showToast(e.message, true));
+      } 
+      // CUSTOM TARGETED VOUCHER LOGIC
+      else {
+          const uidsRaw = document.getElementById('vUids').value;
+          if(!uidsRaw) return showToast('UIDs required for custom targeting', true);
+          
+          const uids = uidsRaw.split(',').map(s=>s.trim()).filter(s=>s);
+          if(uids.length === 0) return showToast('No valid UIDs found', true);
+
+          let updates = {};
+          
+          // 1. Save master admin record to track custom distributions
+          updates[`admin/custom_vouchers_master/${vid}`] = { ...vData, targetedUids: uids };
+          
+          // 2. Loop through users and drop into their specific node to save DB reads
+          uids.forEach(uid => {
+              updates[`appusers/${uid}/customVouchers/${vid}`] = vData;
+          });
+
+          database.ref().update(updates).then(() => {
+              showToast(`Distributed custom offer to ${uids.length} users!`);
+              clearVoucherForm();
+          }).catch(e => showToast(e.message, true));
+      }
+  }
+
+  function delVoucher(vid, targetType, uidsStr) { 
+      if(!confirm('Permanently Delete this Offer?')) return;
+      
+      let updates = {};
+      
+      if (targetType === 'global') {
+          updates[`config/vouchers/${vid}`] = null;
+      } else {
+          // It's a custom voucher
+          updates[`admin/custom_vouchers_master/${vid}`] = null;
+          
+          // Delete from all targeted users
+          if (uidsStr) {
+              const uids = uidsStr.split(',');
+              uids.forEach(uid => {
+                  updates[`appusers/${uid}/customVouchers/${vid}`] = null;
+              });
+          }
+      }
+
+      database.ref().update(updates)
+        .then(() => showToast('Offer Successfully Deleted'))
+        .catch(e => showToast(e.message, true)); 
+  }
+  
+  function clearVoucherForm() {
+      document.getElementById('vTitle').value = '';
+      document.getElementById('vPercent').value = '';
+      document.getElementById('vMaxReward').value = '';
+      document.getElementById('vFlatAmt').value = '';
+      document.getElementById('vMinDep').value = '';
+      document.getElementById('vLimit').value = '';
+      document.getElementById('vExpiry').value = '';
+      document.getElementById('vUids').value = '';
+  }
+
+  // Init Data
+  window.onload = function() {
+      toggleVoucherFields();
+      document.getElementById('adminSearch').addEventListener('input', renderDeposits);
+      document.getElementById('statusFilter').addEventListener('change', renderDeposits);
+      
+      loadAllDeposits();
+      loadPayments();
+      loadVouchers();
+  };
+
+</script>
+</body>
+</html>

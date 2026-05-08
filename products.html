@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SPRIBE Casino Investment Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+      /* Disable text selection */
+    * {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: radial-gradient(circle at center, rgba(125,44,155,0.99), rgba(128,11,155,0.99)),
+                  url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png');
+      background-blend-mode: overlay;
+      background-size: 100% 100%;
+      background-attachment: fixed;   /* keeps background fixed */
+      font-family: 'Segoe UI', sans-serif;
+            padding-bottom: 85px;
+            min-height: 100vh;
+        }
+        
+        /* Custom scroll */
+        ::-webkit-scrollbar { width: 0px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #8e54e9; border-radius: 10px; }
+        
+        /* --- NEW: Filter Bar (Replaces Search Bar in History) --- */
+        .filter-section {
+            padding: 10px;
+            padding-top: 15px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: fixed;
+            top: 45px;
+            width: 100%;
+            z-index: 100;
+            background: radial-gradient(circle at center, rgba(125,44,155,0.99), rgba(128,11,155,0.99)),
+                        url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png');
+            background-blend-mode: overlay;
+            background-size: 100% 100%;
+            background-attachment: fixed;
+        }
+
+        /* --- Custom Dropdown Styles --- */
+        .custom-dropdown {
+            flex: 1;
+            position: relative;
+        }
+        .dropdown-header {
+            width:100%;
+            background: #2a2238;
+            border-radius: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color:rgba(255,255,255,0.8);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background:rgba(42,34,56,0.9);
+            backdrop-filter: blur(0.1px);
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            z-index: 101;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .dropdown-list.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 6px 12px;
+            color:rgba(255,255,255,0.7);
+            border-radius: 0 0 4px 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            font-weight: 600;
+            text-align: center;
+            font-size: 14px;
+        }
+        .dropdown-item:active {
+            background: #6a1b9a;
+        }
+        
+        /* Right element: Daily Balance Card */
+        .daily-balance-card {
+            width:49%;
+            background: #2a2238;
+            border-radius: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .daily-balance-amount {
+            font-size: 14px;
+            font-weight: 900;
+            color: #fbd38d;
+            line-height: 1.2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Hide search-section when in history mode - but we'll control visibility via JS */
+        .search-section {
+            padding: 10px;
+            padding-top: 15px;
+            display: flex;
+            gap: 1px;
+            align-items: stretch;
+            position: fixed;
+            top:45px;
+            width: 100%;
+            z-index: 2;
+            background: radial-gradient(circle at center, rgba(125,44,155,0.99), rgba(128,11,155,0.99)),
+                        url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdgLmOey-Wazo6OgYRZ84ytYF0kFvOpSs-5IeXzAkR8-A_YCd8t7krTINX-j00riNttDSkk1ZW_iem-FiTF7HotxoM1vGPREO4P33FLnYEC6a7zCf6FCW98wyGkHJvXRMgGMcO_dZgg0ieu18RQYPxkCNDaKoLcPUDQdXIAuXXqnQlMt_qN9WjAG7zlA/s16000/1000110623.png');
+            background-blend-mode: overlay;
+            background-size: 100% 100%;
+            background-attachment: fixed;
+        }
+        .search-box {
+            flex: 1;
+            background: #4a0e78;
+            border-radius: 20px;
+            border-bottom-right-radius: 0px;
+            border-top-right-radius:0 ;
+            display: flex;
+            align-items: center;
+            border: 2px solid #8e32e8;
+            overflow: hidden;
+        }
+        .search-icon {
+            padding: 0 10px 0 15px;
+            color: white;
+            font-size: 14px;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 5px 10px 5px 0;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .search-box input::placeholder {
+            color: white;
+            font-weight: 600;
+            opacity: 1;
+        }
+        .search-btn {
+            background: #8e32e8;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            border-bottom-left-radius: 0px;
+            border-top-left-radius:0 ;
+            padding: 0 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #a35ced;
+            font-size: 14px;
+        }
+        .search-btn:active{
+            transform: scale(0.99);
+            color: #fdbd01;
+        }
+
+        /* --- Plans / Product Cards Like Image --- */
+        .plans-list {
+            padding: 15px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 100px;
+        }
+        .plan-card {
+            background: linear-gradient(180deg, #ffffff, #eef2fa);
+            border-radius: 18px;
+            padding: 16px;
+            position: relative;
+            box-shadow: 0 6px 12px rgba(108, 120, 230, 0.15);
+            border: 1px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .plan-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background:linear-gradient(80deg, rgba(70,0,159,0.99), rgba(0,56,178,0.99));
+            color: white;
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            border-bottom-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .card-top {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .card-image-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .product-logo-img {
+            width: 100%;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:white;
+            padding: 0px;
+        }
+        .product-logo-img.error-fallback {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238e54e9"/><text x="50" y="55" font-size="12" text-anchor="middle" fill="white" font-weight="bold">Logo</text></svg>');
+        }
+
+        .card-info {
+            flex: 1;
+            padding-top: 5px;
+        }
+        .card-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        .card-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-val {
+            color: #8e54e9;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .stat-lbl {
+            color: #7f8c8d;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-price {
+            color: #6c78e6;
+            font-size: 17px;
+            font-weight: 900;
+        }
+        .card-btn {
+            background: linear-gradient(90deg, #6c78e6, #8e54e9);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(108, 120, 230, 0.4);
+            cursor: pointer;
+        }
+        .top-bar {
+            width: 100vw;
+            height: 45px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+            z-index: 10000001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position:fixed;
+            top:0;
+            backdrop-filter: blur(500px);
+        }
+
+        .profile-section {
+            width: 20vw;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .balance-section {
+            max-width: 80vw;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+.balance-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    padding:2px;
+    background: rgba(12,11,44,0.5);
+    border-radius: 40px;
+    box-shadow:
+        inset 0 3px 6px rgba(0,0,0, 0.3),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+    gap: 10px;
+}
+
+.coin-icon {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23FDBD01'/%3E%3Ccircle cx='32' cy='32' r='28' fill='none' stroke='%23FFA500' stroke-width='4'/%3E%3Ctext x='32' y='40' font-family='Segoe Ui' font-size='32' font-weight='700' text-anchor='middle' fill='%23FF6700'%3E₹%3C/text%3E%3C/svg%3E");
+    background-size:fill;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow:
+        inset 0 3px 6px rgba(255,255,255, 0.3),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+        border-radius: 25px;
+}
+
+.balance-label {
+    font-size: 9px;
+    color: black;
+    margin-bottom: -2px;
+    font-family: fantasy;
+    font-weight: 900;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+}
+
+.balance-amount {
+    font-size: 15px;
+    font-weight: 900;
+    font-family: serif;
+    background: linear-gradient(0deg, #fdbd01, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: .5px #fdbd01;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.page6-button {
+    width: 70px;
+    height: 20px;
+    background: radial-gradient(
+    ellipse at center,
+    #Fdbd01 0%,
+    #FFA500 30%,
+    #FF6700 100%
+);
+    border: .2px solid #FF6700;
+    outline:1.8px solid #fdbd01;
+    margin:1.8px;
+    border-radius: 25px;
+    color:rgba(255,255,255,1.9);
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.09);
+}
+
+.page6-button:hover {
+    background: linear-gradient(0deg, #FFA500, #FF8C00);
+    transform: scale(1);
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.4);
+}
+
+.page6-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+        
+        .logo {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--primary);
+            font-family: fantasy;
+        }
+        
+        .user-icon {
+            display: none;
+        }
+        
+        /* Profile Button */
+        .profile-button {
+            background:transparent;
+            border: none;
+            color: #fdbd01;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 25px;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.99);
+            cursor: pointer;
+        }
+        .profile-button:active {
+          transform: scale(0.9);
+        }
+        .card-btn.claim-btn { 
+            background: linear-gradient(90deg, #10b981, #059669); 
+        }
+        .card-btn.claimed-btn { 
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        /* Modal / Utility classes */
+        .modal-overlay {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden; 
+            opacity: 0; 
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1; 
+        }
+        .product-modal {
+            background: #fff; 
+            width: 90%;
+            max-width: 500px; 
+            border-radius: 20px;
+            padding: 24px;
+            max-height: 85vh; 
+            overflow-y: auto; 
+        }
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px; 
+            font-weight: bold;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #333; 
+            cursor: pointer;
+        }
+        .history-item { 
+            background: #f8fafc;
+            margin: 10px 0; 
+            padding: 12px;
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        /* bottom nav */
+        .bottom-nav {
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%;
+            background:linear-gradient(180deg, #893BFF 0%, #5539CC 100%);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            display: flex; 
+            justify-content: space-around; 
+            z-index: 900999989;
+        }
+        .nav-item { 
+            text-align: center;
+            color: white; 
+            transition: 0.2s; 
+            cursor: pointer;
+            font-size: 12px; 
+            padding:5px;
+            width: 50vw;
+            font-weight: bold;
+        }
+        .nav-item i {
+            font-size: 20px; 
+            display: block; 
+            margin-bottom: 4px; 
+        }
+        .nav-item.active { 
+            color: #fdbd01;
+            background: linear-gradient(
+             0deg,
+             rgba(0,0,0,0.6) 0%,
+             rgba(0,0,0,0.5) 20%,
+             rgba(0,0,0,0.3) 45%,
+             rgba(0,0,0,0.2) 60%,
+             rgba(0,0,0,0.1) 80%,
+             rgba(0,0,0,0.01) 100%
+            );
+            border-bottom:2px solid #fdbd01;
+            box-shadow: 0 0 10px rgba(253, 189, 1, 0.05);
+        }
+        .section { 
+            display: none; 
+        }
+        .section.active {
+            display: block; 
+        }
+        
+        /* --- NEW: History Transaction Item Layout --- */
+        .transaction-item { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 15px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tx-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .tx-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .tx-title {
+            color: rgba(385,265,255,0.9);
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .tx-id-badge {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+        }
+        .tx-amount {
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .tx-amount.positive {
+            color: #10b981;
+        }
+        .tx-amount.negative {
+            color: #ef4444;
+        }
+        .tx-date {
+            color: #fbd38d;
+            font-size: 12px;
+        }
+
+        .toast-container {
+            position: fixed; 
+            bottom: 80px; 
+            left: 10px; 
+            right: 10px; 
+            z-index: 3000; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast { 
+            background: #333; 
+            border-radius: 50px; 
+            padding: 12px 20px;
+            color: white;
+            text-align: center; 
+            transform: translateY(100%); 
+            opacity: 0;
+            transition: all 0.3s; 
+            pointer-events: auto; 
+        }
+        .toast.show { 
+            transform: translateY(0); 
+            opacity: 1; 
+        }
+        .loading { 
+            position: fixed;
+            inset: 0; 
+            background: rgba(255,255,255,0.8);
+            display: none;
+            align-items: center; 
+            justify-content: center; 
+            z-index: 5000;
+            color: #8e54e9; 
+        }
+        
+        /* New Professional Popup for Add Cash */
+        .insufficient-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 6000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+        .insufficient-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .insufficient-modal-card {
+            background: linear-gradient(145deg, #ffffff, #f9f5ff);
+            width: 85%;
+            max-width: 360px;
+            border-radius: 32px;
+            padding: 20px 20px 28px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalPopIn 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        @keyframes modalPopIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .close-insufficient {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: 0.1s;
+            padding: 4px;
+            line-height: 1;
+        }
+        .close-insufficient:active {
+            transform: scale(0.9);
+            color: #1f2937;
+        }
+        .insufficient-icon {
+            font-size: 52px;
+            color: #f59e0b;
+            margin: 8px 0 6px;
+        }
+        .insufficient-title {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+        .insufficient-message {
+            color: #374151;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 0 8px;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        .insufficient-add-cash-btn {
+            background: linear-gradient(90deg, #10b981, #059669);
+            border: none;
+            padding: 12px 22px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 16px;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(16,185,129,0.35);
+            transition: 0.1s;
+            width: 80%;
+            justify-content: center;
+        }
+        .insufficient-add-cash-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="profile-section">
+        <button class="profile-button" onclick="(function(e) { e.preventDefault(); if (window.history.length > 1) { window.history.back(); } else { window.location.href = 'home.html'; } })(event)"><i class="fas fa-reply"></i></button>
+    </div>
+    <div class="balance-section">
+        <div class="balance-display">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeZQoKjM5USxhnGVsDfNKDaa4izjCIdzl0ClY7rl5fGVazetm9nFPFSO7rI6vzjPT9B8fnWf7cCfcItWHPEwLr0dtdA-O-f_JIH9UXdnruxbA0xDsLRC8ipXvI6e1aDTpnLDrLlo6jFlyisf3kJnhepyzWzSYGZr1Lf4LDML5jSt-BvU62_TTFQhYC5fA/s16000/1000115181.png" alt="" class="coin-icon" onclick="window.location.href='deposit.html'">
+            <div class="balance-amount" id="balance">0.00</div>
+            <button class="page6-button" onclick="window.location.href='withdraw.html'">Withdraw</button>
+        </div>
+    </div>
+</div>
+
+<div id="productsSearchSection" class="search-section">
+    <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="planSearchInput" placeholder="Search For Products Here">
+    </div>
+    <button id="searchButton" class="search-btn">Search</button>
+</div>
+
+<div id="historyFilterSection" class="filter-section" style="display: none;">
+    <div class="custom-dropdown" id="dateDropdown">
+        <div class="dropdown-header" id="dropdownHeader">
+            <span id="selectedDateLabel"></span>
+            <i class="fas fa-caret-down"></i>
+        </div>
+        <div class="dropdown-list" id="dropdownList">
+            </div>
+    </div>
+    <div class="daily-balance-card">
+        <div class="daily-balance-amount" id="dailyNetAmount">0.00</div>
+    </div>
+</div>
+
+<div id="home" class="section active">
+    <div class="plans-list" id="plansContainer"></div>
+</div>
+
+<div id="history" class="section">
+    <div id="historyEntries" style="padding-top:100px;"></div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" data-section="home"><i class="fas fa-store"></i><span>Products</span></div>
+    <div class="nav-item" data-section="history"><i class="fas fa-clock"></i><span>History</span></div>
+</div>
+
+<div id="productHistoryModal" class="modal-overlay">
+    <div class="product-modal">
+        <div class="modal-header">
+            <h3 id="modalPlanTitle">History</h3>
+            <button class="close-modal" onclick="closeProductModal()">&times;</button>
+        </div>
+        <div id="modalReturnsInfo" style="margin-bottom:15px; font-weight:bold; color:#8e54e9;">Loading...</div>
+        <div id="modalInvestmentsList">No investments yet</div>
+    </div>
+</div>
+
+<!-- New Insufficient Balance Popup -->
+<div id="insufficientModal" class="insufficient-modal-overlay">
+    <div class="insufficient-modal-card">
+        <button class="close-insufficient" id="closeInsufficientBtn">&times;</button>
+        <div class="insufficient-icon"><i class="fas fa-wallet"></i></div>
+        <div class="insufficient-title">Low Balance</div>
+        <div class="insufficient-message">Add cash to your wallet to invest and start earning daily returns.</div>
+        <button class="insufficient-add-cash-btn" id="addCashFromPopupBtn"><i class="fas fa-plus-circle"></i> Add Cash</button>
+    </div>
+</div>
+
+<div id="loading" class="loading"><i class="fas fa-spinner fa-spin fa-3x"></i></div>
+<div id="toastContainer" class="toast-container"></div>
+
+<script>
+    const HARDCODED_PLANS = [
+        { id: "plan_a", plantitle: "Product A", investmentamount: 295, dailyReturnAmount: 225, totalDays: 3, serialNo: 1 },
+        { id: "plan_b", plantitle: "Product B", investmentamount: 695, dailyReturnAmount: 250, totalDays: 6, serialNo: 2 },
+        { id: "plan_c", plantitle: "Product C", investmentamount: 1595, dailyReturnAmount: 265, totalDays: 12, serialNo: 3 },
+        { id: "plan_d", plantitle: "Product D", investmentamount: 2995, dailyReturnAmount: 250, totalDays: 24, serialNo: 4 },
+        { id: "plan_e", plantitle: "Product E", investmentamount: 3995, dailyReturnAmount: 195, totalDays: 48, serialNo: 5 },
+        { id: "plan_f", plantitle: "Product F", investmentamount: 6995, dailyReturnAmount: 255, totalDays: 56, serialNo: 6 },
+        { id: "plan_g", plantitle: "Product G", investmentamount: 19995, dailyReturnAmount: 1200, totalDays: 84, serialNo: 7 },
+        { id: "plan_h", plantitle: "Product H", investmentamount: 29995, dailyReturnAmount: 3200, totalDays: 40, serialNo: 8 },
+        { id: "plan_i", plantitle: "Product I", investmentamount: 39995, dailyReturnAmount: 6000, totalDays: 35, serialNo: 9 },
+        { id: "plan_j", plantitle: "Product J", investmentamount: 795, dailyReturnAmount: 500, totalDays: 3, serialNo: 10 },
+    ];
+
+    const PRODUCT_LOGOS = {
+        1:"https://spribe.co/assets/images/games/Av-new@2x.png?v=2.5.61",
+        2:"https://spribe.co/assets/images/games/trader@2x.png?v=2.5.61",
+        3:"https://spribe.co/assets/images/games/Mi@2x.png?v=2.5.61", 
+        4:"https://spribe.co/assets/images/games/Go@2x.png?v=2.5.61", 
+        5:"https://spribe.co/assets/images/games/Hi@2x.png?v=2.5.61",
+        6:"https://spribe.co/assets/images/games/Pl@2x.png?v=2.5.61", 
+        7:"https://spribe.co/assets/images/games/Ba@2x.png?v=2.5.61", 
+        8:"https://spribe.co/assets/images/games/Di@2x.png?v=2.5.61",
+        9:"https://spribe.co/assets/images/games/Ho.png?v=2.5.61",
+        10:"https://spribe.co/assets/images/games/Ke@2x.png?v=2.5.61"};
+    function getProductLogoSrc(serialNo) { return PRODUCT_LOGOS[serialNo] || `#imagelogo(${serialNo}).png`; }
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    let state = { uid: null, authed: false, balance: 0, plans: [...HARDCODED_PLANS], dailyReturnInvestments: [], transactionRecords: [] };
+    let currentFilterDate = null;
+
+    function generateTransactionId() {
+        const array = new Uint32Array(3);
+        crypto.getRandomValues(array);
+        const now = new Date();
+        const year = now.getFullYear().toString().slice(-2);
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const random1 = (array[0] % 1000000).toString().padStart(6, '0');
+        return year + month + day + random1;
+    }
+
+    function showToast(msg) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000); }
+    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+    function updateBalanceUI() { document.getElementById('balance').innerText = state.balance.toFixed(2); }
+    
+    function saveTransactionRecord(type, amount, balanceAfter, description, transactionName, isIncome) { 
+        if (!state.uid) return Promise.resolve(); 
+        const transactionId = generateTransactionId();
+        const record = { type, amount, description, transactionName, timestamp: Date.now(), balanceAfter, isIncome, transactionId }; 
+        return db.ref(`appusers/${state.uid}/transactionRecords`).push(record); 
+    }
+    
+    function loadTransactionRecords() { 
+        if (!state.uid) return; 
+        db.ref(`appusers/${state.uid}/transactionRecords`).on('value', snap => { 
+            state.transactionRecords = Object.values(snap.val() || {}).sort((a,b)=>b.timestamp - a.timestamp); 
+            renderHistoryUI(); 
+        }); 
+    }
+    
+    function renderHistoryUI() {
+        const container = document.getElementById('historyEntries');
+        let filtered = [...state.transactionRecords];
+        filtered = filtered.filter(rec => {
+            const recDate = new Date(rec.timestamp);
+            let rDay = String(recDate.getDate()).padStart(2, '0');
+            let rMonth = String(recDate.getMonth() + 1).padStart(2, '0');
+            let rYear = recDate.getFullYear();
+            let recDateStr = `${rYear}-${rMonth}-${rDay}`;
+            return recDateStr === currentFilterDate;
+        });
+        let net = 0;
+        filtered.forEach(rec => { net += rec.amount; });
+        const netElem = document.getElementById('dailyNetAmount');
+        if(netElem) netElem.innerText = (net >= 0 ? `+₹${net.toFixed(2)}` : `-₹${Math.abs(net.toFixed(2))}`);
+        if(filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:white;">No transactions on this date</div>'; return; }
+        let html = '';
+        filtered.forEach(rec => {
+            const sign = rec.isIncome ? '+' : '-';
+            const cls = rec.isIncome ? 'positive' : 'negative';
+            const d = new Date(rec.timestamp);
+            const dateFmt = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
+            const displayId = rec.transactionId || 'N/A';
+            const formattedId = displayId.length === 12 ? `${displayId.slice(0, 2)}-${displayId.slice(2, 6)}-${displayId.slice(6, 12)}` : displayId;
+            html += `<div class="transaction-item"><div class="tx-left"><div class="tx-title">${rec.transactionName || rec.description}</div><div class="tx-id-badge">${formattedId}</div></div><div class="tx-right"><div class="tx-amount ${cls}">${sign}₹${Math.abs(rec.amount).toFixed(2)}</div><div class="tx-date">${dateFmt}</div></div></div>`;
+        });
+        container.innerHTML = html;
+    }
+    
+    function setFilterDate(dateValue) {
+        if(!dateValue) {
+            let td = new Date();
+            let day = String(td.getDate()).padStart(2, '0');
+            let month = String(td.getMonth() + 1).padStart(2, '0');
+            let year = td.getFullYear();
+            currentFilterDate = `${year}-${month}-${day}`; 
+            document.getElementById('selectedDateLabel').innerText = `${day}-${month}-${year}`;
+        } else { currentFilterDate = dateValue; }
+        renderHistoryUI();
+        return true;
+    }
+    
+    function initCustomDropdown() {
+        const header = document.getElementById('dropdownHeader');
+        const list = document.getElementById('dropdownList');
+        const label = document.getElementById('selectedDateLabel');
+        list.innerHTML = '';
+        for(let i=0; i<30; i++) {
+            let d = new Date();
+            d.setDate(d.getDate() - i);
+            let day = String(d.getDate()).padStart(2, '0');
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let year = d.getFullYear();
+            let dateStr = `${day}-${month}-${year}`;
+            let isoDate = `${year}-${month}-${day}`;
+            let item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.innerText = dateStr;
+            item.onclick = () => {
+                label.innerText = dateStr;
+                list.classList.remove('show');
+                setFilterDate(isoDate);
+            };
+            list.appendChild(item);
+        }
+        let d = new Date();
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+        label.innerText = `${day}-${month}-${year}`;
+        header.addEventListener('click', () => { list.classList.toggle('show'); });
+        window.addEventListener('click', (e) => { if (!document.getElementById('dateDropdown').contains(e.target)) list.classList.remove('show'); });
+    }
+    
+    function loadInvestmentsData() { if (!state.uid) return; db.ref(`appusers/${state.uid}/dailyReturnInvestments`).on('value', snap => { state.dailyReturnInvestments = Object.entries(snap.val() || {}).map(([id,val])=>({id,...val})); renderPlansUI(); }); }
+    async function claimDailyReturn(investmentId, planId) { const investment = state.dailyReturnInvestments.find(i=> i.id === investmentId); const plan = state.plans.find(p=> p.id === planId); if(!investment || investment.remainingDays <= 0) return; const todayStr = new Date().toDateString(); const lastReturnDateStr = investment.lastReturnDate ? new Date(investment.lastReturnDate).toDateString() : ''; if(lastReturnDateStr === todayStr) { showToast("Already claimed today!"); return; } showLoading(); try { await db.ref(`appusers/${state.uid}/totalBalance`).transaction(bal => (bal||0) + plan.dailyReturnAmount); const updates = { [`appusers/${state.uid}/dailyReturnInvestments/${investmentId}/remainingDays`]: investment.remainingDays - 1, [`appusers/${state.uid}/dailyReturnInvestments/${investmentId}/lastReturnDate`]: Date.now(), [`appusers/${state.uid}/dailyReturnInvestments/${investmentId}/totalReturnsReceived`]: (investment.totalReturnsReceived||0) + plan.dailyReturnAmount }; if(investment.remainingDays - 1 <= 0) updates[`appusers/${state.uid}/dailyReturnInvestments/${investmentId}/status`] = 'completed'; await db.ref().update(updates); await saveTransactionRecord('daily_return', plan.dailyReturnAmount, state.balance + plan.dailyReturnAmount, `Return - ${plan.plantitle}`, plan.plantitle, true); showToast(`₹${plan.dailyReturnAmount.toFixed(2)} claimed!`); } catch(e) { showToast("Claim failed"); } finally { hideLoading(); } }
+    
+    // Updated invest function: shows professional popup on insufficient balance instead of toast
+    async function investInPlan(planId) { 
+        const plan = state.plans.find(p=> p.id === planId); 
+        if(!plan) return; 
+        if(state.balance < plan.investmentamount) {
+            // Show engaging professional popup
+            const modal = document.getElementById('insufficientModal');
+            modal.classList.add('active');
+            return;
+        } 
+        const activeInv = state.dailyReturnInvestments.find(inv => inv.planId === planId && inv.status === 'active' && inv.remainingDays > 0); 
+        if(activeInv) { showToast("You already have an active investment for this product."); return; } 
+        showLoading(); 
+        try { 
+            const deductionRes = await db.ref(`appusers/${state.uid}/totalBalance`).transaction(bal => { let current = bal || 0; if(current < plan.investmentamount) return undefined; return current - plan.investmentamount; }); 
+            if(!deductionRes.committed) { showToast("Insufficient balance check failed"); hideLoading(); return; } 
+            const newInv = { planId: plan.id, planName: plan.plantitle, amount: plan.investmentamount, dailyReturnAmount: plan.dailyReturnAmount, totalDays: plan.totalDays, remainingDays: plan.totalDays, status: 'active', startDate: Date.now(), lastReturnDate: 0, totalReturnsReceived: 0 }; 
+            await db.ref(`appusers/${state.uid}/dailyReturnInvestments`).push(newInv); 
+            await saveTransactionRecord('investment', -plan.investmentamount, state.balance - plan.investmentamount, `Investment in ${plan.plantitle}`, plan.plantitle, false); 
+            showToast(`Successfully invested in ${plan.plantitle}`); 
+        } catch(e) { showToast("Investment failed"); } finally { hideLoading(); } 
+    }
+    
+    function renderPlansUI() { const container = document.getElementById('plansContainer'); container.innerHTML = ''; state.plans.forEach(plan => { const totalReturn = plan.dailyReturnAmount * plan.totalDays; const activeInvestment = state.dailyReturnInvestments.find(inv => inv.planId === plan.id && inv.status === 'active' && inv.remainingDays > 0); let btnHtml = ''; if(activeInvestment) { const canClaimToday = (() => { if(!activeInvestment.lastReturnDate) return true; return new Date(activeInvestment.lastReturnDate).toDateString() !== new Date().toDateString(); })(); btnHtml = `<button class="card-btn ${canClaimToday ? 'claim-btn' : 'claimed-btn'}" onclick="event.stopPropagation(); ${canClaimToday ? `claimDailyReturn('${activeInvestment.id}','${plan.id}')` : ''}">${canClaimToday ? 'Claim Return' : 'Claimed Today'}</button>`; } else { btnHtml = `<button class="card-btn" onclick="event.stopPropagation(); investInPlan('${plan.id}')">Invest</button>`; } const logoSrc = getProductLogoSrc(plan.serialNo); const card = document.createElement('div'); card.className = 'plan-card'; card.onclick = (e) => { if(!e.target.closest('button')) openProductHistoryModal(plan.id); }; card.innerHTML = `<div class="plan-badge">Days: ${plan.totalDays}</div><div class="card-top"><div class="card-image-wrapper"><img class="product-logo-img" src="${logoSrc}" alt="" onerror="this.onerror=null; this.classList.add('error-fallback'); this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%238e54e9\'/><text x=\'50\' y=\'55\' font-size=\'12\' text-anchor=\'middle\' fill=\'white\' font-weight=\'bold\'>${plan.plantitle.charAt(0)}</text></svg>';"></div><div class="card-info"><div class="card-title">${plan.plantitle}</div><div class="card-stats"><div class="stat-col"><span class="stat-val">₹${plan.dailyReturnAmount}</span><span class="stat-lbl">Daily Income</span></div><div class="stat-col"><span class="stat-val">₹${totalReturn}</span><span class="stat-lbl">Total Income</span></div></div></div></div><div class="card-bottom"><div class="card-price">Price: ₹${plan.investmentamount}</div>${btnHtml}</div>`; container.appendChild(card); }); performSearch(); }
+    function openProductHistoryModal(planId) { const plan = state.plans.find(p=> p.id === planId); if(!plan) return; document.getElementById('modalPlanTitle').innerText = `${plan.plantitle} History`; const allInvestments = state.dailyReturnInvestments.filter(inv => inv.planId === planId); let totalCollected = 0, historyHtml = ''; allInvestments.forEach(inv => { totalCollected += (inv.totalReturnsReceived || 0); const statusText = inv.status === 'completed' ? 'Completed' : (inv.remainingDays > 0 ? 'Active' : 'Expired'); historyHtml += `<div class="history-item"><strong>Status: ${statusText}</strong><br>Invested: ₹${inv.amount}<br>Collected: ₹${(inv.totalReturnsReceived||0).toFixed(2)}<br><small>${new Date(inv.startDate).toLocaleString('en-IN')}</small></div>`; }); document.getElementById('modalInvestmentsList').innerHTML = historyHtml || '<div style="text-align:center;color:#888;">No history found</div>'; document.getElementById('modalReturnsInfo').innerHTML = `Total Lifetime Mined: ₹${totalCollected.toFixed(2)}`; document.getElementById('productHistoryModal').classList.add('active'); }
+    function closeProductModal() { document.getElementById('productHistoryModal').classList.remove('active'); }
+    function subscribeBalance() { if(!state.uid) return; db.ref(`appusers/${state.uid}/totalBalance`).on('value', snap => { state.balance = parseFloat(snap.val() || 0); updateBalanceUI(); }); }
+    function performSearch() { const term = document.getElementById('planSearchInput').value.trim().toLowerCase(); document.querySelectorAll('.plan-card').forEach(card => { const title = card.querySelector('.card-title')?.innerText.toLowerCase() || ''; card.style.display = (term === '' || title.includes(term)) ? 'block' : 'none'; }); }
+    async function initUser() { if(!state.uid) return; const snap = await db.ref(`appusers/${state.uid}/totalBalance`).once('value'); if(snap.val() === null) await db.ref(`appusers/${state.uid}/totalBalance`).set(0); subscribeBalance(); loadInvestmentsData(); loadTransactionRecords(); }
+    
+    auth.onAuthStateChanged(user => { if(user) { state.uid = user.uid; state.authed = true; initUser(); } else window.location.href = 'index.html'; });
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const productsSearchDiv = document.getElementById('productsSearchSection');
+        const historyFilterDiv = document.getElementById('historyFilterSection');
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sectionId = btn.getAttribute('data-section');
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                btn.classList.add('active');
+                if(sectionId === 'home') {
+                    productsSearchDiv.style.display = 'flex';
+                    historyFilterDiv.style.display = 'none';
+                } else {
+                    productsSearchDiv.style.display = 'none';
+                    historyFilterDiv.style.display = 'flex';
+                    setFilterDate(null);
+                    renderHistoryUI();
+                }
+            });
+        });
+        document.getElementById('searchButton').addEventListener('click', performSearch);
+        document.getElementById('planSearchInput').addEventListener('input', performSearch);
+        initCustomDropdown();
+        setFilterDate(null);
+        
+        // Popup controls: close button & add cash navigation
+        const insModal = document.getElementById('insufficientModal');
+        const closeInsBtn = document.getElementById('closeInsufficientBtn');
+        const addCashBtn = document.getElementById('addCashFromPopupBtn');
+        function closeInsufficientModal() { insModal.classList.remove('active'); }
+        closeInsBtn.addEventListener('click', closeInsufficientModal);
+        addCashBtn.addEventListener('click', () => {
+            closeInsufficientModal();
+            window.location.href = 'deposit.html';
+        });
+        insModal.addEventListener('click', (e) => {
+            if(e.target === insModal) closeInsufficientModal();
+        });
+    });
+</script>
+</body>
+</html>

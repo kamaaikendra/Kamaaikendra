@@ -1,0 +1,3248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lucky Mines Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpfi80obHvAinuDffMUVfLqHWuTJ08-vA6-y6AvxAdcc31-0UuCtJ1LPTvJuAKl8b62cZbJGUnaD6czWIY8zm6VA7Kqc6MMOEkL0T9R2JHCqhTIaDYVkV733lvkSmZWwXIBJ966rONMdonjWKsojbrLLzajpiFBz-QySwoh29zwhr6lY7XDFyl0Pf5kTM/s200/1000123367.png" as="image">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiMIubnL69NTehFz-a5r36_xYAvWbfE4Pr8FtZJv0ja_l0SIkSmqh9xP7o73sRVUJ2QPJ8pJ0QUF5lIY64BQKyEE5rBzKLGoSWRy2Boe0pJK5TfDw1SKctiIoHwPaj0vV5TIscSpIm-HwcaldD-AgSn-tjPX9LTKhy1pPnaTo6dUYBLE47HXXqYIPUGq2Q/s200/1000123368.png" as="image">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiaH3qLZw8ryMdBMGHLIXgOstqu6XZyXYG9zp8Yskajkw3HIkjCUguF85lFVndRjWAFqbRaJbTTk4m3Ud5Vs0hD8GSJWowLvPu5vDl-HJIW6IV4veheYcMTI4PMI6XzyyElYRhAi6oqZhlfs7T_xUMAxaaK2vyqlh8wFgjacw-coqL15dJC5KGmOBpAHGg/s200/1000123366.png" as="image">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_Cm_dCcnZnYv9mLZl3HJ9eYOXgHEFSJLvgeo4x2m1cON4xRSP2ppzYa8XgDBI5hokWKKxdiYVvaRgGAZd14mUJgeNE5VSomvZrALqi1XgJ7NguAW3J79zWQJ_wclqlNL_IaPS2cpU59JDB7QeSaaIQtUlO_nULG6iJg84PPFdgesh1Zpt3hp7928fiMQ/s200/1000123365.png" as="image">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiou2OgORZphyQRXwZoEOINirbbIkPGKFQQ3AZk_r4Ob7zPDPZlpjjbU4pNUbOJd8tNWjlbSNM0rQxwjvN68AkBXFK__aci9avO3pN-g0kCwXdIGSLwbWGWhrozaeNtzIswZlyizI4IqnLGQCoqiwDhKm7dTDdWi_r18ChRbs9TqqvF6hlTLT1y9IN-Asc/s200/1000123364.png" as="image">
+    <link rel="preload" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5TtCC2ZFx7CRaWCExkGjUM4PZV1qt5XnvXFrXGJTCmpmHhXhbcbbKFsGSCdvMwMaO-rbj9M-0tPP180HxHflv3gmKzqsksbM32mR_rJfwNS5EGm2iLY2izoenL8gyXPl0HyNb-VUFDz7oIsGOf4DWaqbfZUCrxPxSfJV9SVLYPoNNCXpD3eL6Ea0rkb4/s200/1000123369.png" as="image">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #171f2e;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        /* Top Navigation Bar - STRICTLY UNTOUCHED AS REQUESTED */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+            width: 100vw;
+            height: 45px;
+            background: linear-gradient(0deg, rgba(190,80,150,0.2) 0%, #893BFF 10%, #5539CC 100%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+            z-index: 10000000000001;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-icons-left, .nav-icons-right {
+            display: flex;
+            align-items: center;
+            color: #fdbd02;
+            font-size: 25px;
+        }
+        .nav-icons-left i:active, .nav-icons-right i:active {
+            opacity: 0.6;
+        }
+        .deposit-btn {
+            background: linear-gradient(180deg, #e42c42 0%, #a81123 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .deposit-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Game Area */
+        .game-container {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjA6gTrYJTitPm6jLHtyWGXD7z6KWVOdrXm-krc2xPvHzWn5aoHSbS_OEwAcKwpTOenvHFRmGQtNGfFAI5JkixQAW59d94mlk9IyHkXW4C3mAKsw96r7O-qPedF9szaTlovAq-BaHXrU5Vi4LP4aUJsyKKSkRjRFdrfApMn4bPuH2Adk87qnWajSRxiL90/s1620/1000123338.png");
+            background-size: contain;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: none;
+        }
+                /* Bottom Status Bar */
+        .bottom-bar {
+            height: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: -10px;
+            font-size: 12px;
+            background:#32415d;
+            font-weight: 700;
+            color: #8fa4c3;
+        }
+
+        .bottom-btn {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjlxffEVkc7ZKBn_BQ0W9q6q9SvKJJ3Igt4AzAdRTyO2U1I6UYxRXOJeGj5Q3WBCnRIvJeF1xYC8Wv0W2h41YCfwKNMwSm5iDXq67optTG_-P-WvUd1c14ukmcTwGzF4w_ExF2S1kw1WhTqAU7f9ydJHC7usAgv7-udiq02ld5rXHuZ5ec6SjieMh93XRc/s772/1000123339.png");
+            background-size:100% 100%;
+            border:none;
+            color: #8fa4c3;
+            height:20px;
+            width:70px;
+            cursor: pointer;
+            box-shadow: none;
+            font-weight: bold;
+        }
+
+        .help-btn {
+            background: transparent;
+            border: 2px solid #8fa4c3;
+            color: #8fa4c3;
+            outline: none;
+            width: 24px;
+            font-size: 16px;
+            height: 24px;
+            border-radius: 50%;
+            display:none;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: -20px;
+        }
+
+        .balance-display {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            background: #253147;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: auto;
+            color: #fff;
+        }
+
+        .menu-hamburger {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border:none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .menu-hamburger span {
+            width: 15px;
+            height: 2px;
+            background: #8fa4c3;
+            border-radius: 1px;
+        }
+
+        /* Header Controls (Mines Select & Next Multiplier) */
+        .header-controls {
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0;
+            margin-top: 20px;
+            position: relative;
+            z-index: 50;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            height: 4px;
+            background: #232f46;
+            border-radius: 2px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: none;
+            display:flex;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #7bd339;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .mines-dropdown-wrapper {
+            position: relative;
+        }
+
+        .mines-toggle-btn {
+            background: #232f46;
+            border: 1px solid #32415d;
+            color: #fff;
+            padding: 4px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            min-width: 100px;
+            justify-content: space-between;
+            box-shadow: none;
+        }
+
+        .mines-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #232f46;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 190px;
+            min-width: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            border: 1px solid #32415d;
+        }
+
+        .mines-dropdown.show {
+            display: block;
+        }
+
+        .mine-option {
+            padding: 8px 30px;
+            margin: 4px;
+            color: #8fa4c3;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            background: #1e283b;
+            border: none;
+        }
+
+        .mine-option:hover{
+            font-size: 16px;
+            color: white;
+        }
+        .mine-option.selected {
+            background: #32415d;
+            color: white;
+        }
+
+        .next-multiplier {
+            background: #fdbd01;
+            border:2px solid rgba(220,120,0,1);
+            color: #1a1a1a;
+            padding: 4px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 900;
+            align-items: center;
+            cursor: pointer;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        /* Game Board */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            padding: 0;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .game-board.board-inactive {
+            opacity: 0.99;
+            filter: brightness(0.8);
+            pointer-events: auto;
+        }
+
+        .tile {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpfi80obHvAinuDffMUVfLqHWuTJ08-vA6-y6AvxAdcc31-0UuCtJ1LPTvJuAKl8b62cZbJGUnaD6czWIY8zm6VA7Kqc6MMOEkL0T9R2JHCqhTIaDYVkV733lvkSmZWwXIBJ966rONMdonjWKsojbrLLzajpiFBz-QySwoh29zwhr6lY7XDFyl0Pf5kTM/s200/1000123367.png");
+            border-radius: 8px;
+            background-size: 100% 100%;
+            min-height: 50px;
+            max-height: 100%;
+            width:100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: none;
+        }
+        
+        .tile.revealed {
+            cursor: default;
+        }
+
+        .tile.revealed:hover {
+            transform: scale(1);
+        }
+
+        .tile.mine {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5TtCC2ZFx7CRaWCExkGjUM4PZV1qt5XnvXFrXGJTCmpmHhXhbcbbKFsGSCdvMwMaO-rbj9M-0tPP180HxHflv3gmKzqsksbM32mR_rJfwNS5EGm2iLY2izoenL8gyXPl0HyNb-VUFDz7oIsGOf4DWaqbfZUCrxPxSfJV9SVLYPoNNCXpD3eL6Ea0rkb4/s200/1000123369.png");
+            animation: shake 0.1s ease;
+            background-size: 100% 100%;
+        }
+        .tile.mine-hit{
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiou2OgORZphyQRXwZoEOINirbbIkPGKFQQ3AZk_r4Ob7zPDPZlpjjbU4pNUbOJd8tNWjlbSNM0rQxwjvN68AkBXFK__aci9avO3pN-g0kCwXdIGSLwbWGWhrozaeNtzIswZlyizI4IqnLGQCoqiwDhKm7dTDdWi_r18ChRbs9TqqvF6hlTLT1y9IN-Asc/s200/1000123364.png");
+            background-size: 100% 100%;
+        }
+
+        .tile.gem {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_Cm_dCcnZnYv9mLZl3HJ9eYOXgHEFSJLvgeo4x2m1cON4xRSP2ppzYa8XgDBI5hokWKKxdiYVvaRgGAZd14mUJgeNE5VSomvZrALqi1XgJ7NguAW3J79zWQJ_wclqlNL_IaPS2cpU59JDB7QeSaaIQtUlO_nULG6iJg84PPFdgesh1Zpt3hp7928fiMQ/s200/1000123365.png");
+            background-size: 100% 100%;
+        }
+
+        .tile.autoplay-selected {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiMIubnL69NTehFz-a5r36_xYAvWbfE4Pr8FtZJv0ja_l0SIkSmqh9xP7o73sRVUJ2QPJ8pJ0QUF5lIY64BQKyEE5rBzKLGoSWRy2Boe0pJK5TfDw1SKctiIoHwPaj0vV5TIscSpIm-HwcaldD-AgSn-tjPX9LTKhy1pPnaTo6dUYBLE47HXXqYIPUGq2Q/s200/1000123368.png");
+            background-size: 100% 100%;
+        }
+
+        .tile.revealed::after {
+            display: none;
+        }
+        
+        .tile.mine::before {
+            animation: popIn 0.2s ease-out;
+        }
+
+        .tile.mine-hit::before {
+            animation: shake 0.2s ease;
+        }
+
+        .tile.gem-auto {
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiaH3qLZw8ryMdBMGHLIXgOstqu6XZyXYG9zp8Yskajkw3HIkjCUguF85lFVndRjWAFqbRaJbTTk4m3Ud5Vs0hD8GSJWowLvPu5vDl-HJIW6IV4veheYcMTI4PMI6XzyyElYRhAi6oqZhlfs7T_xUMAxaaK2vyqlh8wFgjacw-coqL15dJC5KGmOBpAHGg/s200/1000123366.png");
+            background-size: 100% 100%;
+        }
+
+        .tile.mine-auto {
+            background: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5TtCC2ZFx7CRaWCExkGjUM4PZV1qt5XnvXFrXGJTCmpmHhXhbcbbKFsGSCdvMwMaO-rbj9M-0tPP180HxHflv3gmKzqsksbM32mR_rJfwNS5EGm2iLY2izoenL8gyXPl0HyNb-VUFDz7oIsGOf4DWaqbfZUCrxPxSfJV9SVLYPoNNCXpD3eL6Ea0rkb4/s200/1000123369.png");
+            background-size: 100% 100%;
+        }
+
+        /* Bottom Controls Panel */
+        .controls-panel {
+            background: #232f46;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 0;
+            position: relative;
+            z-index: 60;
+            border: 1px solid #32415d;
+            /* Flex column-reverse purely handles the visual layout swap of the sections safely */
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 12px;
+        }
+
+        .tools-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .random-btn {
+            background: #32415d;
+            border: none;
+            color: #8fa4c3;
+            box-shadow: none;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            flex: 1;
+        }
+
+        .random-btn:active {
+            background: #253147;
+        }
+        .random-btn:disabled {
+            background: #1e283b;
+            color: #4b5d7a;
+        }
+
+        .auto-game-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 8px;
+            font-size: 12px;
+            color: #8fa4c3;
+            background: #32415d;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        
+        .auto-game-toggle i {
+           display: none; /* Hide icon for flat modern look */
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 30px;
+            height: 15px;
+            background: rgba(225,225,225,0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: #7bd339;
+        }
+
+        .toggle-switch.active::after {
+            left: 15px;
+        }
+
+        .action-buttons-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .autoplay-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            background: #32415d;
+            border: none;
+            color: #8fa4c3;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: none;
+            transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .autoplay-btn:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            background: #1e283b;
+            color: #4b5d7a;
+        }
+
+        .autoplay-btn:active:not(:disabled) {
+            transform: translateY(2px);
+        }
+        
+        .autoplay-icon {
+            width: 30px;
+            height: 30px;
+            filter: none;
+        }
+
+        .autoplay-btn.active-red {
+            background: #e42c42;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #a81123;
+        }
+
+        .bet-action-btn {
+            flex-grow: 1;
+            height: 55px;
+            border-radius: 8px;
+            font-size: 20px;
+            text-shadow: none;
+            font-weight: 900;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        
+        .play-icon {
+            filter: none;
+            stroke: #fff;
+            stroke-width: 2.5;
+        }
+
+        .bet-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: translateY(0);
+        }
+
+        .bet-action-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 transparent;
+        }
+
+        .btn-green {
+            background: #7bd339;
+        }
+
+        .btn-orange {
+            background: #ffb800;
+            color: #1a1a1a;
+        }
+
+        /* Bet Input Area */
+        .bet-input-wrapper {
+            position: relative;
+        }
+
+        /* === NEW SLIDE-UP POPUP STYLES === */
+        @keyframes slideUpPopup {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .slide-up-popup, .slide-up-popup2 {
+            display: none;
+            position: absolute;
+            bottom: 110%; 
+            left: 0;
+            width: 100%;
+            background: #232f46;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border: 1px solid #32415d;
+            animation: slideUpPopup 0.2s ease-out forwards;
+        }
+        .slide-up-popup.show, .slide-up-popup2.show { display: block; }
+
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .keyboard-btn {
+            background: #32415d;
+            border: 1px solid #171f2e;
+            box-shadow: none;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .keyboard-btn:active { background: #1e283b; }
+
+        .keyboard-close-bar {
+            background: #171f2e;
+            border: none;
+            color: #8fa4c3;
+            width: 100%;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .amounts-title { text-align: center; color: #8fa4c3; font-size: 14px; font-weight: bold; margin-bottom: 12px; }
+        .amounts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .amount-btn {
+            background: #32415d;
+            border: 1px solid #171f2e;
+            box-shadow: none;
+            color: #fff;
+            padding:5px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .amount-btn:active { background: #1e283b; }
+
+        .bet-input-container {
+            background: #232f46;
+            border: 1px solid #32415d;
+            box-shadow: none;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: auto;
+            margin-bottom: 0;
+        }
+
+        .bet-input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            padding:5px;
+            padding-left: 10px;
+            height:35px;
+            margin:-5px;
+            margin-right:15px;
+            margin-left: 5px;
+            gap: 10px;
+            cursor: pointer;
+            background:#171f2e;
+            border-radius: 4px;
+        }
+
+        .bet-label {
+            color: #000;
+            font-size: 13px;
+            background:#fff;
+            padding: 2px 6px;
+            margin:auto;
+            border-radius: 15px;
+        }
+
+        .bet-input-box {
+            background:transparent;
+            border-radius: 0;
+            border: none;
+            width: auto;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            pointer-events: none;
+        }
+
+        .bet-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 400;
+            text-align: left;
+            outline: none;
+            width: 100px;
+            pointer-events: none;
+        }
+
+        .bet-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .bet-control-btn, .bet-control-btn2 {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            border: none;
+            background: #32415d;
+            color: #8fa4c3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: none;
+            font-weight: bold;
+        }
+
+        .bet-control-btn:active, .bet-control-btn2:active {
+            background: #1e283b;
+        }
+
+        /* Autoplay Modal Specific */
+        #autoplay-modal .modal-content {
+            background: #232f46;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 380px;
+            position: relative;
+            border: 1px solid #32415d;
+        }
+        .darkaprgbg{
+            background: #171f2e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #32415d;
+        }
+        
+        .autoplay-rounds-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .autoplay-round-btn {
+            background: #32415d;
+            border: none;
+            color: #8fa4c3;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        
+        .autoplay-round-btn.selected {
+            background: #1e283b;
+            color: #fff;
+            border: 1px solid #4caf50;
+        }
+
+        .autoplay-round-btn.selected::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #7bd339;
+            border-radius: 50%;
+        }
+        
+        .autoplay-round-btn:not(.selected)::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4b5d7a;
+            border-radius: 50%;
+        }
+
+        .autoplay-condition-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #171f2e; 
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #32415d;
+        }
+
+        .auto-toggle {
+            position: relative;
+            width: 36px;
+            height: 18px;
+            background: #32415d;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .auto-toggle::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .auto-toggle.active {
+            background: #7bd339;
+        }
+
+        .auto-toggle.active::after {
+            left: 18px;
+        }
+
+        .autoplay-input-group {
+            display: flex;
+            align-items: center;
+            background: #232f46;
+            border-radius: 8px;
+            box-shadow: none;
+            padding: 4px;
+            width: 140px;
+            justify-content: space-between;
+            border: 1px solid #32415d;
+        }
+
+        .autoplay-input-group button {
+            background: #32415d;
+            border: none;
+            color: #8fa4c3;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            transition: background 0.1s;
+        }
+
+        .autoplay-input-group button:active {
+            background: #1e283b;
+        }
+
+        .autoplay-input-group input {
+            width: 70px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .start-auto-btn {
+            background: #7bd339;
+            border: none;
+            border-bottom: 4px solid #5a9c29;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+         .auto-keyboard-popup {
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            transform: translateX(50%);
+            background: #232f46;
+            border: 1px solid #32415d;
+            padding: 10px;
+            border-radius: 12px;
+            z-index: 200;
+            display: none;
+            width: 70%;
+            animation: slideUpPopup 0.2s ease-out forwards;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .auto-keyboard-popup.show { display: block; }
+        .auto-keyboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .auto-keyboard-btn {
+            background: #32415d;
+            border: 1px solid #171f2e;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .auto-keyboard-btn:active { background: #1e283b; }
+        .auto-keyboard-close {
+            background: #171f2e;
+            border: none;
+            color: #8fa4c3;
+            width: 100%;
+            height: 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Modals Generic */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(15, 20, 30, 0.8); 
+            z-index: 1000; 
+            display: none;
+            justify-content: center; 
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content { 
+            background: #232f46; 
+            width: 95%; 
+            max-width: 350px;
+            border-radius: 12px;
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; 
+            border: 1px solid #32415d;
+            animation: slideUp 0.3s ease; 
+        }
+        .modal-header {
+            padding: 15px; 
+            border-bottom: 1px solid #32415d; 
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            background: #171f2e;
+        }
+        .modal-title { 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: #fff; 
+            text-transform: uppercase; 
+        }
+        .modal-close {
+            background: #32415d;
+            border: none; 
+            color: #8fa4c3; 
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+        }
+        .modal-body {
+            padding: 15px; 
+            color: #8fa4c3;
+            font-size: 14px; 
+            line-height: 1.5;
+            max-height: 70vh;
+            overflow-y: auto; 
+        }
+        
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-list li {
+            padding: 12px 15px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #8fa4c3;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-list li i, .menu-list li svg {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #8fa4c3;
+        }
+
+        #sound-toggle-menu-btn {
+            background: #171f2e;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #32415d;
+        }
+
+        #freebets-menu-btn, #recordsmenu-btn, #limits-menu-btn, #how-to-play-menu-btn, #rules-menu-btn, #fairnessmenu-btn {
+            background: #171f2e;
+            border-bottom: 1px solid #232f46;
+        }
+
+        #freebets-menu-btn { border-top-left-radius: 8px; border-top-right-radius: 8px; border: 1px solid #32415d;  }
+        #recordsmenu-btn, #limits-menu-btn, #how-to-play-menu-btn, #rules-menu-btn { border-left: 1px solid #32415d; border-right: 1px solid #32415d; }
+        #fairnessmenu-btn { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border: 1px solid #32415d; margin-bottom: 10px; }
+
+        #closemenu {
+            justify-content: center;
+            color: #8fa4c3;
+            background: transparent;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #32415d;
+        }
+
+        .menu-list li:last-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 15px 5px 5px 5px;
+            border-top: 1px solid #32415d;
+            cursor: default;
+        }
+
+        .rules-grid-example {
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 4px;
+            margin: 15px auto;
+            width: 150px; 
+        }
+        .rules-tile {
+            aspect-ratio: 1/1;
+            background: #32415d; 
+            border-radius: 4px;
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+            font-size: 14px;
+        }
+        .rules-tile.star { background: #ffb800; }
+        .rules-tile.mine { background: #ff5b5b; }
+        
+        .limits-table { 
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .limits-table td { 
+            padding: 10px; 
+            background: #171f2e;
+            border-top: 1px solid #32415d;
+            border-bottom: 1px solid #32415d;
+        }
+        .limits-table td:first-child {
+            border-radius: 8px 0 0 8px; 
+            color: #8fa4c3;
+            border-left: 1px solid #32415d;
+        }
+        .limits-table td:last-child { 
+            border-radius: 0 8px 8px 0; 
+            text-align: right; 
+            font-weight: bold; 
+            color: #fff;
+            border-right: 1px solid #32415d;
+        }
+        .message-toast {
+            position: fixed; 
+            top: 60px;
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #232f46;
+            border: 1px solid #32415d;
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            font-weight: bold; 
+            z-index: 2000; 
+            opacity: 0; 
+            transition: opacity 0.3s; 
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .message-toast.show { opacity: 1; }
+        
+        .auth-popup {
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%;
+            background: rgba(15, 20, 30, 0.9); 
+            display: none; 
+            justify-content: center; 
+            align-items: center;
+            z-index: 9999;
+        }
+        .auth-popup-content { 
+            background: #232f46;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            width: 90%;
+            max-width: 320px;
+            border: 1px solid #7bd339;
+        }
+        .auth-popup h2 { 
+            color: #fff; 
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .auth-popup p { 
+            color: #8fa4c3; 
+            font-size: 14px; 
+            margin-bottom: 25px; 
+            font-weight: 500;
+        }
+        .auth-popup-btn { 
+            background: #7bd339;
+            color: white;
+            border: none;
+            border-bottom: 4px solid #5a9c29;
+            padding: 12px 20px;
+            border-radius: 8px; 
+            font-weight: 900;
+            font-size: 16px;
+            width: 100%; 
+            cursor: pointer;
+        }
+        #loading-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: #171f2e; 
+            z-index: 99999; 
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner div { 
+            width: 14px; 
+            height: 14px; 
+            background: #7bd339;
+            border-radius: 50%; 
+            margin: 0 4px;
+            display: inline-block;
+            animation: bounce 0.4s infinite ease-in-out both; 
+        }
+        .spinner div:nth-child(1) { animation-delay: -0.32s; }
+        .spinner div:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 
+            0%, 80%, 100% { transform: scale(0.9); } 
+            40% { transform: scale(1); }
+        }
+
+        .list-header {
+            display: flex; padding: 10px 15px; color: #8fa4c3; font-size: 12px; align-items: center; background: #171f2e; font-weight: bold;
+        }
+        .list-row {
+            display: flex; padding: 12px 15px; align-items: center; font-size: 13px; border-bottom: 1px solid #171f2e; color: #fff;
+        }
+        .list-row.win {
+            background: rgba(123, 211, 57, 0.1); border: 1px solid #7bd339; border-radius: 8px; margin: 8px;
+        }
+        .list-row.win .col-date { color: #8fa4c3; }
+        .list-row.lose {
+            background: rgba(255, 91, 91, 0.1); border-radius: 8px; margin: 8px; border: 1px solid #ff5b5b;
+        }
+        .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 11px; color: #8fa4c3; }
+        .col-bet { flex: 1.5; text-align: left; font-weight: bold; }
+        .col-x { flex: 1; text-align: center; }
+        .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+        .x-pill {
+            background: #32415d; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;
+        }
+        .x-pill.blue-bg {
+            background: #171f2e; color: #7bd339; border: 1px solid #7bd339;
+        }
+        .action-icons { display: flex; gap: 8px; color: #7bd339; font-size: 14px; margin-left: auto; }
+        .action-icons i { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner">
+            <div></div><div></div><div></div>
+        </div>
+    </div>
+
+   <div class="top-nav">
+    <div class="nav-icons-left">
+        <i class="fas fa-reply" id="top-deposit-btn" onclick="window.location.href='home.html'"></i>
+    </div>
+    <div class="nav-icons-right">
+        <button class="deposit-btn" id="top-deposit-btn" onclick="window.location.href='deposit.html'">
+            Deposit
+        </button>
+    </div>
+</div>
+    <div class="game-container">
+            <div class="bottom-bar">
+        <button class="bottom-btn" id="bottom-mines-btn"></button>
+        <button class="help-btn" id="help-open-btn">?</button>
+        <div class="balance-display">
+            <span id="balance">0.00</span> INR</div>
+            <button class="menu-hamburger" id="main-menu-btn">
+                <span></span><span></span><span></span>
+            </button>
+    </div>
+        
+        <div class="header-controls">
+            <div class="mines-dropdown-wrapper">
+                <button class="mines-toggle-btn" id="mines-toggle-btn">
+                    <span>MINES <span id="selected-mines-count">5</span></span>
+                    <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="mines-dropdown" id="mines-dropdown">
+                    
+                    <div class="mine-option" data-mines="2">2</div>
+                    <div class="mine-option" data-mines="3">3</div>
+                    <div class="mine-option" data-mines="4">4</div>
+                    <div class="mine-option selected" data-mines="5">5</div>
+                    <div class="mine-option" data-mines="6">6</div>
+                    <div class="mine-option" data-mines="7">7</div>
+                    <div class="mine-option" data-mines="8">8</div>
+                    <div class="mine-option" data-mines="9">9</div>
+                    <div class="mine-option" data-mines="10">10</div>
+                    <div class="mine-option" data-mines="11">11</div>
+                    <div class="mine-option" data-mines="12">12</div>
+                    <div class="mine-option" data-mines="13">13</div>
+                    <div class="mine-option" data-mines="14">14</div>
+                    <div class="mine-option" data-mines="15">15</div>
+                    <div class="mine-option" data-mines="16">16</div>
+                    <div class="mine-option" data-mines="17">17</div>
+                    <div class="mine-option" data-mines="18">18</div>
+                    <div class="mine-option" data-mines="19">19</div>
+                    <div class="mine-option" data-mines="20">20</div>
+                    <div class="mine-option" data-mines="21">21</div>
+                    <div class="mine-option" data-mines="22">22</div>
+                    <div class="mine-option" data-mines="23">23</div>
+                    <div class="mine-option" data-mines="24">24</div>
+                </div>
+            </div>
+            <div class="next-multiplier" id="next-multiplier-display">Next: 1.21x</div>
+        </div>
+
+        <div class="progress-bar-container" id="progress-bar-container">
+            <div class="progress-bar" id="main-progress-bar"></div>
+        </div>
+        <div style="flex-grow: 1;"></div>
+        <div class="game-board" id="game-board">
+        </div>
+
+        <div style="flex-grow: 1;"></div>
+
+        <div class="tools-row">
+            <button class="random-btn" id="random-btn" disabled>RANDOM</button>
+            <div class="auto-game-toggle">
+                <i class="fas fa-sync-alt"></i>
+                <div class="toggle-switch" id="auto-game-switch"></div>
+                <span>AUTO GAME</span>
+            </div>
+        </div>
+        
+        <div class="controls-panel">
+            <div class="action-buttons-wrapper">
+               <button class="autoplay-btn" id="autoplay-btn">
+    <svg class="autoplay-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 8.5V15.5L15.5 12L10 8.5Z" fill="currentColor"/>
+
+    <g>
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+
+    <g transform="rotate(180 12 12)">
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+</svg>
+</button>
+
+                
+                <button class="bet-action-btn btn-green" id="start-btn">
+                    <svg class="play-icon" viewBox="0 0 24 24" width="35" height="30" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" style="position: absolute; left: 20px;">
+                        <path d="M 13.7 15.6 L 18.3 13 Q 20 12 18.3 11 L 7.7 5 Q 6 4 6 6.5 L 6 17.5 Q 6 20 8.5 18.6"></path>
+                    </svg>
+                    BET
+                </button>
+                <button class="bet-action-btn btn-orange" id="cashout-btn" style="display: none;">
+                    CASHOUT <span id="cashout-multiplier" style="margin-left:8px; font-weight:500;">1.00x</span>
+                </button>
+            </div>
+
+            <div class="bet-input-wrapper">
+                <div class="slide-up-popup keyboard-popup" id="keyboard-popup">
+                    <div class="keyboard-grid">
+                        <button class="keyboard-btn key-val" data-val="1">1</button>
+                        <button class="keyboard-btn key-val" data-val="2">2</button>
+                        <button class="keyboard-btn key-val" data-val="3">3</button>
+                        <button class="keyboard-btn key-val" data-val="4">4</button>
+                        <button class="keyboard-btn key-val" data-val="5">5</button>
+                        <button class="keyboard-btn key-val" data-val="6">6</button>
+                        <button class="keyboard-btn key-val" data-val="7">7</button>
+                        <button class="keyboard-btn key-val" data-val="8">8</button>
+                        <button class="keyboard-btn key-val" data-val="9">9</button>
+                        <button class="keyboard-btn key-val" data-val=".">.</button>
+                        <button class="keyboard-btn key-val" data-val="0">0</button>
+                        <button class="keyboard-btn key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                    </div>
+                    <button class="keyboard-close-bar" id="keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+                </div>
+
+                <div class="slide-up-popup2 amounts-popup" id="amounts-popup">
+                    <div class="amounts-title">Bet INR</div>
+                    <div class="amounts-grid">
+                            <button class="amount-btn" data-val="5">5.00</button>
+                           <button class="amount-btn" data-val="10">10.00</button>
+                          <button class="amount-btn" data-val="20">20.00</button>
+                         <button class="amount-btn" data-val="30">30.00</button>
+                        <button class="amount-btn" data-val="40">40.00</button>
+                         <button class="amount-btn" data-val="50">50.00</button>
+                          <button class="amount-btn" data-val="100">100.00</button>
+                           <button class="amount-btn" data-val="150">150.00</button>
+                            <button class="amount-btn" data-val="200">200.00</button>
+                             <button class="amount-btn" data-val="400">400.00</button>
+                            <button class="amount-btn" data-val="500">500.00</button>
+                           <button class="amount-btn" data-val="1000">1,000.00</button>
+                          <button class="amount-btn" data-val="5000">5,000.00</button>
+                        <button class="amount-btn" data-val="10000">10,000.00</button>
+                         <button class="amount-btn" data-val="40000">40,000.00</button>
+                    </div>
+                </div>
+                
+                <div class="bet-input-container">
+                    <div class="bet-input-section" id="bet-input-trigger">
+                        <div class="bet-label">₹</div>
+                        <div class="bet-input-box">
+                            <input type="text" class="bet-input" id="bet-amount" value="10" readonly>
+                        </div>
+                    </div>
+                    <div class="bet-buttons">
+                        <button class="bet-control-btn" id="half-btn"><i class="fas fa-minus" style="pointer-events: none;"></i></button>
+                        <button class="bet-control-btn2" id="max-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" style="pointer-events: none;">
+    <ellipse cx="12" cy="6" rx="7" ry="2.5"></ellipse>
+    <path d="M5 12a7 2.5 0 0 0 14 0"></path>
+    <path d="M5 18a7 2.5 0 0 0 14 0"></path>
+</svg>
+                        </button>
+                        <button class="bet-control-btn" id="double-btn"><i class="fas fa-plus" style="pointer-events: none;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="autoplay-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">AUTO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="auto-keyboard-popup" id="auto-keyboard-popup">
+                <div class="auto-keyboard-grid">
+                    <button class="auto-keyboard-btn auto-key-val" data-val="1">1</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="2">2</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="3">3</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="4">4</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="5">5</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="6">6</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="7">7</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="8">8</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="9">9</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val=".">.</button>
+                    <button class="auto-keyboard-btn auto-key-val" data-val="0">0</button>
+                    <button class="auto-keyboard-btn auto-key-backspace"><i class="fas fa-backspace" style="pointer-events:none;"></i></button>
+                </div>
+                <button class="auto-keyboard-close" id="auto-keyboard-close-btn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="darkaprgbg">
+                <p style="text-align:center; color:#fff; font-size:14px; margin-bottom:10px; font-weight:bold;">Number of rounds</p>
+                <div class="autoplay-rounds-grid">
+                    <button class="autoplay-round-btn selected" data-rounds="3">3</button>
+                    <button class="autoplay-round-btn" data-rounds="10">10</button>
+                    <button class="autoplay-round-btn" data-rounds="25">25</button>
+                    <button class="autoplay-round-btn" data-rounds="100">100</button>
+                    <button class="autoplay-round-btn" data-rounds="200">200</button>
+                    <button class="autoplay-round-btn" data-rounds="500">500</button>
+                </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#8fa4c3; font-size:13px; font-weight:bold; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-loss-toggle"></div>
+                        Stop if cash decreases by
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-loss-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-loss-val" value="0.00" readonly>
+                        <button id="auto-loss-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="autoplay-condition-row">
+                    <label style="display:flex; align-items:center; gap:10px; color:#8fa4c3; font-size:13px; font-weight:bold; margin:0;">
+                        <div class="auto-toggle" id="auto-stop-win-toggle"></div>
+                        Stop if single win exceeds
+                    </label>
+                    <div class="autoplay-input-group">
+                        <button id="auto-win-dec"><i class="fas fa-minus"></i></button>
+                        <input type="text" id="auto-stop-win-val" value="0.00" readonly>
+                        <button id="auto-win-inc"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:15px;">
+                    <button style="background:transparent; border:1px solid #32415d; color:#8fa4c3; padding:8px 20px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer;">More options <i class="fas fa-caret-down"></i></button>
+                </div>
+
+                <button class="start-auto-btn" id="start-auto-btn">START AUTO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menu-modal">
+    <div class="modal-content" style="background:#232f46; border-radius:12px; position:absolute; top:100px; padding: 16px; animation:none; border:1px solid #32415d;">
+        
+        <div style="padding: 4px 4px 12px 4px; color: #8fa4c3; font-size: 13px; font-weight:bold;">
+            Email id: <span id="useremailID"></span>
+        </div>
+
+        <ul class="menu-list">
+            <li id="sound-toggle-menu-btn">
+                <i class="fas fa-volume-up"></i> Sound 
+                <div id="sound-toggle-ui" style="margin-left:auto; width:40px; height:20px; background:#7bd339; border-radius:10px; position:relative; transition: background 0.2s;">
+                    <div id="sound-toggle-circle" style="width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; top:2px; right:2px; transition: right 0.2s, left 0.2s;"></div>
+                </div>
+            </li>
+            
+            <li id="freebets-menu-btn" class="menu-option-item"><i class="far fa-star"></i> Free Bets</li>
+            <li id="recordsmenu-btn" class="menu-option-item"><i class="fas fa-history"></i> Bet History</li>
+            <li id="limits-menu-btn" class="menu-option-item"><i class="fas fa-money-bill-wave"></i> Game Limits</li>
+            <li id="how-to-play-menu-btn" class="menu-option-item"><i class="far fa-question-circle"></i> How to Play</li>
+            <li id="rules-menu-btn" class="menu-option-item"><i class="far fa-file-alt"></i> Game Rules</li>
+            <li id="fairnessmenu-btn" class="menu-option-item"><i class="fas fa-balance-scale"></i> Provably Fair Settings</li>
+            
+            <li id="closemenu" class="menu-option-item"><i class="fas fa-home"></i> Back to Home</li>
+            
+            <li>
+                <div style="display: flex; align-items: center; gap: 8px; color: #8fa4c3; font-size: 13px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7bd339" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    <path d="M7.5 12.5L11 16L17.5 8.5"></path>
+</svg>
+
+                    <span>Powered by</span>
+                </div>
+                <div style="background:url('https://lucky-mines.inout.games/static/svg/logo-vendor.2ec2a0c2.svg'); height:35px; width:100px; background-size:100% 100%;">
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    <div class="modal-overlay" id="how-to-play-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">HOW TO PLAY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <div style="font-size:18px; color:#fff; font-weight:bold; margin-bottom:40px;"><i class="fas fa-bomb" style="color:#ffb800;"></i> MINES</div>
+                <div class="rules-grid-example">
+                    <div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div>
+                    <div class="rules-tile"></div><div class="rules-tile star">⭐</div><div class="rules-tile"></div><div class="rules-tile mine">💥</div><div class="rules-tile"></div>
+                    <div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile star">⭐</div><div class="rules-tile"></div><div class="rules-tile"></div>
+                    <div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile star">⭐</div><div class="rules-tile"></div>
+                    <div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div><div class="rules-tile"></div>
+                </div>
+                <p style="margin-bottom:15px; margin-top:40px;color:#fff; font-weight:bold;">Each tile hides either a star or a mine.</p>
+                <p>Increase the total number of stars for bigger odds and higher rewards. You can cash out after each turn, or try for increased winnings.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="limits-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME LIMITS</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:20px; font-weight:bold;">Game limits are managed by operator. Current game limits for this game are below:</p>
+                <table class="limits-table">
+                    <tr><td>Maximum bet INR:</td><td>40,000.00</td></tr>
+                    <tr><td>Minimum bet INR:</td><td>5.00</td></tr>
+                    <tr><td>Maximum win for one bet INR:</td><td>800,000.00</td></tr>
+                    <tr><td>Auto cashout in sec:</td><td>30</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GAME RULES</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:18px; color:#fff; font-weight:bold; text-align:center; margin-bottom:20px;"><i class="fas fa-bomb" style="color:#ffb800;"></i> MINES</div>
+                <p>- A goal of the game is to reveal stars and avoid mines. With each revealed star, payout multiplier increases. Tiles can be revealed by selecting certain tile or clicking "pick randomly" button;</p><br>
+                <p>- Player can cash out winnings at any time by clicking "Cash out" button;</p><br>
+                <p>- Number of mines per field can be adjusted from dropdown. This affects game odds and bet multiplier;</p><br>
+                <p>- The maximum winning odds for this game are 5044291X. However, the maximum win is limited by the operator and can be accessed from the "Game Limits" section in the menu.</p>
+                <hr style="border:0; border-top:1px solid #32415d; margin:20px 0;">
+                 <p style="color:#fff; font-weight:bold;">GAME INTERFACE</p><br>
+                <p>- Bets can be made from the bet panel, by selecting predefined bet amounts, or entering your own.Click(-) and (+) buttons to move between two options;</p>
+                <p>- Player balance shows available funds to play;</p>
+                <p>- Sound can be turned off and back on from the game menu;</p>
+                <p>- Bet history can be accessed from the game menu;</p>
+                <p>- Game information and rules can be accessed from the game menu;</p>
+                <p>- Provably Fair settings can be accessed from the game menu;</p>
+                <hr style="border:0; border-top:1px solid #32415d; margin:20px 0;">
+                <p style="color:#fff; font-weight:bold;">AUTO PLAY</p><br>
+                <p style="margin-bottom:10px; font-weight:bold;">Note: this feature might be unavailable in some casinos.</p>
+                <p>- Auto Play panel is activated by pressing the "Auto Play" button.</p>
+                <p>- In the Auto Play panel, the "Stop if cash decreases by" option stops Auto Play, if the balance is decreased by the Selected amount.</p>
+                <p>- In the Auto Play panel, the "Stop if single win exceeds" option stops Auto Play, if a single win exceeds the selected amount.</p>
+                <p>- After Start, remaining Number of rounds is displayed on the counter. The player can stop Auto Play at any time, by clicking the counter.</p>
+                <p>- Auto Play is activated by pressing the "Auto Game" button. To continue tiles on the board should be selected;</p>
+                <hr style="border:0; border-top:1px solid #32415d; margin:20px 0;">
+                <p style="color:#fff; font-weight:bold;">ADDITIONAL INFORMATION</p><br>
+                <p>- In the event of a malfunction of the gaming hardware/software, all effected game bets and payouts are rendered void and all effected bets are refunded.</p>
+                <p>- If the internet connection is interrupted when the bet is active, the game will auto cash out with the original bet amount or the current multiplier, and the winning amount will be added to your balance</p>
+                <p style="margin-top:10px; font-weight:bold; color:#ff5b5b;">Note: Any Usage Of Illegal Tools to manipulate the game results may lead to account suspension.</p>
+                
+            </div>
+        </div>
+    </div>
+
+   <div class="modal-overlay" id="fairness-modal" onclick="closeModalOnBG(event, 'fairness-modal')">
+    <div class="modal-content" style="max-width: 380px;">
+        <div class="modal-header">
+            <div class="modal-title">PROVABLY FAIR SETTINGS</div>
+            <button class="modal-close" onclick="closeModal('fairness-modal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+            <p style="color: #8fa4c3; margin-bottom: 15px; font-weight:bold;">
+                This game uses Provably Fair technology to determine game result. This tool gives you ability to change your seed and check fairness of the game.
+            </p>
+            <a href="#" style="color: #7bd339; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block;">
+                <i class="far fa-question-circle"></i> What is Provably Fair
+            </a>
+            
+            <div style="background: #171f2e; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #32415d;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-laptop" style="font-size: 24px; color: #8fa4c3;"></i>
+                    <div>
+                        <div style="color: #fff; font-weight: bold;">Next client seed:</div>
+                        <div style="color: #8fa4c3; font-size: 12px; font-weight:bold;">Generated on Your side</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: #8fa4c3; font-weight:bold; margin-bottom: 8px;">
+                        <input type="radio" name="seed_type" style="accent-color: #7bd339;"> Random on every new game
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; color: #8fa4c3; font-weight:bold;">
+                        <input type="radio" name="seed_type" checked style="accent-color: #7bd339;"> Add nonce
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1; background: #232f46; border: 1px solid #32415d; border-radius: 6px; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        
+                        <span id="client-seed" style="color: #fff; font-weight:bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ZT6tUHTD300bl...
+                        </span>
+
+                        <i class="far fa-copy" style="color: #8fa4c3; cursor: pointer;" onclick="copySeed('client-seed')"></i>
+                    </div>
+
+                    <button onclick="updateSeeds()" style="background: #32415d; border: none; color: #fff; width: 40px; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="background: #171f2e; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #32415d;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-server" style="font-size: 24px; color: #8fa4c3;"></i>
+                    <div>
+                        <div style="color: #fff; font-weight: bold;">Next server seed SHA256:</div>
+                        <div style="color: #8fa4c3; font-size: 12px; font-weight:bold;">Encrypted seed, generated on our side</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1; background: #232f46; border: 1px solid #32415d; border-radius: 6px; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        
+                        <span id="server-seed" style="color: #fff; font-weight:bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            0xiaci5bskddmg...
+                        </span>
+
+                        <i class="far fa-copy" style="color: #8fa4c3; cursor: pointer;" onclick="copySeed('server-seed')"></i>
+                    </div>
+
+                    <button onclick="updateSeeds()" style="background: #32415d; border: none; color: #fff; width: 40px; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <p style="color: #8fa4c3; font-size: 12px; font-weight:bold; margin-top: 15px;">
+                You can check fairness of each bet from 
+                <a href="#" style="color: #7bd339; text-decoration: none;">Game History</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function generateRandomSeed(length = 16) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function updateSeeds() {
+    document.getElementById("client-seed").textContent = generateRandomSeed(16);
+    document.getElementById("server-seed").textContent = generateRandomSeed(16);
+}
+
+// Copy to clipboard
+function copySeed(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text);
+}
+
+// Run once on load
+updateSeeds();
+
+// Auto update every 15 seconds
+setInterval(updateSeeds, 15000);
+</script>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content" style="max-width: 380px; max-height: 80vh; display: flex; flex-direction: column; background: #232f46;">
+            <div class="modal-header">
+                <div class="modal-title">BET HISTORY</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="list-header">
+                <div class="col-date">Date</div>
+                <div class="col-bet">Bet INR</div>
+                <div class="col-x">X</div>
+                <div class="col-cashout">Cash out INR</div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div id="history-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 15px; background: #171f2e; margin-top: auto;">
+                    <button id="load-more-history-btn" class="generic-btn" onclick="playAudioFile('generic-btn-sfx'); loadBetHistory(true)" style="background: #32415d; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight:bold; font-size: 14px; cursor: pointer; display: none;">Load more</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="insufficient-balance-modal">
+        <div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #ffb800;">
+            <div class="modal-header" style="border-bottom: none; background: transparent;">
+                <div class="modal-title" style="color: #ffb800; display: flex; align-items: center; gap: 8px; margin: 0 auto;">
+                    <i class="fas fa-wallet"></i> LOW BALANCE
+                </div>
+                <button class="modal-close" style="position: absolute; right: 15px;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 0px;">
+                <i class="fas fa-coins" style="font-size: 60px; color: #ffb800; margin-bottom: 20px;"></i>
+                <p style="color: #fff; font-size: 18px; margin-bottom: 10px; font-weight: bold;">Insufficient Balance</p>
+                <p style="color: #8fa4c3; font-size: 14px; margin-bottom: 25px; font-weight: bold;">Please add cash to your wallet to place this bet and continue playing.</p>
+                <button id="popup-add-cash-btn" style="background: #ffb800; color: #1a1a1a; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 900; width: 100%; cursor: pointer; font-size: 16px; box-shadow: 0 4px 0 #cc9300;">Add Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-popup" id="auth-popup">
+        <div class="auth-popup-content">
+            <h2>Authentication Required !!</h2>
+            <p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p>
+            <button class="auth-popup-btn generic-btn" id="sign-in-btn">Sign In to Play</button>
+        </div>
+    </div>
+
+    <div class="message-toast" id="message-toast">Message</div>
+
+       <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // ====================== SOUND EFFECTS ====================== //
+        // SoundPool implementation for low latency audio playback
+        class SoundPool {
+            constructor(maxSize = 10) {
+                this.pool = [];
+                this.maxSize = maxSize;
+                this.sounds = {};
+                this.init();
+            }
+
+            async init() {
+                // URLs migrated from the HTML <audio> tags
+                this.soundUrls = {
+                    'tile-click-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/tilereveal.mp3',
+                    'explosion-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/INOUTminesblast.mp3',
+                    'win-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/cashoutsuccess.mp3',
+                    'lose-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/minesgameover.mp3',
+                    'bet-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/startbetbtn.mp3',
+                    'cashout-sound': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/singletap.mp3',
+                    'menu-option-click-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click6.wav',
+                    'menu-btn-click-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    'modal-open-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click4.wav',
+                    'modal-close-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    'keyboard-open-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click2.wav',
+                    'keyboard-btn-sfx': 'https://audio.jukehost.co.uk/w8Ex4MhHu1vTYq1UfUKvwIIpAdh4k4LZ',
+                    'bet-disabled-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    'cashout-disabled-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/randombtnclick.mp3',
+                    'mines-hover-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/RStp12.wav',
+                    'toggle-on-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnon.mp3',
+                    'toggle-off-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/togglebtnoff.mp3',
+                    'generic-btn-sfx': 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click.wav'
+                };
+
+                // Pre-load all sounds
+                await this.preloadSounds();
+            }
+
+            async preloadSounds() {
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            console.warn(`Failed to load sound: ${key}, using fallback`);
+                            continue;
+                        }
+                        
+                        // Create audio context for each sound
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer());
+                        
+                        this.sounds[key] = {
+                            audioContext,
+                            audioBuffer,
+                            url
+                        };
+                        
+                        console.log(`Preloaded sound: ${key}`);
+                    } catch (error) {
+                        console.error(`Error loading sound ${key}:`, error);
+                        // Create a silent fallback audio buffer
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+                        this.sounds[key] = {
+                            audioContext,
+                            audioBuffer: buffer,
+                            url: null
+                        };
+                    }
+                }
+            }
+
+            play(soundName, volume = 0.5) {
+                if (!this.sounds[soundName]) {
+                    console.warn(`Sound not found: ${soundName}`);
+                    return;
+                }
+
+                // Get or create audio context
+                let audioContext = this.sounds[soundName].audioContext;
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+
+                // Create source
+                const source = audioContext.createBufferSource();
+                source.buffer = this.sounds[soundName].audioBuffer;
+
+                // Create gain node for volume control
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = volume;
+
+                // Connect nodes
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                // Play sound
+                source.start(0);
+
+                // Cleanup after playback
+                source.onended = () => {
+                    source.disconnect();
+                    gainNode.disconnect();
+                };
+
+                return source;
+            }
+        }
+
+        // Initialize SoundPool
+        const soundPool = new SoundPool();
+
+        // Core Audio Player Helper Update
+        function playAudioFile(id, volume = 0.5) {
+            if (!gameState.soundEnabled) return;
+            if (soundPool.sounds[id]) {
+                try {
+                    soundPool.play(id, volume);
+                } catch (error) {
+                    console.warn(`Failed to play sound ${id}:`, error);
+                }
+            }
+        }
+
+        // Keep old function alias to maintain your original game code calls
+        function playSound(audioElOrId, volume = 0.5) {
+            if (!gameState.soundEnabled) return;
+            // Handle both element object (with id) or string literal
+            const id = typeof audioElOrId === 'string' ? audioElOrId : (audioElOrId ? audioElOrId.id : null);
+            if (id && soundPool.sounds[id]) {
+                try {
+                    soundPool.play(id, volume);
+                } catch (error) {
+                    console.warn(`Failed to play sound ${id}:`, error);
+                }
+            }
+        }
+
+        // UI & Modal Interaction Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide Loader
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 1000);
+
+            // Fetch and set user email
+            const userEmailSpan = document.getElementById('useremailID');
+            if(userEmailSpan) {
+                userEmailSpan.textContent = localStorage.getItem('email') || localStorage.getItem('userEmail') || 'Guest User';
+            }
+
+            // Modal Controls
+            const closeModals = () => {
+                let anyClosed = false;
+                document.querySelectorAll('.modal-overlay').forEach(m => {
+                    if(m.classList.contains('show')) {
+                        m.classList.remove('show');
+                        anyClosed = true;
+                    }
+                });
+                if(anyClosed) playAudioFile('modal-close-sfx');
+            };
+
+            document.querySelectorAll('.modal-close').forEach(btn => btn.onclick = closeModals);
+            
+            // Modal Open Events
+            document.getElementById('help-open-btn').onclick = () => {
+                playAudioFile('modal-open-sfx');
+                document.getElementById('how-to-play-modal').classList.add('show');
+            };
+            document.getElementById('main-menu-btn').onclick = () => {
+                playAudioFile('menu-btn-click-sfx'); 
+                document.getElementById('menu-modal').classList.add('show');
+            };
+            document.getElementById('how-to-play-menu-btn').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+                document.getElementById('how-to-play-modal').classList.add('show'); 
+            };
+            document.getElementById('limits-menu-btn').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+                document.getElementById('limits-modal').classList.add('show'); 
+            };
+            document.getElementById('rules-menu-btn').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+                document.getElementById('rules-modal').classList.add('show'); 
+            };
+            document.getElementById('fairnessmenu-btn').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+                document.getElementById('fairness-modal').classList.add('show'); 
+            };
+            document.getElementById('recordsmenu-btn').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+                document.getElementById('history-modal').classList.add('show'); 
+                loadBetHistory(); 
+            };
+            
+            document.getElementById('closemenu').onclick = () => { 
+                playAudioFile('menu-option-click-sfx');
+                closeModals(); 
+            };
+
+            // Sound Toggle Logic
+            const soundToggleMenuBtn = document.getElementById('sound-toggle-menu-btn');
+            const soundToggleUI = document.getElementById('sound-toggle-ui');
+            const soundToggleCircle = document.getElementById('sound-toggle-circle');
+
+            if(soundToggleMenuBtn) {
+                soundToggleMenuBtn.onclick = () => {
+                    gameState.soundEnabled = !gameState.soundEnabled;
+                    if (gameState.soundEnabled) {
+                        playAudioFile('toggle-on-sfx');
+                        soundToggleUI.style.background = '#7bd339';
+                        soundToggleCircle.style.right = '2px';
+                        soundToggleCircle.style.left = 'auto';
+                    } else {
+                        // Bypass gameState.soundEnabled check for the 'off' sound execution
+                        if (soundPool.sounds['toggle-off-sfx']) {
+                            try { soundPool.play('toggle-off-sfx'); } catch(e) { console.warn(e); }
+                        }
+                        
+                        soundToggleUI.style.background = '#1e283b';
+                        soundToggleCircle.style.left = '2px';
+                        soundToggleCircle.style.right = 'auto';
+                    }
+                };
+            }
+
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.onclick = (e) => {
+                    if (e.target.classList.contains('modal-overlay')) closeModals();
+                };
+            });
+
+            // Generic buttons
+            document.querySelectorAll('.generic-btn, #top-deposit-btn, #bottom-mines-btn').forEach(btn => {
+                btn.addEventListener('click', () => playAudioFile('generic-btn-sfx'));
+            });
+
+            // Insufficient Balance "Add Cash" Logic Setup
+            document.getElementById('popup-add-cash-btn').onclick = () => {
+                playAudioFile('generic-btn-sfx');
+                closeModals();
+                window.location.href = 'deposit.html';
+            };
+
+            // Auto Play Modal specific logic
+            document.querySelectorAll('.autoplay-round-btn').forEach(btn => {
+                btn.onclick = () => {
+                    playAudioFile('menu-option-click-sfx');
+                    document.querySelectorAll('.autoplay-round-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    gameState.autoplayTargetRounds = parseInt(btn.dataset.rounds);
+                };
+            });
+
+            // Close Mines Dropdown on outside click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.mines-dropdown-wrapper')) {
+                    document.getElementById('mines-dropdown').classList.remove('show');
+                }
+            });
+
+            // === NEW POPUP LOGIC ===
+            const betInputTrigger = document.getElementById('bet-input-trigger');
+            const keyboardPopup = document.getElementById('keyboard-popup');
+            const amountsPopup = document.getElementById('amounts-popup');
+            const maxBtn = document.getElementById('max-btn');
+            
+            function closeAllBetPopups() {
+                keyboardPopup.classList.remove('show');
+                amountsPopup.classList.remove('show');
+                updateBetAmount(); 
+            }
+
+            // Toggle Keyboard
+            betInputTrigger.onclick = (e) => {
+                if (gameState.gameActive || gameState.autoplayActive) return;
+                e.stopPropagation();
+                if (keyboardPopup.classList.contains('show')) {
+                    closeAllBetPopups();
+                } else {
+                    playAudioFile('keyboard-open-sfx');
+                    closeAllBetPopups();
+                    keyboardPopup.classList.add('show');
+                    currentInputString = ""; 
+                }
+            };
+
+            maxBtn.onclick = (e) => {
+                if (gameState.gameActive || gameState.autoplayActive) return;
+                e.stopPropagation();
+                if (amountsPopup.classList.contains('show')) {
+                    closeAllBetPopups();
+                } else {
+                    playAudioFile('menu-btn-click-sfx');
+                    closeAllBetPopups();
+                    amountsPopup.classList.add('show');
+                }
+            };
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.bet-input-wrapper')) closeAllBetPopups();
+            });
+
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.onclick = () => {
+                    playAudioFile('menu-option-click-sfx');
+                    document.getElementById('bet-amount').value = parseFloat(btn.dataset.val).toFixed(2);
+                    closeAllBetPopups();
+                };
+            });
+
+            let currentInputString = "";
+            const betInput = document.getElementById('bet-amount');
+
+            document.querySelectorAll('.key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playAudioFile('keyboard-btn-sfx');
+                    const val = btn.dataset.val;
+                    if (val === '.' && currentInputString.includes('.')) return;
+                    currentInputString += val;
+                    betInput.value = currentInputString;
+                };
+            });
+
+            document.querySelector('.key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playAudioFile('keyboard-btn-sfx');
+                if (currentInputString.length > 0) {
+                    currentInputString = currentInputString.slice(0, -1);
+                    betInput.value = currentInputString === "" ? "0" : currentInputString;
+                }
+            };
+
+            document.getElementById('keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                playAudioFile('generic-btn-sfx');
+                closeAllBetPopups();
+            };
+            // =========================
+
+            // Auto Game Switch toggle
+            document.getElementById('auto-game-switch').onclick = function() {
+                if (gameState.gameActive || gameState.autoplayActive) return;
+                
+                this.classList.toggle('active');
+                gameState.autoGameEnabled = this.classList.contains('active');
+                
+                if(gameState.autoGameEnabled){
+                    playAudioFile('toggle-on-sfx');
+                } else {
+                    playAudioFile('toggle-off-sfx');
+                    gameState.autoplaySelectedTiles = [];
+                    updateBoardVisuals();
+                }
+                updateUI();
+            };
+
+            // === AUTOPLAY MODAL INTERACTIONS ===
+            // Toggles
+            document.getElementById('auto-stop-loss-toggle').onclick = function() {
+                this.classList.toggle('active');
+                playAudioFile(this.classList.contains('active') ? 'toggle-on-sfx' : 'toggle-off-sfx');
+            };
+
+            document.getElementById('auto-stop-win-toggle').onclick = function() {
+                this.classList.toggle('active');
+                playAudioFile(this.classList.contains('active') ? 'toggle-on-sfx' : 'toggle-off-sfx');
+            };
+
+            // Plus/Minus Buttons
+            function adjustAutoInput(id, delta) {
+                let input = document.getElementById(id);
+                let val = parseFloat(input.value) || 0;
+                val += delta;
+                if(val < 0) val = 0;
+                input.value = val.toFixed(2);
+            }
+            
+            document.getElementById('auto-loss-inc').onclick = () => { playAudioFile('generic-btn-sfx'); adjustAutoInput('auto-stop-loss-val', 1.00); };
+            document.getElementById('auto-loss-dec').onclick = () => { playAudioFile('generic-btn-sfx'); adjustAutoInput('auto-stop-loss-val', -1.00); };
+            document.getElementById('auto-win-inc').onclick = () => { playAudioFile('generic-btn-sfx'); adjustAutoInput('auto-stop-win-val', 1.00); };
+            document.getElementById('auto-win-dec').onclick = () => { playAudioFile('generic-btn-sfx'); adjustAutoInput('auto-stop-win-val', -1.00); };
+
+            // Custom Autoplay Keyboard Logic
+            let activeAutoInputId = null;
+            let currentAutoInputStr = "";
+
+            function openAutoKeyboard(inputId) {
+                activeAutoInputId = inputId;
+                currentAutoInputStr = ""; 
+                document.getElementById('auto-keyboard-popup').classList.add('show');
+            }
+
+            function closeAutoKeyboard() {
+                document.getElementById('auto-keyboard-popup').classList.remove('show');
+                activeAutoInputId = null;
+            }
+
+            document.getElementById('auto-stop-loss-val').onclick = (e) => { e.stopPropagation(); openAutoKeyboard('auto-stop-loss-val'); };
+            document.getElementById('auto-stop-win-val').onclick = (e) => { e.stopPropagation(); openAutoKeyboard('auto-stop-win-val'); };
+
+            document.querySelectorAll('.auto-key-val').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    playAudioFile('keyboard-btn-sfx');
+                    if (!activeAutoInputId) return;
+                    const val = btn.dataset.val;
+                    if (val === '.' && currentAutoInputStr.includes('.')) return;
+                    currentAutoInputStr += val;
+                    document.getElementById(activeAutoInputId).value = currentAutoInputStr;
+                };
+            });
+
+            document.querySelector('.auto-key-backspace').onclick = (e) => {
+                e.stopPropagation();
+                playAudioFile('keyboard-btn-sfx');
+                if (!activeAutoInputId) return;
+                if (currentAutoInputStr.length > 0) {
+                    currentAutoInputStr = currentAutoInputStr.slice(0, -1);
+                    document.getElementById(activeAutoInputId).value = currentAutoInputStr === "" ? "0.00" : currentAutoInputStr;
+                }
+            };
+
+            document.getElementById('auto-keyboard-close-btn').onclick = (e) => {
+                e.stopPropagation();
+                playAudioFile('generic-btn-sfx');
+                if(activeAutoInputId && currentAutoInputStr !== "") {
+                    document.getElementById(activeAutoInputId).value = parseFloat(currentAutoInputStr || 0).toFixed(2);
+                }
+                closeAutoKeyboard();
+            };
+
+        });
+
+        // ---------------------------------------------------------
+        // CORE GAME LOGIC
+        // ---------------------------------------------------------
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            return {
+                time: `${hours}:${minutes}`,
+                date: `${day}-${month}-${year}`
+            };
+        }
+
+        function saveToMyBets(betAmount, winAmount) {
+            const uid = localStorage.getItem('uid');
+            if (!uid) return;
+            const dt = getFormattedDateTime();
+            
+            const record = {
+                gameName: "Lucky Mines",
+                time: dt.time,
+                date: dt.date,
+                timestamp: Date.now(),
+                betAmount: betAmount,
+                winAmount: winAmount
+            };
+            
+            database.ref(`appusers/${uid}/betHistory`).push(record).catch(err => console.error(err));
+        }
+
+        function updateBalance(amount) {
+            const uid = localStorage.getItem('uid');
+            if(!uid) return Promise.resolve(gameState.balance);
+            
+            return database.ref('appusers/' + uid).transaction((userData) => {
+                if (userData) {
+                    let total = userData.totalBalance || 0;
+                    let withdrawable = userData.withdrawableBalance || 0;
+                    
+                    if (amount < 0) {
+                        let betAmount = Math.abs(amount);
+                        let unwithdrawable = total - withdrawable;
+                        if (unwithdrawable < 0) unwithdrawable = 0;
+                        
+                        if (betAmount <= unwithdrawable) {
+                            unwithdrawable -= betAmount;
+                        } else {
+                            let remainingBet = betAmount - unwithdrawable;
+                            withdrawable -= remainingBet;
+                        }
+                        
+                        userData.totalBalance = total - betAmount;
+                        userData.withdrawableBalance = Math.max(0, withdrawable);
+
+                        // --- HYBRID SYSTEM UPDATE: Record wager amount ---
+                        userData.lifetimeWagered = (userData.lifetimeWagered || 0) + betAmount;
+
+                    } else if (amount > 0) {
+                        userData.totalBalance = total + amount;
+                        userData.withdrawableBalance = withdrawable + amount;
+
+                        // --- HYBRID SYSTEM UPDATE: Record win amount ---
+                        userData.lifetimeWon = (userData.lifetimeWon || 0) + amount;
+                    }
+                }
+                return userData;
+            }).then((result) => {
+                if (result.committed) {
+                    return result.snapshot.val().totalBalance;
+                }
+                return gameState.balance;
+            });
+        }
+
+        // --- NEW UPDATED BET HISTORY SYSTEM START ---
+        let currentHistoryLimit = 50;
+
+        function loadBetHistory(isLoadMore = false) {
+            const uid = localStorage.getItem('uid');
+            const historyList = document.getElementById('history-list');
+            const loadMoreBtn = document.getElementById('load-more-history-btn');
+            
+            if (!uid) {
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#8fa4c3; font-weight:bold;">Please login to view history</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            if (gameState.isHistoryLoading) return;
+            gameState.isHistoryLoading = true;
+
+            if (!isLoadMore) {
+                currentHistoryLimit = 50;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#8fa4c3; font-weight:bold;">Loading history...</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            } else {
+                currentHistoryLimit += 50;
+                const loadingText = document.createElement('div');
+                loadingText.id = 'history-loading-text';
+                loadingText.style.cssText = 'text-align:center; padding: 10px; color:#8fa4c3; font-size: 12px; font-weight:bold;';
+                loadingText.innerText = 'Loading more...';
+                historyList.appendChild(loadingText);
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            }
+
+            let query = database.ref(`appusers/${uid}/betHistory`)
+                                .orderByChild('gameName')
+                                .equalTo('Lucky Mines')
+                                .limitToLast(currentHistoryLimit);
+
+            query.once('value').then(snapshot => {
+                gameState.isHistoryLoading = false;
+                historyList.innerHTML = ''; 
+
+                if (!snapshot.exists()) {
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#8fa4c3; font-weight:bold;">No history found</div>';
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    return;
+                }
+
+                const records = [];
+                snapshot.forEach(child => {
+                    records.push({ key: child.key, ...child.val() });
+                });
+
+                if (records.length === 0) {
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#8fa4c3; font-weight:bold;">No history found</div>';
+                    return;
+                }
+
+                if (records.length < currentHistoryLimit) {
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+                } else {
+                    if(loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+                }
+
+                records.reverse(); 
+
+                records.forEach(bet => {
+                    const isWin = bet.winAmount > 0;
+                    const calcMultiplier = isWin ? (bet.winAmount / bet.betAmount) : 0;
+                    
+                    const item = document.createElement('div');
+                    item.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                    item.innerHTML = `
+                        <div class="col-date">${bet.time}<br><span>${bet.date}</span></div>
+                        <div class="col-bet">${bet.betAmount.toFixed(2)}</div>
+                        <div class="col-x">
+                            ${isWin ? `<span class="x-pill blue-bg">${calcMultiplier.toFixed(2)}x</span>` : `<span style="color: #ff5b5b; font-weight: bold; font-size: 12px;">0.00x</span>`}
+                        </div>
+                        <div class="col-cashout">
+                            <span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span>
+                            <div class="action-icons">
+                                <i class="fas fa-shield-alt"></i>
+                                <i class="far fa-comment"></i>
+                            </div>
+                        </div>
+                    `;
+                    historyList.appendChild(item);
+                });
+            }).catch(err => {
+                gameState.isHistoryLoading = false;
+                historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#ff5b5b; font-weight:bold;">Error loading history</div>';
+                if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+            });
+        }
+        // --- NEW UPDATED BET HISTORY SYSTEM END ---
+
+        const gameState = {
+            soundEnabled: true,
+            balance: 0,
+            betAmount: 10,
+            minesCount: 5,
+            gameActive: false,
+            revealedTiles: 0,
+            multiplier: 1,
+            board: [],
+            canReveal: true,
+            gameEnded: false,
+            luckFactor: 0.95,
+            userAuthenticated: false,
+            betPlacedThisRound: false,
+            paidThisRound: false,
+            betButtonCooldown: false,
+            inactivityTimeout: null,
+            warningTimeout: null,
+            isHistoryLoading: false,
+
+            // --- HYBRID SYSTEM UPDATE: Add tracking variables ---
+            lifetimeWagered: 0, 
+            lifetimeWon: 0,
+            globalMode: 'NORMAL',
+            
+            // Auto Play Specifics
+            autoGameEnabled: false,
+            autoplayActive: false,
+            autoplaySelectedTiles: [],
+            autoplayTargetRounds: 3,
+            autoplayCurrentRounds: 0,
+            autoplayInitialBalance: 0,
+            
+            multipliersTable: {
+                1: {1: 1.01, 2: 1.08, 3: 1.12, 4: 1.18, 5: 1.24, 6: 1.3, 7: 1.37, 8: 1.46, 9: 1.55, 10: 1.65, 11: 1.77, 12: 1.9, 13: 2.06, 14: 2.25, 15: 2.47, 16: 2.75, 17: 3.09, 18: 3.54, 19: 4.12, 20: 4.95, 21: 6.19, 22: 8.25, 23: 12.38, 24: 24.75},
+                2: {1: 1.05, 2: 1.17, 3: 1.29, 4: 1.41, 5: 1.56, 6: 1.74, 7: 1.94, 8: 2.18, 9: 2.47, 10: 2.83, 11: 3.26, 12: 3.81, 13: 4.5, 14: 5.4, 15: 6.6, 16: 8.25, 17: 10.61, 18: 14.14, 19: 19.8, 20: 29.7, 21: 49.5, 22: 99, 23: 297},
+                3: {1: 1.10, 2: 1.29, 3: 1.48, 4: 1.71, 5: 2, 6: 2.35, 7: 2.79, 8: 3.35, 9: 4.07, 10: 5, 11: 6.26, 12: 7.96, 13: 10.35, 14: 13.8, 15: 18.97, 16: 27.11, 17: 40.66, 18: 65.06, 19: 113.85, 20: 227.7, 21: 569.25, 22: 2277},
+                4: {1: 1.15, 2: 1.41, 3: 1.71, 4: 2.09, 5: 2.58, 6: 3.23, 7: 4.09, 8: 5.26, 9: 6.88, 10: 9.17, 11: 12.51, 12: 17.52, 13: 25.3, 14: 37.95, 15: 59.64, 16: 99.39, 17: 178.91, 18: 357.81, 19: 834.9, 20: 2504.7, 21: 12523.5},
+                5: {1: 1.21, 2: 1.56, 3: 2, 4: 2.58, 5: 3.39, 6: 4.52, 7: 6.14, 8: 8.5, 9: 12.04, 10: 17.52, 11: 26.27, 12: 40.87, 13: 66.41, 14: 113.85, 15: 208.72, 16: 417.45, 17: 939.26, 18: 2504.7, 19: 8766.45, 20: 52598.7},
+                6: {1: 1.27, 2: 1.74, 3: 2.35, 4: 3.23, 5: 4.52, 6: 6.46, 7: 9.44, 8: 14.17, 9: 21.89, 10: 35.03, 11: 58.38, 12: 102.17, 13: 189.75, 14: 379.5, 15: 834.9, 16: 2087.25, 17: 6261.75, 18: 25047, 19: 175329},
+                7: {1: 1.34, 2: 1.94, 3: 2.79, 4: 4.09, 5: 6.14, 6: 9.44, 7: 14.95, 8: 24.47, 9: 41.6, 10: 73.95, 11: 138.66, 12: 277.33, 13: 600.87, 14: 1442.1, 15: 3965.77, 16: 13219.25, 17: 59486.62, 18: 475893},
+                8: {1: 1.42, 2: 2.18, 3: 3.35, 4: 5.26, 5: 8.5, 6: 14.17, 7: 24.47, 8: 44.05, 9: 83.2, 10: 166.4, 11: 356.56, 12: 831.98, 13: 2163.15, 14: 6489.45, 15: 23794.65, 16: 118973.25, 17: 1070759.25},
+                9: {1: 1.51, 2: 2.47, 3: 4.07, 4: 6.88, 5: 12.04, 6: 21.89, 7: 41.6, 8: 83.2, 9: 176.8, 10: 404.1, 11: 1010.26, 12: 2828.73, 13: 9193.39, 14: 36773.55, 15: 202254.52, 16: 2022545.25},
+                10: {1: 1.61, 2: 2.83, 3: 5, 4: 9.17, 5: 17.52, 6: 35.03, 7: 73.95, 8: 166.4, 9: 404.1, 10: 1077.61, 11: 3232.84, 12: 11314.94, 13: 49031.4, 14: 294188.4, 15: 3236072.4},
+                11: {1: 1.73, 2: 3.26, 3: 6.26, 4: 12.51, 5: 26.27, 6: 58.38, 7: 138.66, 8: 356.56, 9: 1010.26, 10: 3232.84, 11: 12123.15, 12: 56574.69, 13: 367735.5, 14: 4412826},
+                12: {1: 1.86, 2: 3.81, 3: 7.96, 4: 17.52, 5: 40.87, 6: 102.17, 7: 277.33, 8: 831.98, 9: 2828.73, 10: 11314.94, 11: 56574.69, 12: 396022.85, 13: 5148297},
+                13: {1: 2.02, 2: 4.5, 3: 10.35, 4: 25.3, 5: 66.41, 6: 189.75, 7: 600.87, 8: 2163.15, 9: 9193.39, 10: 49031.4, 11: 367735.5, 12: 5148297},
+                14: {1: 2.20, 2: 5.4, 3: 13.8, 4: 37.95, 5: 113.85, 6: 379.5, 7: 1442.1, 8: 6489.45, 9: 36773.55, 10: 294188.4, 11: 4412826},
+                15: {1: 2.42, 2: 6.6, 3: 18.97, 4: 59.64, 5: 208.72, 6: 834.9, 7: 3965.77, 8: 23794.65, 9: 202254.52, 10: 3236072.4},
+                16: {1: 2.69, 2: 8.25, 3: 27.11, 4: 99.39, 5: 417.45, 6: 2087.25, 7: 13219.25, 8: 118973.25, 9: 2022545.25},
+                17: {1: 3.03, 2: 10.61, 3: 40.66, 4: 178.91, 5: 939.26, 6: 6261.75, 7: 59486.62, 8: 1070759.25},
+                18: {1: 3.46, 2: 14.14, 3: 65.06, 4: 357.81, 5: 2504.7, 6: 25047, 7: 475893},
+                19: {1: 4.04, 2: 19.8, 3: 113.85, 4: 834.9, 5: 8766.45, 6: 175329},
+                20: {1: 4.85, 2: 29.10, 3: 227.7, 4: 2504.7, 5: 52598.7},
+                21: {1: 6.10, 2: 49.5, 3: 569.25, 4: 12523.5},
+                22: {1: 8.20, 2: 99, 3: 2277},
+                23: {1: 12.30, 2: 297},
+                24: {1: 24.70}
+            }
+        };
+
+        // DOM Elements
+        const balanceElement = document.getElementById('balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const halfBtn = document.getElementById('half-btn');
+        const doubleBtn = document.getElementById('double-btn');
+        const minesToggleBtn = document.getElementById('mines-toggle-btn');
+        const minesDropdown = document.getElementById('mines-dropdown');
+        const selectedMinesCount = document.getElementById('selected-mines-count');
+        const mineOptions = document.querySelectorAll('.mine-option');
+        const gameBoard = document.getElementById('game-board');
+        const cashoutBtn = document.getElementById('cashout-btn');
+        const cashoutMultiplierElement = document.getElementById('cashout-multiplier');
+        const startBtn = document.getElementById('start-btn');
+        const nextMultiplierDisplay = document.getElementById('next-multiplier-display');
+        const msgToast = document.getElementById('message-toast');
+        const autoplayBtn = document.getElementById('autoplay-btn');
+
+        // Sounds mapped to IDs instead of DOM nodes for SoundPool
+        const tileClickSound = 'tile-click-sound';
+        const explosionSound = 'explosion-sound';
+        const winSound = 'win-sound';
+        const loseSound = 'lose-sound';
+        const betSound = 'bet-sound';
+        const cashoutSound = 'cashout-sound';
+
+        function showMessage(msg) {
+            msgToast.textContent = msg;
+            msgToast.classList.add('show');
+            setTimeout(() => msgToast.classList.remove('show'), 2500);
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Make init async and wait for platform listener ---
+        async function init() {
+            checkAuthentication();
+            updateUI();
+            createEmptyBoard();
+            setupEventListeners();
+            setupFirebaseListeners();
+            
+            await setupGlobalPlatformListener();
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Listen for Admin Panel Traffic Light changes for MINES ---
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                database.ref('platformControl/globalModes/mines').on('value', snap => {
+                    if (snap.exists()) {
+                        gameState.globalMode = snap.val(); 
+                    } else {
+                        gameState.globalMode = 'NORMAL';
+                    }
+                    resolve(); // Siri Fix: Resolved instantly to avoid race condition delays
+                });
+            });
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Presence Tracking for Live Users ---
+        function trackGamePresence(uid) {
+            const presenceRef = database.ref(`gamePresence/mines/${uid}`);
+            
+            database.ref('.info/connected').on('value', function(snapshot) {
+                if (snapshot.val() === false) {
+                    return;
+                }
+                presenceRef.onDisconnect().remove().then(function() {
+                    presenceRef.set(true);
+                });
+            });
+
+            // Extra fallback for explicit tab closures
+            window.addEventListener('beforeunload', () => {
+                presenceRef.remove();
+            });
+        }
+
+        function checkAuthentication() {
+            const uid = localStorage.getItem('uid');
+            if (uid) {
+                gameState.userAuthenticated = true;
+                loadUserDataFromFirebase(uid);
+                document.getElementById('auth-popup').style.display = 'none';
+                trackGamePresence(uid); // Siri Fix: Start tracking live user connection
+            } else {
+                gameState.userAuthenticated = false;
+                document.getElementById('auth-popup').style.display = 'flex';
+                document.getElementById('sign-in-btn').onclick = () => {
+                    playAudioFile('generic-btn-sfx');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        function loadUserDataFromFirebase(uid) {
+            database.ref('appusers/' + uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    gameState.balance = data.totalBalance || 0;
+                    
+                    // --- HYBRID SYSTEM UPDATE: Keep lifetime stats synced ---
+                    gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                    gameState.lifetimeWon = data.lifetimeWon || 0;
+                    
+                    updateUI();
+                }
+            });
+        }
+
+        function setupFirebaseListeners() {
+            const luckRef = database.ref('luckFactors');
+            luckRef.child('winLuckFactor').on('value', snap => { if(snap.exists()) gameState.luckFactor = 1 - snap.val(); });
+            luckRef.child('loseLuckFactor').on('value', snap => { if(snap.exists()) gameState.luckFactor = snap.val(); });
+            luckRef.once('value').then(snap => {
+                if(!snap.exists()) luckRef.set({ winLuckFactor: 0.01, loseLuckFactor: 0.99 });
+            });
+        }
+
+        function clearInactivityTimers() {
+            clearTimeout(gameState.inactivityTimeout);
+            clearTimeout(gameState.warningTimeout);
+            const pb = document.getElementById('main-progress-bar');
+            if (pb) {
+                pb.style.transition = 'width 0.3s ease, background-color 0.3s ease';
+            }
+        }
+
+        function resetInactivityTimer() {
+            clearInactivityTimers();
+            if (!gameState.gameActive || gameState.gameEnded) return;
+
+            updateProgressBarTiles();
+
+            gameState.warningTimeout = setTimeout(() => {
+                if (!gameState.gameActive || gameState.gameEnded) return;
+                startWarningProgress();
+            }, 25000);
+
+            gameState.inactivityTimeout = setTimeout(() => {
+                if (!gameState.gameActive || gameState.gameEnded) return;
+                cashout(true); 
+            }, 30000);
+        }
+
+        function updateProgressBarTiles() {
+            if (!gameState.gameActive) return;
+            const pb = document.getElementById('main-progress-bar');
+            pb.style.transition = 'width 0.3s ease, background-color 0.3s ease';
+            const totalSafe = 25 - gameState.minesCount;
+            const progress = (gameState.revealedTiles / totalSafe) * 100;
+            const hue = 120 - (progress * 1.2); 
+            pb.style.backgroundColor = `hsl(${hue}, 100%, 40%)`;
+            pb.style.width = `${progress}%`;
+        }
+
+        function startWarningProgress() {
+            const pb = document.getElementById('main-progress-bar');
+            pb.style.transition = 'none';
+            pb.style.width = '100%';
+            pb.style.backgroundColor = '#ff5b5b'; 
+            void pb.offsetWidth; 
+            pb.style.transition = 'width 5s linear, background-color 5s linear';
+            pb.style.width = '0%';
+            pb.style.backgroundColor = '#7bd339';
+        }
+
+        function setupEventListeners() {
+            halfBtn.onclick = () => { playAudioFile('generic-btn-sfx'); adjustBet(0.5); };
+            doubleBtn.onclick = () => { playAudioFile('generic-btn-sfx'); adjustBet(2); };
+            
+            minesToggleBtn.onclick = () => {
+                if(gameState.gameActive || gameState.autoplayActive) return;
+                playAudioFile('menu-btn-click-sfx');
+                minesDropdown.classList.toggle('show');
+            };
+            
+            mineOptions.forEach(opt => {
+                opt.addEventListener('mouseenter', () => playAudioFile('mines-hover-sfx'));
+                opt.onclick = () => {
+                    if(gameState.gameActive || gameState.autoplayActive) return;
+                    playAudioFile('menu-option-click-sfx');
+                    gameState.minesCount = parseInt(opt.dataset.mines);
+                    mineOptions.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    selectedMinesCount.textContent = gameState.minesCount;
+                    minesDropdown.classList.remove('show');
+                    
+                    // Reset selected tiles if they exceed safe tiles left
+                    if(gameState.autoGameEnabled) {
+                        gameState.autoplaySelectedTiles = [];
+                        updateBoardVisuals();
+                    }
+                    updateUI();
+                };
+            });
+            
+            startBtn.onclick = () => {
+                if(!gameState.userAuthenticated) { 
+                    playAudioFile('generic-btn-sfx');
+                    document.getElementById('auth-popup').style.display='flex'; 
+                    return; 
+                }
+
+                if (gameState.betAmount > gameState.balance) {
+                    playAudioFile('modal-open-sfx');
+                    document.getElementById('insufficient-balance-modal').classList.add('show');
+                    return;
+                }
+
+                if (gameState.betButtonCooldown || startBtn.disabled || gameState.autoplayActive) {
+                    playAudioFile('bet-disabled-sfx');
+                    return;
+                } 
+                
+                playSound(betSound);
+                startGame();
+            };
+            
+            cashoutBtn.onclick = () => {
+                if (gameState.revealedTiles === 0 || cashoutBtn.disabled || !gameState.gameActive) {
+                    playAudioFile('cashout-disabled-sfx');
+                    return;
+                }
+                playSound(cashoutSound); 
+                cashout();
+            };
+            
+            document.getElementById('random-btn').onclick = () => {
+                const randomBtn = document.getElementById('random-btn');
+                if(randomBtn.disabled) return;
+                
+                playAudioFile('generic-btn-sfx');
+                if (gameState.autoGameEnabled && !gameState.gameActive && !gameState.autoplayActive) {
+                    // Add ONE random unselected tile to the autoplay setup per click
+                    const maxSafeTiles = 25 - gameState.minesCount;
+                    
+                    if (gameState.autoplaySelectedTiles.length < maxSafeTiles) {
+                        const availableTiles = [];
+                        for (let i = 0; i < 25; i++) {
+                            if (!gameState.autoplaySelectedTiles.includes(i)) {
+                                availableTiles.push(i);
+                            }
+                        }
+                        
+                        if (availableTiles.length > 0) {
+                            const randomTile = availableTiles[Math.floor(Math.random() * availableTiles.length)];
+                            gameState.autoplaySelectedTiles.push(randomTile);
+                        }
+                    } else {
+                        showMessage('Max safe tiles selected.');
+                    }
+                    updateBoardVisuals();
+                    updateUI();
+                } else if(gameState.gameActive && gameState.canReveal && !gameState.gameEnded) {
+                    const unrevealed = [];
+                    for(let i=0; i<25; i++) {
+                        if(!document.querySelector(`.tile[data-index="${i}"]`).classList.contains('revealed')) unrevealed.push(i);
+                    }
+                    if(unrevealed.length > 0) revealTile(unrevealed[Math.floor(Math.random()*unrevealed.length)]);
+                }
+            };
+
+            // Autoplay Logic specific Listeners
+            autoplayBtn.onclick = () => {
+                if (gameState.autoplayActive) {
+                    // Stop button logic
+                    playAudioFile('generic-btn-sfx');
+                    stopAutoplay();
+                } else if (gameState.autoGameEnabled && gameState.autoplaySelectedTiles.length > 0) {
+                    // Open settings modal
+                    playAudioFile('modal-open-sfx');
+                    document.getElementById('autoplay-modal').classList.add('show');
+                }
+            };
+
+            document.getElementById('start-auto-btn').onclick = () => {
+                if (!gameState.userAuthenticated) {
+                    playAudioFile('generic-btn-sfx');
+                    document.getElementById('auth-popup').style.display='flex';
+                    return;
+                }
+                if (gameState.betAmount > gameState.balance) {
+                    playAudioFile('modal-open-sfx');
+                    document.getElementById('insufficient-balance-modal').classList.add('show');
+                    return;
+                }
+                
+                playAudioFile('generic-btn-sfx');
+                document.getElementById('autoplay-modal').classList.remove('show');
+                startAutoplay();
+            };
+        }
+
+        function adjustBet(factor) {
+            if(gameState.gameActive || gameState.autoplayActive) return;
+            let val = parseFloat(betAmountInput.value) || 0;
+            gameState.betAmount = Math.max(5, Math.min(val * factor, 40000));
+            updateUI();
+        }
+
+        function updateBetAmount() {
+            if(gameState.gameActive || gameState.autoplayActive) return;
+            let val = parseFloat(betAmountInput.value) || 5;
+            if (isNaN(val) || val < 5) val = 5;
+            gameState.betAmount = Math.max(5, Math.min(val, 40000));
+            updateUI();
+        }
+
+        function createEmptyBoard() {
+            gameBoard.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.dataset.index = i;
+                if (gameState.autoGameEnabled && gameState.autoplaySelectedTiles.includes(i)) {
+                    tile.classList.add('autoplay-selected');
+                }
+                tile.onclick = () => {
+                    if (!gameState.userAuthenticated) { 
+                        playAudioFile('generic-btn-sfx');
+                        document.getElementById('auth-popup').style.display='flex'; 
+                        return; 
+                    }
+                    
+                    if (gameState.autoGameEnabled && !gameState.gameActive && !gameState.autoplayActive) {
+                        toggleTileSelection(i);
+                    } else if (gameState.gameActive && !gameState.autoplayActive) {
+                        revealTile(i);
+                    }
+                };
+                gameBoard.appendChild(tile);
+            }
+        }
+
+        function updateBoardVisuals() {
+            for (let i = 0; i < 25; i++) {
+                const tile = document.querySelector(`.tile[data-index="${i}"]`);
+                if (tile && !tile.classList.contains('revealed')) {
+                    if (gameState.autoGameEnabled && gameState.autoplaySelectedTiles.includes(i)) {
+                        tile.classList.add('autoplay-selected');
+                    } else {
+                        tile.classList.remove('autoplay-selected');
+                    }
+                }
+            }
+        }
+
+        function toggleTileSelection(index) {
+            if (gameState.autoplaySelectedTiles.includes(index)) {
+                gameState.autoplaySelectedTiles = gameState.autoplaySelectedTiles.filter(idx => idx !== index);
+                playAudioFile('keyboard-btn-sfx');
+            } else {
+                if (gameState.autoplaySelectedTiles.length < (25 - gameState.minesCount)) {
+                    gameState.autoplaySelectedTiles.push(index);
+                    playAudioFile('keyboard-btn-sfx');
+                } else {
+                    showMessage('Max safe tiles selected.');
+                }
+            }
+            updateBoardVisuals();
+            updateUI();
+        }
+
+        function generateBoardWithMines() {
+            gameState.board = Array(25).fill(0);
+            let minesPlaced = 0;
+            while (minesPlaced < gameState.minesCount) {
+                const idx = Math.floor(Math.random() * 25);
+                if (gameState.board[idx] === 0) {
+                    gameState.board[idx] = 1;
+                    minesPlaced++;
+                }
+            }
+        }
+
+        // --- HYBRID SYSTEM UPDATE: Probability Matrix specific to Mines Math ---
+        function getDynamicLossChance() {
+            let baseChance = 0.50; 
+            let rtp = 0;
+
+            if (gameState.lifetimeWagered >= 50) {
+                rtp = gameState.lifetimeWon / gameState.lifetimeWagered;
+            } else {
+                rtp = 0.50; 
+            }
+
+            if (rtp > 0.90) baseChance = 0.85;       
+            else if (rtp > 0.60) baseChance = 0.60;  
+            else if (rtp < 0.30) baseChance = 0.10;  
+            else baseChance = 0.45;                  
+
+            let finalChance = baseChance;
+
+            if (gameState.globalMode === 'RECOVERY') {
+                finalChance = baseChance + 0.30; 
+            } 
+            else if (gameState.globalMode === 'PAYOUT') {
+                finalChance = baseChance - 0.95; 
+            }
+
+            if (finalChance > 0.95) finalChance = 0.95; 
+            if (finalChance < 0.05) finalChance = 0.05;
+
+            return finalChance;
+        }
+
+        function revealTile(index) {
+            if (!gameState.gameActive || !gameState.canReveal || gameState.gameEnded) return;
+            
+            const tile = document.querySelector(`.tile[data-index="${index}"]`);
+            if (tile.classList.contains('revealed')) return;
+
+            // --- HYBRID DEGRADER EXECUTION (SECRET SWAPPER) ---
+            if (gameState.board[index] === 0) { 
+                const forceLossChance = getDynamicLossChance();
+                if (Math.random() < forceLossChance) {
+                    // AI decided they lose. Secretly move a mine to the clicked tile before revealing!
+                    for (let i = 0; i < 25; i++) {
+                        if (gameState.board[i] === 1) {
+                            gameState.board[i] = 0; // Remove original mine
+                            break;
+                        }
+                    }
+                    gameState.board[index] = 1; // Place mine precisely where they clicked
+                }
+            }
+            // --- END HYBRID DEGRADER EXECUTION ---
+            
+            gameState.canReveal = false;
+            tile.classList.add('revealed');
+            
+            if (gameState.board[index] === 1) {
+                tile.classList.add('mine', 'mine-hit'); // Added 'mine-hit' here
+                playSound(explosionSound); 
+                clearInactivityTimers();
+                setTimeout(() => revealAllMines(), 100);
+                endGame(false);
+            } else {
+                tile.classList.add('gem');
+                playSound(tileClickSound);
+                gameState.revealedTiles++;
+                
+                if (gameState.multipliersTable[gameState.minesCount] && gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles]) {
+                    gameState.multiplier = gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles];
+                }
+                
+                updateUI();
+                resetInactivityTimer();
+                
+                if (gameState.revealedTiles === (25 - gameState.minesCount)) {
+                    setTimeout(() => { cashout(); }, 100);
+                } else {
+                    setTimeout(() => { gameState.canReveal = true; }, 5);
+                }
+            }
+        }
+
+        function revealAllMines() {
+            gameState.board.forEach((val, i) => {
+                const t = document.querySelector(`.tile[data-index="${i}"]`);
+                // FIX: Ensure autoplay-selected is removed so auto visuals show correctly and don't override the CSS
+                t.classList.remove('autoplay-selected');
+                
+                if (!t.classList.contains('revealed')) {
+                    t.classList.add('revealed');
+                    // Use the new auto classes so background colors don't change
+                    if (val === 1) t.classList.add('mine-auto');
+                    else t.classList.add('gem-auto');
+                }
+            });
+        }
+
+
+        function cashout(isAuto = false) {
+            if (!gameState.gameActive || gameState.gameEnded || gameState.paidThisRound) return;
+            if (!isAuto && gameState.revealedTiles === 0) return; 
+            
+            clearInactivityTimers();
+            const winnings = gameState.betAmount * gameState.multiplier;
+            gameState.paidThisRound = true;
+            
+            updateBalance(winnings).then(newBalance => {
+                gameState.balance = newBalance;
+                revealAllMines();
+                endGame(true, winnings);
+            }).catch(e => {
+                gameState.paidThisRound = false;
+                showMessage('Error processing win.');
+                if (gameState.autoplayActive) stopAutoplay();
+            });
+        }
+        function startGame() {
+            if (gameState.gameActive || gameState.betPlacedThisRound || gameState.betButtonCooldown) return;
+            
+            if (gameState.betAmount > gameState.balance) { 
+                playAudioFile('modal-open-sfx');
+                document.getElementById('insufficient-balance-modal').classList.add('show');
+                if (gameState.autoplayActive) stopAutoplay();
+                return; 
+            }
+            
+            gameState.betPlacedThisRound = true;
+            setControlsEnabled(false);
+            
+            return updateBalance(-gameState.betAmount).then(newBalance => {
+                gameState.balance = newBalance;
+                gameState.gameActive = true;
+                gameState.gameEnded = false;
+                gameState.revealedTiles = 0;
+                gameState.multiplier = 1;
+                gameState.canReveal = true;
+                gameState.paidThisRound = false;
+                
+                document.getElementById('progress-bar-container').style.display = 'block';
+                
+                generateBoardWithMines();
+                createEmptyBoard(); 
+                updateUI();
+                if (!gameState.autoplayActive) resetInactivityTimer();
+                return true;
+            }).catch(e => {
+                gameState.betPlacedThisRound = false;
+                setControlsEnabled(true);
+                showMessage('Error placing bet.');
+                if (gameState.autoplayActive) stopAutoplay();
+                return false;
+            });
+        }
+        function endGame(win, winnings = 0) {
+            gameState.gameActive = false;
+            gameState.gameEnded = true;
+            gameState.betPlacedThisRound = false;
+            
+            saveToMyBets(gameState.betAmount, win ? winnings : 0);
+
+            clearInactivityTimers();
+            document.getElementById('progress-bar-container').style.display = 'flex';
+            document.getElementById('main-progress-bar').style.width = '0%';
+            
+            if(!win) { 
+                playSound(loseSound); 
+                if(!gameState.autoplayActive) showMessage('Game Over'); 
+            } else {
+                playSound(winSound);
+                if(!gameState.autoplayActive) showMessage(`Won ₹${winnings.toFixed(2)}`);
+            }
+            
+            setControlsEnabled(true);
+            updateUI();
+            
+            if (!gameState.autoplayActive) {
+                gameState.betButtonCooldown = true;
+                let cd = 3;
+                startBtn.disabled = true;
+                startBtn.innerHTML = `WAIT ${cd}s`;
+                let inv = setInterval(() => {
+                    cd--;
+                    startBtn.innerHTML = `WAIT ${cd}s`;
+                    if(cd <= 0) {
+                        clearInterval(inv);
+                        gameState.betButtonCooldown = false;
+                        createEmptyBoard();
+                        updateUI();
+                    }
+                }, 1000);
+            }
+        }
+        // --- NEW AUTOPLAY EXECUTION LOGIC ---
+        function startAutoplay() {
+            gameState.autoplayActive = true;
+            gameState.autoplayCurrentRounds = gameState.autoplayTargetRounds;
+            gameState.autoplayInitialBalance = gameState.balance;
+            
+            updateUI();
+            runAutoplayLoop();
+        }
+        function stopAutoplay() {
+            gameState.autoplayActive = false;
+            gameState.autoplayCurrentRounds = 0;
+            updateUI();
+            createEmptyBoard(); // reset to selection state visually
+        }
+        async function runAutoplayLoop() {
+            if (!gameState.autoplayActive || gameState.autoplayCurrentRounds <= 0) {
+                stopAutoplay();
+                return;
+            }
+            // Check Limits
+            const checkStopLoss = document.getElementById('auto-stop-loss-toggle').classList.contains('active');
+            const stopLossVal = parseFloat(document.getElementById('auto-stop-loss-val').value) || 0;
+            if (checkStopLoss && stopLossVal > 0) {
+                if ((gameState.autoplayInitialBalance - gameState.balance) >= stopLossVal) {
+                    stopAutoplay(); 
+                    showMessage("Stop Loss Reached"); 
+                    return;
+                }
+            }
+            // Pre-check balance
+            if (gameState.betAmount > gameState.balance) {
+                playAudioFile('modal-open-sfx');
+                document.getElementById('insufficient-balance-modal').classList.add('show');
+                stopAutoplay(); return;
+            }
+            // Update UI
+            updateUI();
+            // Place bet and generate board
+            const started = await startGame();
+            if (!started) return;
+            // Short delay to simulate rolling
+            await new Promise(r => setTimeout(r, 600));
+            if (!gameState.autoplayActive) { // Interrupted
+                if(gameState.gameActive) endGame(false); 
+                return;
+            }
+            let isWin = true;
+            
+            // Reveal selected tiles sequentially to mirror manual gameplay visually and logically
+            for (let idx of gameState.autoplaySelectedTiles) {
+                
+                // --- HYBRID DEGRADER EXECUTION (SECRET SWAPPER FOR AUTOPLAY) ---
+                if (gameState.board[idx] === 0) { 
+                    const forceLossChance = getDynamicLossChance();
+                    if (Math.random() < forceLossChance) {
+                        for (let i = 0; i < 25; i++) {
+                            if (gameState.board[i] === 1) {
+                                gameState.board[i] = 0; 
+                                break;
+                            }
+                        }
+                        gameState.board[idx] = 1; 
+                    }
+                }
+                // --- END HYBRID DEGRADER EXECUTION ---
+
+                const tile = document.querySelector(`.tile[data-index="${idx}"]`);
+                
+                // FIX: Remove autoplay-selected class so gem/mine visuals do not get overridden by CSS order
+                tile.classList.remove('autoplay-selected');
+                tile.classList.add('revealed');
+                
+                if (gameState.board[idx] === 1) {
+                    tile.classList.add('mine', 'mine-hit'); // Added 'mine-hit' here too
+                    isWin = false;
+                    break;
+                } else {
+                    tile.classList.add('gem');
+                    playSound(tileClickSound); // Play sound per tile exactly like manual
+                    gameState.revealedTiles++;
+                    
+                    // Update multiplier dynamically per reveal
+                    if (gameState.multipliersTable[gameState.minesCount] && gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles]) {
+                        gameState.multiplier = gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles];
+                    }
+                    
+                    updateUI();
+                    updateProgressBarTiles(); // Animate progress bar exactly like manual play
+                    
+                    // Add slight delay to perfectly mimic sequential manual tapping
+                    await new Promise(r => setTimeout(r, 400));
+                }
+            }
+
+            if (!isWin) {
+                playSound(explosionSound);
+                revealAllMines();
+                endGame(false);
+            } else {
+                // Determine multiplier
+                if (gameState.multipliersTable[gameState.minesCount] && gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles]) {
+                    gameState.multiplier = gameState.multipliersTable[gameState.minesCount][gameState.revealedTiles];
+                }
+                const winnings = gameState.betAmount * gameState.multiplier;
+                
+                // Process win
+                gameState.paidThisRound = true;
+                try {
+                    const newBalance = await updateBalance(winnings);
+                    gameState.balance = newBalance;
+                    revealAllMines();
+                    endGame(true, winnings);
+                    // Check Stop Win limit
+                    const checkStopWin = document.getElementById('auto-stop-win-toggle').classList.contains('active');
+                    const stopWinVal = parseFloat(document.getElementById('auto-stop-win-val').value) || 0;
+                    if (checkStopWin && stopWinVal > 0 && winnings >= stopWinVal) {
+                        showMessage("Stop Win Reached");
+                        stopAutoplay(); return;
+                    }
+                } catch(e) {
+                    gameState.paidThisRound = false;
+                    stopAutoplay(); return;
+                }
+            }
+            gameState.autoplayCurrentRounds--;
+            
+            // Wait before next round
+            await new Promise(r => setTimeout(r, 1200));
+            createEmptyBoard();
+            
+            // Recursive call next tick
+            requestAnimationFrame(runAutoplayLoop);
+        }
+        function setControlsEnabled(enabled) {
+            if (gameState.autoplayActive) return; // Inputs stay locked
+            halfBtn.disabled = !enabled;
+            doubleBtn.disabled = !enabled;
+            document.getElementById('max-btn').disabled = !enabled;
+            minesToggleBtn.disabled = !enabled;
+            document.getElementById('bet-input-trigger').style.pointerEvents = enabled ? 'auto' : 'none';
+            document.getElementById('auto-game-switch').style.pointerEvents = enabled ? 'auto' : 'none';
+        }
+        function updateUI() {
+            balanceElement.textContent = gameState.balance.toFixed(2);
+            let formattedAmount = gameState.betAmount.toFixed(2);
+            betAmountInput.value = formattedAmount;
+            
+            const randomBtn = document.getElementById('random-btn');
+            const boardElement = document.getElementById('game-board');
+
+            // Autoplay Active overrides normal play states
+            if (gameState.autoplayActive) {
+                boardElement.classList.remove('board-inactive');
+                startBtn.disabled = true;
+                cashoutBtn.style.display = 'none';
+                startBtn.style.display = 'flex';
+                randomBtn.disabled = true;
+                
+                autoplayBtn.classList.add('active-red');
+                autoplayBtn.innerHTML = gameState.autoplayCurrentRounds;
+                autoplayBtn.disabled = false;
+                
+                halfBtn.disabled = true; doubleBtn.disabled = true;
+                document.getElementById('max-btn').disabled = true;
+                minesToggleBtn.disabled = true;
+                document.getElementById('bet-input-trigger').style.pointerEvents = 'none';
+                document.getElementById('auto-game-switch').style.pointerEvents = 'none';
+            } else if (gameState.gameActive) {
+                boardElement.classList.remove('board-inactive');
+                cashoutMultiplierElement.textContent = gameState.multiplier.toFixed(2) + 'x';
+                startBtn.style.display = 'none';
+                cashoutBtn.style.display = 'flex';
+                cashoutBtn.disabled = (gameState.revealedTiles === 0);
+                randomBtn.disabled = false;
+                
+                autoplayBtn.classList.remove('active-red');
+                autoplayBtn.innerHTML = `<svg class="autoplay-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 8.5V15.5L15.5 12L10 8.5Z" fill="currentColor"/>
+
+    <g>
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+
+    <g transform="rotate(180 12 12)">
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+</svg>
+`;
+                autoplayBtn.disabled = true;
+            } else {
+                // NEW LOGIC: Keep board active if in wait cooldown OR if Auto Game is toggled ON
+                if (gameState.betButtonCooldown || gameState.autoGameEnabled) {
+                    boardElement.classList.remove('board-inactive');
+                } else {
+                    boardElement.classList.add('board-inactive');
+                }
+                
+                startBtn.style.display = 'flex';
+                cashoutBtn.style.display = 'none';
+                
+                // Allow random in setup if auto is on, else disable
+                randomBtn.disabled = !gameState.autoGameEnabled;
+                
+                if(!gameState.betButtonCooldown) {
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = ` <svg class="play-icon" viewBox="0 0 24 24" width="35" height="30" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" style="position: absolute; left: 10px;">
+            <path d="M 12.9 16.0 L 18.3 13 Q 20 12 18.3 11 L 7.7 5 Q 6 4 6 6.5 L 6 17.5 Q 6 20 9.1 18.1"></path>
+                </svg> BET`;
+                }
+                
+                // Set Auto play button visual/disabled state
+                autoplayBtn.classList.remove('active-red');
+                autoplayBtn.innerHTML = `<svg class="autoplay-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 8.5V15.5L15.5 12L10 8.5Z" fill="currentColor"/>
+
+    <g>
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+
+    <g transform="rotate(180 12 12)">
+        <path d="M 4.5 9.3 A 8 8 0 0 1 19.5 9.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <polygon points="17.2,10.2 21.9,8.5 21.2,14.0" fill="currentColor"/>
+    </g>
+</svg>
+`;
+                
+                if (gameState.autoGameEnabled) {
+                    startBtn.disabled = true; // Normal bet disabled when Auto is active
+                    startBtn.innerHTML = `BET`; // Make standard text
+                    if (gameState.autoplaySelectedTiles.length > 0) {
+                        autoplayBtn.disabled = false;
+                    } else {
+                        autoplayBtn.disabled = true;
+                    }
+                } else {
+                    autoplayBtn.disabled = true;
+                }
+                
+                setControlsEnabled(true);
+            }
+
+            let nextMult = gameState.multiplier;
+            let queryTiles = gameState.gameActive ? gameState.revealedTiles + 1 : 1;
+            
+            if (gameState.autoGameEnabled && !gameState.gameActive) {
+                queryTiles = Math.max(1, gameState.autoplaySelectedTiles.length);
+            }
+            
+            if (gameState.multipliersTable[gameState.minesCount] && gameState.multipliersTable[gameState.minesCount][queryTiles]) {
+                nextMult = gameState.multipliersTable[gameState.minesCount][queryTiles];
+            }
+            nextMultiplierDisplay.textContent = `Next: ${nextMult.toFixed(2)}x`;
+        }
+
+        window.onload = init;
+    </script>
+
+</body>
+</html>

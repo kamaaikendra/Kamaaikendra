@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casino Fortune</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 10px; width: 100vw; position: absolute; top: 0; z-index: 10000001;
+            background: transparent;
+        }
+        
+        .nav-left { display: flex; align-items: center; gap: 8px; }
+        .avatar-ring {
+            width: 45px; height: 45px; border-radius: 50%;
+            border: 2px solid #b784df; background: #fff; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 8px rgba(183, 132, 223, 0.8); overflow: hidden; position: relative;
+        }
+        .avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-square-btn {
+            width: 60px; height: 30px; background: linear-gradient(180deg, #009966 0%, #006644 100%);
+            border: 2px solid #fff; border-radius: 6px; display: flex; justify-content: center; align-items: center;
+            color: #fff; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 14px;
+        }
+
+        .nav-center { flex: 1; display: flex; justify-content: center; }
+        .balance-pill {
+            background: linear-gradient(180deg, #2a0000 0%, #000000 100%);
+            border: 2px solid #fdbd02; border-radius: 20px; display: flex; align-items: center;
+            padding: 2px 4px 2px 10px; width: 160px; justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.6); position: relative;
+        }
+        .balance-icon { color: #fdbd02; font-size: 16px; margin-right: 5px; }
+        .balance-display { font-size: 16px; font-weight: 900; color: #ffdf00; flex: 1; text-align: center; }
+        .deposit-btn {
+            width: 24px; height: 24px; background: linear-gradient(180deg, #00cc66 0%, #008844 100%);
+            border: 1px solid #fff; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center;
+            font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-circle-btn {
+            width: 32px; height: 32px; background: linear-gradient(180deg, #009966 0%, #006644 100%);
+            border: 2px solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: #fff; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 14px;
+        }
+
+        /* Main Game Area */
+        .game-container {
+            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-SVvdrRJWhVXkM3Jy_KvG6XjkTH7qWFunRXusGyBWVqhBrJmoFmqzRGNBoH-A4E70x50kJj20TdFka8NZCgmEbHrUrawNoghjgKdlGVOdNoqiH4tHRGT42_xBwzsNeMFCXkHSgaEiCF785MCrg-dP4s9ZxxjSqq5KD_EzdhqTPZqaVO8-fQM77z4cZwY/s1312/1000104728.jpg');
+            background-size:cover;
+            background-position: center;
+            flex: 1; display: flex; flex-direction: column; position: relative;
+            overflow-y: auto; overflow-x: hidden;
+        }
+
+        /* Top Graphics Area */
+        .top-graphics-area {
+            position: relative; width: 100%; height: 320px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 0px; margin-top: 40px;
+        }
+        .top-chimpanzee-img { position: absolute; bottom: 85px; height: 200px; margin-bottom:-30px; z-index: 1; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
+
+        /* Extra Bet Toggle Container */
+        .extra-bet-container {
+            position: absolute;
+            left: 10px;
+            bottom: 5px; 
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(180deg, #6a0022 0%, #3a000a 100%);
+            border: 2px solid #ffdf00;
+            border-radius: 20px;
+            padding: 2px 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .extra-bet-container:active { transform: scale(0.95); }
+        .ex-icon {
+            margin:-8px;
+            margin-right: 6px;
+            height:30px;
+            width:35px;
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirNJEV1TZhWpbzZPIKwYRW3f2lmCRs4P4nyxBA5b4h4zGSHjP3MWl4V5R5hnYUBVSqW5xmaxpsKdX4-D9wjnqFoThBDfSGLa7oU0Ek3MdbeXITq174XLkXVS77B1TdiQcvj3GRz9EWM0w8xLF6aylchCuEW4J-5OFDua2naI6R70f8fJYpWM9IN326jqo/s87/1000104944.webp");
+            background-size: 100% 100%;
+            display: flex;
+            align-items: center;
+        }
+        .ex-text {
+            color: #fff;
+            font-style: italic;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .ex-toggle {
+            width: 28px;
+            height: 14px;
+            background: #111;
+            border-radius: 10px;
+            position: relative;
+            transition: 0.3s;
+            border: 1px solid #555;
+        }
+        .ex-toggle-knob {
+            width: 12px;
+            height: 12px;
+            background: #888;
+            border-radius: 50%;
+            position: absolute;
+            top: 0px;
+            left: 1px;
+            transition: 0.3s;
+        }
+        .extra-bet-container.active .ex-toggle {
+            background: #00cc66;
+            border-color: #00ff88;
+        }
+        .extra-bet-container.active .ex-toggle-knob {
+            left: 13px;
+            background: #fff;
+        }
+        .ex-status {
+            color: #aaa;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+
+        /* Slot Board Area */
+        .slot-board-container {
+            position: relative;
+            margin: 0 auto 10px auto;
+            width: 100%; 
+            max-width: 400px;
+            background:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1F1rAY5JiVGibVm0PAQt-snVYn723uqqhcE4aa8o-BPLjcPfChgTVFSQ1OHbjwmkb1buefvi03ogSxHk37eJjNkev9wxFgblXJaSmNMD-TYx_xpIcxfL785H05SBJvl7naRGL-zEDcdA0hGlNUntY-3bN9STieAhlJQWAGBWSmVeACUqMAGVi1EIlphA/s719/1000125211.png");
+            background-size: 100% 100%;
+            padding-top: 25px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px; 
+            cursor: pointer;
+        }
+
+        /* New Board Header (Tips & Win Multiplier Section) */
+        .board-header {
+            display: flex;
+            width: 101%;
+            height: 34px;
+        }
+        .tips-marquee-container {
+            width: 76%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            padding-top: 10px;
+            align-items: center;
+        }
+        .tips-marquee {
+            color: #ffb3b3;
+            font-size: 10px;
+            font-family: cursive;
+            font-weight: 900;
+            white-space: nowrap;
+            text-shadow: 0 1px 1px rgba(0,0,0,1);
+        }
+        .win-mult-title-container {
+            width: 24%;
+            height: 101%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffdf00;
+            font-size: 10px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.1;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .lines-indicator {
+            writing-mode: vertical-rl; text-orientation: mixed; color: #d4af37;
+            font-size: 11px; font-weight: 900; letter-spacing: 3px; text-shadow: 1px 1px 2px #000; position: absolute;
+        }
+        .lines-left { left: 4px; transform: rotate(180deg); }
+        .lines-right { right: 4px; }
+
+        .reels-wrapper {
+            display: flex; gap: 2px; height: 165px; width: 100%;
+            justify-content: space-between; background: rgba(225,155,55,1); padding: 0;
+            pointer-events: none;
+        }
+
+        .reel-window {
+            flex: 1; height: 100%; background: transparent; overflow: hidden; position: relative;
+            border-left: 2px solid rgba(0,0,0,0.5); border-right: 2px solid rgba(0,0,0,0.5);
+        }
+
+        .reel-strip { display: flex; flex-direction: column; width: 100%; }
+        .symbol-slot { width: 100%; height: 55px; display: flex; justify-content: center; align-items: center; padding: 0px; }
+        .slot-icon { width: 100%; height: 100%; object-fit: fill; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.8)); transition: all 0.3s ease; }
+
+        @keyframes infiniteReelSpin {
+            0% { transform: translateY(-1485px); }
+            100% { transform: translateY(0px); }
+        }
+        .reel-spinning-infinite { animation: infiniteReelSpin 0.4s linear infinite; }
+
+        .win-glow {
+            filter: drop-shadow(0 0 2px #ffdf00) drop-shadow(0 0 5px #ffff00) !important;
+            animation: pulseGlow 0.8s infinite alternate;
+            transform: scale(0.51);
+            z-index: 10;
+            position: relative;
+        }
+        @keyframes pulseGlow {
+            from { filter: drop-shadow(0 0 5px #ffdf00); transform: scale(0.95); }
+            to { filter: drop-shadow(0 0 15px #ffdf00) drop-shadow(0 0 25px #ffffff); transform: scale(1); }
+        }
+
+        @keyframes nearMissBorder {
+            { filter: drop-shadow(0 0 5px #ffdf00); transform: scale(0.95); }
+            to { filter: drop-shadow(0 0 15px #ffdf00) drop-shadow(0 0 25px #ffffff); transform: scale(1); }
+        }
+        .slot-board-container.near-miss-active { animation: nearMissBorder 0.6s ease-in-out infinite; }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: linear-gradient(180deg, #d60045 0%, #6a0022 100%);
+            border-top: 3px solid #ffdf00; position: relative; z-index: 60;
+            display: flex; justify-content: space-between; align-items: center; 
+            height: 90px; padding: 0 15px; width: 100%;
+            box-shadow: 0 -8px 20px rgba(0,0,0,0.7); margin-top: auto;
+            border-radius: 40px 40px 0 0;
+        }
+        .controls-panel::before {
+            content:''; position:absolute; top: -3px; left:0; width:100%; height:3px;
+            background: linear-gradient(90deg, transparent, #ffdf00, transparent);
+        }
+
+        .action-btn-heart.left-heart {
+            width: 60px; height: 60px;
+            background: linear-gradient(180deg, #ffe066 0%, #b8860b 100%);
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.1s; filter: drop-shadow(0 4px 6px rgba(252,0,200,0.6));
+            position: relative; border: 2px solid #fdbd01; border-radius: 100px;
+        }
+        .action-btn-heart.left-heart:active { transform: scale(0.95); }
+        .action-btn-heart.left-heart i { color: #d60045; font-size: 24px; margin-top: -5px; text-shadow: 1px 1px 0px rgba(255,255,255,0.8); }
+
+        .total-bet-console { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; margin: 0 15px; }
+        .total-bet-label { color: #fff; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 1px; text-shadow: 1px 1px 2px #000; }
+        .bet-controls-wrapper {
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+            gap: 5px;
+        }
+
+        .bet-controls-row {
+            display: flex; align-items: center; 
+            background: rgba(22,22,11,0.5); 
+            border-radius: 4px; padding: 1px;
+            flex: 1;
+            justify-content: space-between; 
+            border: 1px solid #4a0d0d; 
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.9);
+        }
+
+        .pink-btn {
+            width: 25px; height: 25px; 
+            background: linear-gradient(180deg, #1bd125 0%, #008f06 100%); 
+            border: 1px solid #003300; 
+            border-radius: 4px; 
+            color: #053305; 
+            font-size: 18px; font-weight: bold;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; 
+            box-shadow: inset 0px 2px 1px #80ff80, inset 0px -2px 1px #005900, 0 3px 5px rgba(0,0,0,0.6);
+        }
+
+        .pink-btn:active { transform: scale(0.95); }
+
+        .pink-btn.lightning { 
+            background: linear-gradient(180deg, #1bd125 0%, #008f06 100%); 
+            font-size: 10px; width: 28px; height: 26px; 
+            flex-direction: column; line-height: 1; 
+        }
+
+        .pink-btn.lightning span { 
+            font-size: 6px; font-weight: 500; 
+            color: #053305; 
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .pink-btn.lightning i { 
+            color: #053305; 
+            transition: color 0.2s; 
+        }
+
+        .pink-btn.lightning.fast-active i { 
+            color: #ff5500; 
+        }
+
+        .bet-display { 
+            color: #fff; font-size: 12px; font-weight: 900; 
+            text-align: center; flex: 1; text-shadow: 1px 1px 2px #000; 
+        }
+
+        .action-btn-heart.right-heart {
+            width: 60px; height: 60px;
+            background: linear-gradient(180deg, #ffcc33 0%, #b8860b 100%);
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.1s; filter: drop-shadow(0 6px 8px rgba(220,0,200,0.4));
+            position: relative; border-radius: 100px;
+        }
+        .action-btn-heart.right-heart:active { transform: scale(0.95); }
+        .action-btn-heart.right-heart .spin-text { 
+            position: relative; z-index: 2; color: #ffdf00; font-size: 20px; font-weight: 900; 
+            margin-top: -10px; letter-spacing: 1px; -webkit-text-stroke: 1px #8a0000; text-shadow: 2px 2px 4px #000; 
+        }
+
+        @keyframes spinBtnPulse {
+            0%   { filter: drop-shadow(0 6px 8px rgba(220,0,200,0.4)); }
+            50%  { filter: drop-shadow(0 6px 18px rgba(255,200,0,0.9)) drop-shadow(0 0 12px rgba(255,100,0,0.6)); }
+            100% { filter: drop-shadow(0 6px 8px rgba(220,0,200,0.4)); }
+        }
+        .action-btn-heart.right-heart.idle-pulse { animation: spinBtnPulse 1.8s ease-in-out infinite; }
+
+       /* Modals Generic */
+       .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; }
+       .modal-overlay.show { display: flex; }
+       .modal-content { background: rgba(34,34,40,1); width: 95%; max-width: 350px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0); position: relative; animation: slideUp 0.3s ease; }
+       @keyframes slideUp { from { transform: translateY(30px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+       .modal-header { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+       .modal-title { font-size: 15px; font-weight: 700; color: #fff; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+       .modal-close { background: #333; border: 1px solid rgba(0,0,0,0.5); color: #aaa; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 1px 1px rgba(255,255,255,0.2); }
+       .modal-body { padding: 15px; color: #ccc; font-size: 14px; line-height: 1.5; max-height: 70vh; overflow-y: auto; }
+
+       /* Autoplay Modal */
+       #autoplay-modal { align-items: flex-end; }
+       #autoplay-modal .modal-content { background: #014742; border-radius: 20px 20px 0 0; width: 100%; max-width: 100%; border: 1px solid #067268; animation: slideUpBottom 0.3s ease-out forwards; padding: 0; height: auto; max-height: 90vh;}
+       @keyframes slideUpBottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
+       #autoplay-modal .modal-header { padding: 15px 20px; border-bottom: 1px solid #06695b; display: flex; justify-content: space-between; align-items: center; background: transparent; position: relative; }
+       #autoplay-modal .modal-title { font-size: 18px; font-weight: 800; color: #00ffaa; text-transform: none; display: flex; justify-content: center; width: 100%; }
+       #autoplay-modal .modal-close { position: absolute; right: 20px; background: transparent; border: none; color: #fff; font-size: 20px; box-shadow: none; width: auto; height: auto; }
+       .ap-new-body { padding: 15px 20px 25px 20px; }
+       .ap-group { background: #013733; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #034842; }
+       .ap-row { display: flex; align-items: center; margin-bottom: 12px; color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+       .ap-row i { margin-right: 8px; font-size: 16px; width: 20px; text-align: center; }
+       .ap-toggles { display: flex; gap: 10px; }
+       .ap-pill { background: #06695b; color: #79c5bb; border-radius: 25px; padding: 8px 0; font-weight: 800; font-size: 14px; cursor: pointer; border: none; flex: 1; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s; }
+       .ap-pill.active { background: linear-gradient(180deg, #02b68c 0%, #018a6a 100%); color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3); }
+       .ap-auto-spins { display: flex; gap: 8px; justify-content: space-between; }
+       .ap-spin-btn { background: #06695b; color: #79c5bb; border-radius: 20px; width: 50px; height: 32px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 14px; cursor: pointer; border: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); flex: 1; transition: all 0.2s; }
+       .ap-spin-btn.active { background: linear-gradient(180deg, #02b68c 0%, #018a6a 100%); color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3); }
+       .ap-bet-adjuster { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; padding:1px; }
+       .ap-bet-btn { background: #00ff88; border:1px solid rgba(22,89,25,1); padding: 2px 5px; width:25px; border-radius: 6px; color: #004742; font-size: 18px; font-weight: 900; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: inset 0 -2px 0 rgba(0,22,10,0.42); transition: transform 0.1s; }
+       .ap-bet-btn:active { transform: translateY(1px); box-shadow: none; }
+       .ap-bet-val { color: #fff; font-weight: 500; font-size: 14px; min-width: 40px; text-align: right; }
+       .ap-confirm-btn { background: linear-gradient(180deg, #f8b446 0%, #db7c11 100%); border: 2px solid #5a3504; color: #fff; width: 100%; padding: 12px; border-radius: 25px; font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #5a3504; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3); margin-top: 5px; transition: transform 0.1s; }
+       .ap-confirm-btn:active { transform: scale(0.98); }
+
+       /* Menu List */
+       .menu-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+       .menu-list li { padding: 10px 15px; margin: 0; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #c2c7cc; font-size: 14px; font-weight: 400; }
+       .menu-list li i, .menu-list li svg { width: 20px; text-align: center; font-size: 16px; color: #a1a5b0; }
+       #sound-toggle-menu-btn { background: #141518; border-radius: 8px 8px 0 0; border-bottom: 1px solid #232529; }
+       #bgm-toggle-menu-btn { background: #141518; border-radius: 0 0 8px 8px; margin-bottom: 8px; }
+       #freebets-menu-btn, #recordsmenu-btn, #limits-menu-btn, #how-to-play-menu-btn, #rules-menu-btn, #fairnessmenu-btn { background: #141518; border-bottom: 1px solid #232529; }
+       #freebets-menu-btn { border-top-left-radius: 8px; border-top-right-radius: 8px; }
+       #fairnessmenu-btn { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom: none; margin-bottom: 8px; }
+       #closemenu { justify-content: center; color: #8a919e; background: transparent; padding:10px; }
+       .menu-list li:last-child { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 15px 4px 4px 4px; border-top: 2px solid #292b30; cursor: default; }
+
+       /* Bet History */
+       .list-header { display: flex; padding: 5px 15px; color: #888; font-size: 11px; align-items: center; background: #1b1c1d; }
+       .list-row { display: flex; padding: 8px 15px; align-items: center; font-size: 12px; border-bottom: 1px solid #1b1c1d; color: #ddd; }
+       .list-row.win { background: rgba(40, 167, 69, 0.15); border: 1px solid #28a745; border-radius: 6px; margin: 4px; border-bottom: 1px solid #28a745; }
+       .list-row.win .col-date { color: #fff; }
+       .list-row.lose { background: rgba(167,69,40,0.15); border-radius: 6px; margin: 4px; border: 1px solid rgba(280,20,10,1); }
+       .col-date { flex: 1.5; display: flex; flex-direction: column; font-size: 10px; color: #888; }
+       .col-bet { flex: 1.5; text-align: left; }
+       .col-x { flex: 1; text-align: center; }
+       .col-cashout { flex: 2; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 5px;}
+       .x-pill { background: rgba(255,255,255,0.1); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+       .x-pill.blue-bg { background: #1a425c; color: #4db8ff; }
+
+       /* Utilities */
+       #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; }
+       .spinner div { width: 12px; height: 12px; background: #d4af37; border-radius: 50%; margin: 0 4px; display: inline-block; animation: bounce 0.4s infinite ease-in-out both; }
+       .spinner div:nth-child(1) { animation-delay: -0.32s; }
+       .spinner div:nth-child(2) { animation-delay: -0.16s; }
+       @keyframes bounce { 0%, 80%, 100% { transform: scale(0.9); } 40% { transform: scale(1); } }
+       .message-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 1px solid #445; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+       .message-toast.show { opacity: 1; }
+       .auth-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
+       .auth-popup-content { background: #222428; padding: 25px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; border: 1px solid #5a8dec; }
+       .auth-popup h2 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+       .auth-popup p { color: #5a8dec; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+       .auth-popup-btn { background: linear-gradient(180deg, #1E90FF 0%, #0a4fbc 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; width: 100%; cursor: pointer; }
+
+       /* Win overlay */
+       .win-overlay-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 100; pointer-events: none; opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+       .win-overlay-text.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+       .win-title-small  { color: #00ffaa !important; }
+       .win-title-nice   { color: #66ffcc !important; }
+       .win-title-big    { color: #ffdf00 !important; text-shadow: 0 0 10px #ff8800, 0 0 20px #ff4400, 2px 2px 0px #000 !important; }
+       .win-title-huge   { color: #ff8800 !important; text-shadow: 0 0 10px #ff4400, 0 0 20px #ff0000, 2px 2px 0px #000 !important; }
+       .win-title-mega   { color: #ff33ff !important; text-shadow: 0 0 10px #ff00ff, 0 0 20px #aa00ff, 2px 2px 0px #000 !important; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay"><div class="spinner"><div></div><div></div><div></div></div></div>
+
+    <div class="top-nav">
+        <div class="nav-left">
+            <div class="nav-square-btn" id="top-back-btn" onclick="window.location.href='home.html'"><i class="fas fa-reply"></i></div>
+        </div>
+        <div class="nav-center">
+            <div class="balance-pill">
+                <i class="fas fa-coin balance-icon"></i>
+                <span class="balance-display" id="balance">0.29</span>
+                <button class="deposit-btn" id="top-deposit-btn" onclick="window.location.href='deposit.html'"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="nav-circle-btn" id="help-open-btn">?</div>
+            <div class="nav-circle-btn" id="main-menu-btn"><i class="fas fa-bars"></i></div>
+        </div>
+    </div>
+    
+    <div class="game-container">
+        
+        <div class="top-graphics-area">
+            <img src="" alt="" class="top-chimpanzee-img" onerror="this.style.display='none'">
+
+            <div class="extra-bet-container" id="extra-bet-btn" onclick="toggleExtraBet()">
+                <span class="ex-icon"></span>
+                <span class="ex-text">Extra Bets</span>
+                <div class="ex-toggle" id="ex-toggle-switch"><div class="ex-toggle-knob"></div></div>
+                <span class="ex-status" id="ex-status-text">OFF</span>
+            </div>
+        </div>
+
+        <div class="slot-board-container" id="slot-table">
+            <div class="board-header">
+                <div class="tips-marquee-container">
+                    <div class="tips-marquee" id="tips-marquee-text">CASINO FORTUNE</div>
+                </div>
+                <div class="win-mult-title-container">
+                    WIN<br>MULTIPLIER
+                </div>
+            </div>se
+
+            <div class="reels-wrapper">
+                <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
+            </div>
+            <div class="win-overlay-text" id="win-display-text">
+                <div id="slot-win-counter" style="font-size: 32px; font-weight: 900; color: #fff; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; text-align: center;">0.00</div>
+                <div id="slot-win-title" style="font-size: 40px; font-weight: 900; color: #ffdf00; text-shadow: 0 0 10px #d3001a, 0 0 20px #d3001a, 2px 2px 0px #000; text-align: center;">BIG WIN!</div>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="action-btn-heart left-heart" id="autoplay-btn">
+                <i class="fas fa-sync-alt" id="ap-icon"></i>
+            </div>
+
+            <div class="total-bet-console">
+                <div id="small-win-counter" style="display:none; color: #ffdf00; font-size: 14px; font-weight: 900; text-shadow: 1px 1px 2px #000; margin-bottom: 2px;">0.00</div>
+                <div class="total-bet-label" id="main-bet-title">TOTAL BET</div>
+               <div class="bet-controls-wrapper">
+    <div class="bet-controls-row">
+        <button class="pink-btn" id="half-btn"><i class="fas fa-minus"></i></button>
+        
+        <div class="bet-input-wrapper" style="flex:1; position:relative;">
+            <div class="bet-display" id="bet-input-trigger">
+                <input type="text" id="bet-amount" value="1" style="background:transparent;border:none;color:#fff;font-size:18px;font-weight:900;text-align:center;width:100%;pointer-events:none;text-shadow:1px 1px 2px #000;">
+            </div>
+        </div>
+
+        <button class="pink-btn" id="double-btn"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <button class="pink-btn lightning" id="max-btn"><i class="fas fa-bolt"></i><span>1.0X</span></button>
+</div>
+
+            </div>
+
+            <div class="action-btn-heart right-heart idle-pulse" id="spin-btn">
+                <span class="spin-text">SPIN</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="autoplay-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Spin Options</div>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="ap-new-body">
+                <div class="ap-group">
+                    <div class="ap-row"><i class="fas fa-bolt"></i> SPIN SPEED</div>
+                    <div class="ap-toggles">
+                        <button class="ap-pill active" id="ap-speed-1">1.0X</button>
+                        <button class="ap-pill" id="ap-speed-2">2.0X</button>
+                    </div>
+                </div>
+                <div class="ap-group">
+                    <div class="ap-row"><i class="fas fa-sync-alt"></i> AUTO SPIN</div>
+                    <div class="ap-auto-spins">
+                        <button class="ap-spin-btn active auto-btn-val" data-rounds="20">20</button>
+                        <button class="ap-spin-btn auto-btn-val" data-rounds="50">50</button>
+                        <button class="ap-spin-btn auto-btn-val" data-rounds="100">100</button>
+                        <button class="ap-spin-btn auto-btn-val" data-rounds="500">500</button>
+                        <button class="ap-spin-btn auto-btn-val" data-rounds="999999"><i class="fas fa-infinity"></i></button>
+                    </div>
+                </div>
+                <div class="ap-group">
+                    <div class="ap-row" style="justify-content: space-between; margin-bottom: 0;">
+                        <div style="display:flex; align-items:center;"><i class="fas fa-coins"></i> TOTAL BET</div>
+                        <div class="ap-bet-adjuster">
+                            <button class="ap-bet-btn" id="ap-bet-dec">-</button>
+                            <div class="ap-bet-val" id="ap-bet-val-display">1.00</div>
+                            <button class="ap-bet-btn" id="ap-bet-inc">+</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="ap-confirm-btn" id="start-auto-btn">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="menu-modal">
+        <div class="modal-content" style="background:#1b1d21; border-radius:12px; position:absolute; bottom:40px; padding: 16px; animation:none;">
+            <div style="padding: 4px 4px 12px 4px; color: #e5e7eb; font-size: 12px;">Email id: <span id="useremailID"></span></div>
+            <ul class="menu-list">
+                <li id="sound-toggle-menu-btn">
+                    <i class="fas fa-volume-up"></i> Sound 
+                    <div id="sound-toggle-ui" style="margin-left:auto; width:32px; height:18px; background:#62a628; border-radius:12px; position:relative; transition: background 0.2s;">
+                        <div id="sound-toggle-circle" style="width:15px; height:15px; background:#fff; border-radius:50%; position:absolute; top:1.5px; right:1.5px; transition: right 0.2s, left 0.2s;"></div>
+                    </div>
+                </li>
+                <li id="bgm-toggle-menu-btn">
+                    <i class="fas fa-music"></i> Music 
+                    <div id="bgm-toggle-ui" style="margin-left:auto; width:32px; height:18px; background:#62a628; border-radius:12px; position:relative; transition: background 0.2s;">
+                        <div id="bgm-toggle-circle" style="width:15px; height:15px; background:#fff; border-radius:50%; position:absolute; top:1.5px; right:1.5px; transition: right 0.2s, left 0.2s;"></div>
+                    </div>
+                </li>
+                <li id="freebets-menu-btn" class="menu-option-item"><i class="far fa-star"></i> Free Bets</li>
+                <li id="recordsmenu-btn" class="menu-option-item"><i class="fas fa-history"></i> Bet History</li>
+                <li id="limits-menu-btn" class="menu-option-item"><i class="fas fa-money-bill-wave"></i> Game Limits</li>
+                <li id="how-to-play-menu-btn" class="menu-option-item"><i class="far fa-question-circle"></i> How to Play</li>
+                <li id="rules-menu-btn" class="menu-option-item"><i class="far fa-file-alt"></i> Game Rules</li>
+                <li id="fairnessmenu-btn" class="menu-option-item"><i class="fas fa-balance-scale"></i> Provably Fair Settings</li>
+                <li id="closemenu" class="menu-option-item"><i class="fas fa-home"></i> Back to Home</li>
+                <li>
+                    <div style="display: flex; align-items: center; gap: 8px; color: #a1a5b0; font-size: 13px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#82E022" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8-10z"></path><path d="M7.5 12.5L11 16L17.5 8.5"></path><path d="M7 9v-1.5q0-1.5 1.5-2l1-.4"></path><path d="M11 4.5v0"></path><path d="M17 13.5c-1 2-2 3.5-3.5 4.5"></path><path d="M12.5 19.5v0"></path></svg>
+                        <span>Provably Fair Game</span>
+                    </div>
+                    <div style="color: #a1a5b0; font-size: 13px;">© <strong style="text-decoration: underline; color: #ffffff; text-underline-offset: 4px; text-decoration-thickness: 2px; font-weight: 800;">SPRIBE</strong></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="how-to-play-modal"><div class="modal-content"><div class="modal-header"><div class="modal-title"><i class="fas fa-gamepad"></i> HOW TO PLAY</div><button class="modal-close"><i class="fas fa-times"></i></button></div><div class="modal-body" style="text-align:center;"><div style="font-size:20px; font-weight:700; color:#5a8dec; margin-bottom:10px;">CASINO FORTUNE</div><p style="margin-bottom:15px; color:#fff;">Spin the reels and collect symbols on the 5 paylines! (Multiplier Reel multiplies your Gem & Wild wins!)</p><p style="color:#ccc;">Match 3 identical symbols exactly on a payline to win multipliers!</p></div></div></div>
+    <div class="modal-overlay" id="limits-modal"><div class="modal-content"><div class="modal-header"><div class="modal-title">GAME LIMITS</div><button class="modal-close"><i class="fas fa-times"></i></button></div><div class="modal-body"><p style="margin-bottom:15px;">Game limits are managed by operator. Current game limits for this game are below:</p><table class="limits-table"><tr><td>Maximum bet INR:</td><td>40,000.00</td></tr><tr><td>Minimum bet INR:</td><td>10.00</td></tr><tr><td>Maximum win for one bet INR:</td><td>800,000.00</td></tr></table></div></div></div>
+    <div class="modal-overlay" id="rules-modal"><div class="modal-content"><div class="modal-header"><div class="modal-title">GAME RULES</div><button class="modal-close"><i class="fas fa-times"></i></button></div><div class="modal-body"><div style="font-size:18px; font-weight:700; color:#5a8dec; text-align:center; margin-bottom:15px;">CASINO FORTUNE</div><p>- Casino Fortune is a 3x3 slot game awarding payouts across 5 specific paylines.</p><p>- Outcomes are generated utilizing Provably Fair RNG methodologies.</p></div></div></div>
+    
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content" style="max-width: 380px; max-height: 80vh; display: flex; flex-direction: column; background: #121418;">
+            <div class="modal-header"><div class="modal-title">BET HISTORY</div><button class="modal-close"><i class="fas fa-times"></i></button></div>
+            <div class="list-header"><div class="col-date">Date</div><div class="col-bet">Bet INR</div><div class="col-x">X</div><div class="col-cashout">Cash out INR</div></div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column;">
+                <div id="history-list" style="flex: 1;"></div>
+                <div style="text-align: center; padding: 15px; background: #1b1c1d; margin-top: auto;"><button id="load-more-history-btn" style="background: #2b2b2c; color: #aaa; border: none; padding: 8px 16px; border-radius: 16px; font-size: 12px; cursor: pointer; display: none;">Load more</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="fairness-modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header"><div class="modal-title">PROVABLY FAIR SETTINGS</div><button class="modal-close"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body" style="padding: 20px;">
+                <p style="color: #aaa; margin-bottom: 10px;">This game uses Provably Fair technology to determine game result. This tool gives you ability to change your seed and check fairness of the game.</p>
+                <div style="background: #1a1c20; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; background: #2a2c30; border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span id="client-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">ZT6tUHTD300bl...</span>
+                        </div>
+                        <button onclick="updateSeeds()" style="background: #333; border: none; color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <div style="background: #1a1c20; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; background: #2a2c30; border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span id="server-seed" style="color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">0xiaci5bskddmg...</span>
+                        </div>
+                        <button onclick="updateSeeds()" style="background: #333; border: none; color: #ccc; width: 36px; border-radius: 6px; cursor: pointer;"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="insufficient-balance-modal"><div class="modal-content" style="max-width: 320px; text-align: center; border: 1px solid #e42c42;"><div class="modal-header" style="border-bottom: none;"><div class="modal-title" style="color: #e42c42; display: flex; align-items: center; gap: 8px;"><i class="fas fa-wallet"></i> LOW BALANCE</div><button class="modal-close"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding-top: 0px;"><i class="fas fa-coins" style="font-size: 50px; color: #ffc107; margin-bottom: 15px;"></i><p style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: 500;">Insufficient Balance</p><button id="popup-add-cash-btn" style="background: linear-gradient(180deg, #e42c42 0%, #a81123 100%); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer;" onclick="window.location.href='deposit.html'">Add Cash</button></div></div></div>
+    <div class="auth-popup" id="auth-popup"><div class="auth-popup-content"><h2>Authentication Required!!</h2><p id="auth-message">Please Sign-up or Sign-in To Start Playing Games</p><button class="auth-popup-btn" id="sign-in-btn">Sign In to Play</button></div></div>
+    <div class="message-toast" id="message-toast">Message</div>
+
+    <div class="modal-overlay" id="epic-win-modal" style="z-index: 10000002;">
+        <div class="modal-content" style="background: transparent; box-shadow: none; align-items: center; display: flex; flex-direction: column; cursor: pointer; border: none; max-width: 100%; width: 100vw;" id="epic-win-content">
+            <div id="epic-win-title" style="font-size: 40px; font-weight: 900; color: #ffdf00; text-shadow: 0 0 10px #d3001a, 0 0 20px #d3001a, 2px 2px 0px #000; text-align: center; margin-bottom: 10px; text-transform: uppercase;">LEGENDARY WIN</div>
+            <div id="epic-win-counter" style="font-size: 55px; font-weight: 900; color: #fff; text-shadow: 0 0 15px #ff00ff, 2px 2px 4px #000; text-align: center;">0.00</div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        function generateRandomSeed(length = 16) { const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; let result = ""; for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length)); return result; }
+        function updateSeeds() { document.getElementById("client-seed").textContent = generateRandomSeed(16); document.getElementById("server-seed").textContent = generateRandomSeed(16); }
+        updateSeeds(); setInterval(updateSeeds, 15000);
+
+        class SoundPool {
+            constructor() {
+                this.sharedCtx = null;
+                this.sounds = {};       
+                this.activeSources = {}; 
+                this.init();
+            }
+
+            _getCtx() {
+                if (!this.sharedCtx || this.sharedCtx.state === 'closed') {
+                    this.sharedCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                return this.sharedCtx;
+            }
+
+            async init() {
+                this.soundUrls = {
+                    spinStart:              'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    genericClick:           'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    betControl:             'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click4.wav',
+                    autoplayStart:          'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/startbetbtn.mp3',
+                    winTone:                'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallWinsTile.mp3',
+                    loseTone:               'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallLosTile.mp3',
+                    spinning:               'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/floraphonic-rotate-movement-whoosh-1-185335.mp3',
+                    excitingSpin:           'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/floraphonic-rotate-movement-whoosh-1-185335.mp3',
+                    nearMissSpin:           'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/floraphonic-rotate-movement-whoosh-1-185335.mp3',
+                    smallWin:               'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/ping-82822.mp3',
+                    niceWin:                'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/RStp9.wav',
+                    bigWin:                 'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/new-notification-016-350210.mp3',
+                    hugeWin:                'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/cartoon-yoink-2-183916.mp3',
+                    megaWin:                'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallWinsTile.mp3',
+                    legendaryWin:           'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/startbetbtn.mp3',
+                    megaJackpot:            'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/GreenBallWinsTile.mp3',
+                    reelStop:               'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/ping-82822.mp3',
+                    coinCounting:           'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/RStp9.wav',
+                    betMinus:               'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    betPlus:                'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click1.wav',
+                    spinClick:              'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    normalModeToggle:       'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    fastModeToggle:         'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    autoplayClick:          'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    modalOpen:              'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav',
+                    modalClose:             'https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/Click3.wav'
+                };
+
+                const urlToBuffer = {};
+                const uniqueUrls = [...new Set(Object.values(this.soundUrls))];
+
+                for (const url of uniqueUrls) {
+                    if (!url) continue;
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const ctx = this._getCtx();
+                        const buf = await ctx.decodeAudioData(await response.arrayBuffer());
+                        urlToBuffer[url] = buf;
+                    } catch(e) { }
+                }
+
+                for (const [key, url] of Object.entries(this.soundUrls)) {
+                    if (urlToBuffer[url]) this.sounds[key] = urlToBuffer[url];
+                }
+            }
+
+            play(soundName, volume = 1.0, options = {}) {
+                if (!this.sounds[soundName]) return;
+                const ctx = this._getCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                const source = ctx.createBufferSource();
+                source.buffer = this.sounds[soundName];
+
+                if (options.loop) {
+                    source.loop = true;
+                    if (options.loopEnd) { source.loopStart = 0; source.loopEnd = options.loopEnd; }
+                }
+                if (options.playbackRate) source.playbackRate.value = options.playbackRate;
+
+                this.activeSources[soundName] = source;
+
+                const gainNode = ctx.createGain();
+                gainNode.gain.value = volume;
+                source.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                source.start(0);
+                source.onended = () => { delete this.activeSources[soundName]; };
+            }
+
+            stop(soundName) {
+                if (this.activeSources[soundName]) {
+                    try { this.activeSources[soundName].stop(); } catch(e) {}
+                    delete this.activeSources[soundName];
+                }
+            }
+        }
+
+        const soundPool = new SoundPool();
+        function playSound(key, vol = 1.0, opts = {}) { if(gameState.soundEnabled) soundPool.play(key, vol, opts); }
+        function stopSound(key) { soundPool.stop(key); }
+
+        const SlotConfig = {
+            gem1: { name: 'gem1', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol06.webp' },
+            gem2: { name: 'gem2', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol05.webp' },
+            gem3: { name: 'gem3', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol04.webp' },
+            gem4: { name: 'gem4', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol03.webp' },
+            gem5: { name: 'gem5', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol02.webp' },
+            gem6: { name: 'gem6', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol01.webp' },
+            gem7: { name: 'gem7', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol00.webp' },
+            wild: { name: 'wild', src: 'https://uat-web-cdn.jiligames.com/static/images/intro/fg3/symbol07.webp' },
+            mult_1x:  { name: 'mult_1x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg0IwfGW8AwX6gZxvc-7-2-Q5qQAi_C26tMKsWVca98PJY13sUuV3Sf-crB3X_NtpyhfeROfJcjWSu3xswqgSLufyJNGVsdX1NMnThzEIFGeRMhtPPQ2S6FPoGGYR67q7oBeS0hx6kHxBrrTz_BVM7KoE2mkUqkpX9z-0uqCu64-e44fLr-zyQGAg-Y5oQ/s981/1000124926.png' },
+            mult_2x:  { name: 'mult_2x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFMkViF9F2UTiabU8DbWgNxWWmYyFxmA6sSLFuX230JF_LJTH1Grs3Fp6pfBs9MzX5bkR9OhSxC-Im6colDHR5FslwRJnne-Y2-MoLW0xL5I1vqZK5X33Vj241OdH0JH6G0jkYT4SUmvNELKuxrlv-2cePYCnA9rrwbee1nqGtWcVlj1qbrNKKHu4U0a8/s940/1000124927.png' },
+            mult_3x:  { name: 'mult_3x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjY67XPYZ6Opvzn8rXA9Xhu4gtAi7YBF5204mT9zcxbISuz5cs-qBNHFvIkAbC_I_44syVk-Qnvo6NkB2ovf_TLbx6ZA2RueW5HjYYmAoBWYmWqfPH7Q8Z_szgh9OkRPxix7bqt33RBTIDDLNud6CZMp9hsDs9IW3lidpy2lirgdPmY8R8Za6JO8X4GQeE/s945/1000124928.png' },
+            mult_4x:  { name: 'mult_4x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNvMoEDqNdRFs1P-_KWCd8-syZ6N9KtzMWb1HQpoZYq5i5ZB-xlqCJ_YSVbqsMd6Sy_Pt-Hz9Zvre0W5fmH00fg6_F67e4w7emv0EdYorZ5wJBgH1kNriHw4y980C4-ATJhR49eMnr0e6eqxSQkA8da8ZlRhVybzjgDRBsPuCFG1-S8XIuzlTLnT6CTbU/s1037/1000124937.png' },
+            mult_5x:  { name: 'mult_5x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhzLw3Y9QyOXeSQs7H6c6Qq4Qh-Qm_sraERpEvdb9sYLyQmoyV5qctsV4gs79ryDpoazK57OmaiZCzQu-rhXItiVKAEZm8UP3fmC4Kj1STCXk2YTO11r2d49vLkFjOo7MLvVDeJBfglgnWLEcjQoXTacSwZNCGNHHPkrI0Byt5-ZK9aG4P72eAk02nzvo/s940/1000124929.png' },
+            mult_6x:  { name: 'mult_6x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQkhXZKaNM2VfXwZXszpdM7AbGUfGbUCipiQ2as-Dlc0slNHySUPbCuoB9j3_jZKEKjiAKz5HvoGjLXMUvqSXc_sSof5tJBXr1vQdCSZUwc3o4riUD06HeOBRWkLm1nOF0v2HLKk5WI1ZnBw-7PtiMN5UqcHqPCSd0V5mBdMpTjG-rGSFDacq5s6MJLTs/s1026/1000124940.png' },
+            mult_8x:  { name: 'mult_8x',  src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7AVY1JLiwjsofPllTQbTUQxxDHXwQamaF2sHv3mMj0R7i4QlOMbxfjOceTIw9pahaVSKd5kDo5EeKad9FeV6j-NUJGD9oy4IpF8CC0f-rgukqjj55qkGdr7aE01te3uQzbgE3NClANG_Amme-NjygSP24Qr-CpU8HAoKAQP-B3L3pmBvWMuK3RNwzVyE/s1030/1000124930.png' },
+            mult_10x: { name: 'mult_10x', src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbHRDLw0yqSw6KVsALL65xC7ZL-gN-zUwwSN6UwHZ4CNt3QGIx6atLfFP8Nty5J-xPPWlMGaqwq-8X-5eM8qeG-tg1ELsKKC4p3JShCHigihIy3BHuYPtSJAChjQvBcTLoJrarvVVux_LcX3yMfuQaaqz-DQ2YvposoLVxmwbWBnQWtjGst2y-lYA-D1o/s917/1000124931.png' },
+            mult_15x: { name: 'mult_15x', src: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXrG7pdqPhWdnd8OPOIpJNZMGy1qSoMSIszRi7EKPOtqklEwisRlNKgKv-EGQfNibodmS_UpiCfRKDJXiBB8Y7d1LXStJuUD8dNxI2IbCHbQCFmhf6oUhJsD6CY4GpjcnC5MTX0RTSuD0CYSXnbc2YYmzgpoBHsl_7D6-lWCSJy7MM-yWeQVK3AWPl6YQ/s956/1000124932.png' }
+        };
+
+        const allowedBets = [1, 2, 5, 10, 20, 30, 50, 100, 200, 500, 750, 1000, 1500, 2500];
+        let currentBetIndex = 3; 
+
+        let winCountObj = { active: false, interval: null, currentValue: 0, targetValue: 0, element: null, onComplete: null, lastSfxValue: 0 };
+        let epicModalState = 'hidden'; 
+        let epicModalTimeout = null;
+
+        const gameState = {
+            soundEnabled: true, balance: 0, betAmount: 10, userAuthenticated: false, isPlaying: false,
+            lifetimeWagered: 0, lifetimeWon: 0, globalMode: 'NORMAL', isFastSpeed: false,
+            autoplayActive: false, autoplayColors: ['spin'], autoplayTargetRounds: 20, autoplayRoundsPlayed: 0,
+            autoplayInitialBalance: 0, stopLossAmount: 0, stopLossActive: false, stopWinAmount: 0, stopWinActive: false,
+            autoplayTimeout: null, spinsSinceLastWin: 0,
+            manualStopRequested: false, spinTimeouts: [], currentFinalGrid: null, currentFinalRes: null,
+            isCountingWin: false, extraBetActive: false,
+            bgmEnabled: localStorage.getItem('bgmEnabled') !== 'false'
+        };
+
+       const firebaseConfig = {
+  apiKey: "AIzaSyAfVcC_wBMaarOExZVrUeqZf65NzT7BCfU",
+  authDomain: "kamaaikendra-546d6.firebaseapp.com",
+  databaseURL: "https://kamaaikendra-546d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kamaaikendra-546d6",
+  storageBucket: "kamaaikendra-546d6.firebasestorage.app",
+  messagingSenderId: "878228615894",
+  appId: "1:878228615894:web:c3660d7510fb05d0d54f77"
+};
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const balanceElement = document.getElementById('balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const msgToast = document.getElementById('message-toast');
+        const reels = [document.getElementById('reel-0'), document.getElementById('reel-1'), document.getElementById('reel-2'), document.getElementById('reel-3')]; 
+
+        const bgmAudio = new Audio('https://kimi-win-registration-authiiiiuuu.github.io/sfx-files/clockwork_joyride.mp3'); 
+        bgmAudio.loop = true;
+        bgmAudio.volume = 0.3;
+        
+        function syncBgmUI() {
+            const bgmToggleUI = document.getElementById('bgm-toggle-ui');
+            const bgmToggleCircle = document.getElementById('bgm-toggle-circle');
+            if(gameState.bgmEnabled) {
+                bgmToggleUI.style.background = '#4caf50';
+                bgmToggleCircle.style.right = '2px';
+                bgmAudio.play().catch(e => {});
+            } else {
+                bgmToggleUI.style.background = '#555';
+                bgmToggleCircle.style.right = '18px';
+                bgmAudio.pause();
+            }
+        }
+
+        function showMessage(msg) { msgToast.textContent = msg; msgToast.classList.add('show'); setTimeout(() => msgToast.classList.remove('show'), 2500); }
+
+        function setSpinBtnIdle(idle) {
+            const btn = document.getElementById('spin-btn');
+            if (idle) btn.classList.add('idle-pulse'); else btn.classList.remove('idle-pulse');
+        }
+
+        async function init() {
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 800);
+            const userEmailSpan = document.getElementById('useremailID');
+            if(userEmailSpan) userEmailSpan.textContent = localStorage.getItem('email') || 'Guest User';
+            checkAuthentication();
+            setupEventListeners();
+            syncBetDisplay();
+            initReelsVisuals();
+            syncBgmUI();
+            runMarquee(); 
+            
+            document.body.addEventListener('click', function unlockAudio() {
+                if(gameState.bgmEnabled && bgmAudio.paused) bgmAudio.play().catch(e => {});
+                document.body.removeEventListener('click', unlockAudio);
+            }, { once: true });
+
+            await setupGlobalPlatformListener();
+        }
+
+        // Marquee Logic for Tips Announcement
+        const gameNameText = "CASINO FORTUNE";
+        const tipsList = [
+            "activate EX and the chance of winning score",
+            "Match 3 identical symbols to win multipliers!",
+            "Extra Bet removes all 1x multipliers!"
+        ];
+        let tipIdx = 0;
+
+        function runMarquee() {
+            const marqueeEl = document.getElementById('tips-marquee-text');
+            if(!marqueeEl) return;
+            
+            marqueeEl.style.transition = 'none';
+            marqueeEl.style.transform = 'translateX(0px)';
+            marqueeEl.style.position = 'static';
+            marqueeEl.style.width = '100%';
+            marqueeEl.style.textAlign = 'center';
+            marqueeEl.innerText = gameNameText;
+            
+            setTimeout(() => {
+                marqueeEl.innerText = tipsList[tipIdx];
+                marqueeEl.style.position = 'absolute';
+                marqueeEl.style.width = 'auto';
+                marqueeEl.style.textAlign = 'left';
+                marqueeEl.style.transform = 'translateX(300px)'; 
+                
+                tipIdx = (tipIdx + 1) % tipsList.length;
+                void marqueeEl.offsetWidth; 
+                
+                marqueeEl.style.transition = 'transform 8s linear';
+                marqueeEl.style.transform = 'translateX(-400px)'; 
+                
+                setTimeout(runMarquee, 8000);
+            }, 10000);
+        }
+
+        function setupGlobalPlatformListener() {
+            return new Promise((resolve) => {
+                database.ref('platformControl/globalModes/king').on('value', snap => {
+                    gameState.globalMode = snap.exists() ? snap.val() : 'NORMAL';
+                    resolve(); 
+                });
+            });
+        }
+
+        function checkAuthentication() {
+            const uid = localStorage.getItem('uid');
+            if (uid) {
+                gameState.userAuthenticated = true;
+                document.getElementById('auth-popup').style.display = 'none';
+                loadUserData(uid);
+            } else {
+                gameState.userAuthenticated = false;
+                document.getElementById('auth-popup').style.display = 'flex';
+                document.getElementById('sign-in-btn').onclick = () => { window.location.href = 'index.html'; }
+            }
+        }
+
+        let _historyCache = null;
+        let _historyCacheUid = null;
+
+        function loadUserData(uid) {
+            database.ref('appusers/' + uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    gameState.balance = data.totalBalance || 0;
+                    gameState.lifetimeWagered = data.lifetimeWagered || 0;
+                    gameState.lifetimeWon = data.lifetimeWon || 0;
+                    balanceElement.textContent = gameState.balance.toFixed(2);
+                }
+            });
+        }
+
+        function updateBalance(amount) {
+            const uid = localStorage.getItem('uid');
+            if(!uid) return Promise.resolve(gameState.balance);
+            return database.ref('appusers/' + uid).transaction((userData) => {
+                if (userData) {
+                    let total = userData.totalBalance || 0;
+                    let withdrawable = userData.withdrawableBalance || 0;
+                    if (amount < 0) {
+                        let betAmount = Math.abs(amount);
+                        let unwithdrawable = total - withdrawable;
+                        if (unwithdrawable < 0) unwithdrawable = 0;
+                        if (betAmount <= unwithdrawable) unwithdrawable -= betAmount;
+                        else withdrawable -= (betAmount - unwithdrawable);
+                        userData.totalBalance = total - betAmount;
+                        userData.withdrawableBalance = Math.max(0, withdrawable);
+                        userData.lifetimeWagered = (userData.lifetimeWagered || 0) + betAmount;
+                    } else if (amount > 0) {
+                        userData.totalBalance = total + amount;
+                        userData.withdrawableBalance = withdrawable + amount;
+                        userData.lifetimeWon = (userData.lifetimeWon || 0) + amount;
+                    }
+                }
+                return userData;
+            }).then((result) => {
+                _historyCache = null;
+                return result.committed ? result.snapshot.val().totalBalance : gameState.balance;
+            });
+        }
+
+        function saveToMyBets(betAmount, winAmount) {
+            const uid = localStorage.getItem('uid');
+            if (!uid) return;
+            const now = new Date();
+            const record = {
+                gameName: "Casino Fortune",
+                time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+                date: `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getFullYear()).slice(-2)}`,
+                timestamp: Date.now(),
+                betAmount: betAmount,
+                winAmount: winAmount
+            };
+            _historyCache = null;
+            database.ref(`appusers/${uid}/betHistory`).push(record).catch(e => console.error(e));
+        }
+
+        function getSymbolImg(sym) {
+            const url = SlotConfig[sym] ? SlotConfig[sym].src : `assets/${sym}.png`;
+            return `<img src="${url}" class="slot-icon" alt="${sym}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/320px-Image_not_available.png'">`;
+        }
+
+        function getRandomSymbol() {
+            const weights = { 
+                gem1: 9500, gem2: 9500, gem3: 9000, gem4: 7500, gem5: 5000, gem6: 3000, gem7: 2000, wild: 1000
+            };
+            let totalWeight = 0; for(let key in weights) totalWeight += weights[key];
+            let randomNum = Math.random() * totalWeight;
+            let currentWeight = 0;
+            for(let key in weights) { currentWeight += weights[key]; if(randomNum <= currentWeight) return key; }
+            return 'gem1'; 
+        }
+
+        function getMultiplierSymbol(isWin) {
+            const weights = isWin ? {
+                'mult_1x': 8000, 'mult_2x': 1000, 'mult_3x': 500, 'mult_4x': 250, 
+                'mult_5x': 100, 'mult_6x': 80, 'mult_8x': 40, 'mult_10x': 20, 'mult_15x': 10
+            } : {
+                'mult_1x': 500, 'mult_2x': 1000, 'mult_3x': 1500, 'mult_4x': 2000, 
+                'mult_5x': 2000, 'mult_6x': 1500, 'mult_8x': 1000, 'mult_10x': 300, 'mult_15x': 200
+            };
+            
+            // Remove 1x multipliers completely when Extra Bet is Active
+            if (gameState.extraBetActive) {
+                delete weights['mult_1x'];
+            }
+
+            let totalWeight = 0; for(let key in weights) totalWeight += weights[key];
+            let randomNum = Math.random() * totalWeight;
+            let currentWeight = 0;
+            for(let key in weights) { currentWeight += weights[key]; if(randomNum <= currentWeight) return key; }
+            return 'mult_2x'; // Fallback just in case, though math ensures return
+        }
+
+        function initReelsVisuals() {
+            reels.forEach((r, idx) => {
+                let html = '';
+                for(let i=0; i<30; i++) {
+                    let sym = idx === 3 ? getMultiplierSymbol(false) : getRandomSymbol();
+                    html += `<div class="symbol-slot">${getSymbolImg(sym)}</div>`;
+                }
+                r.innerHTML = html;
+                r.style.transform = `translateY(-1485px)`;
+            });
+        }
+
+        function generateRandomGrid() {
+            let grid = [[],[],[]]; 
+            for(let c=0; c<3; c++) for(let r=0; r<3; r++) grid[c][r] = getRandomSymbol();
+            return grid;
+        }
+
+        function evaluateGrid(grid) {
+            let gemMult = 0, winningCoords = [];
+
+            const payouts = {
+                'wild': 5,
+                'gem1': 4,
+                'gem2': 3,
+                'gem3': 2,
+                'gem4': 1.6,
+                'gem5': 1.2,
+                'gem6': 1,
+                'gem7': 0.4
+            };
+
+            const paylines = [
+                [{c:0, r:0}, {c:1, r:0}, {c:2, r:0}], 
+                [{c:0, r:1}, {c:1, r:1}, {c:2, r:1}], 
+                [{c:0, r:2}, {c:1, r:2}, {c:2, r:2}], 
+                [{c:0, r:0}, {c:1, r:1}, {c:2, r:2}], 
+                [{c:0, r:2}, {c:1, r:1}, {c:2, r:0}]  
+            ];
+
+            paylines.forEach(line => {
+                let sym1 = grid[line[0].c][line[0].r];
+                let sym2 = grid[line[1].c][line[1].r];
+                let sym3 = grid[line[2].c][line[2].r];
+
+                let lineSymbol = null;
+                if (sym1 !== 'wild') lineSymbol = sym1;
+                else if (sym2 !== 'wild') lineSymbol = sym2;
+                else if (sym3 !== 'wild') lineSymbol = sym3;
+                else lineSymbol = 'wild';
+
+                if ((sym1 === lineSymbol || sym1 === 'wild') &&
+                    (sym2 === lineSymbol || sym2 === 'wild') &&
+                    (sym3 === lineSymbol || sym3 === 'wild')) {
+                    
+                    winningCoords.push(...line);
+                    
+                    if (payouts[lineSymbol]) {
+                        gemMult += payouts[lineSymbol];
+                    }
+                }
+            });
+
+            let uniqueCoords = []; let stringSet = new Set();
+            winningCoords.forEach(c => { let s = `${c.c},${c.r}`; if(!stringSet.has(s)) { stringSet.add(s); uniqueCoords.push(c); } });
+            
+            return { gemMult, winningCoords: uniqueCoords, mult: gemMult, flatWin: 0 };
+        }
+
+        function getGridWithMultiplier() {
+            let grid = generateRandomGrid();
+            let res = evaluateGrid(grid);
+            
+            let baseWin = (gameState.betAmount * res.mult) + res.flatWin;
+            let isWin = baseWin > 0;
+            
+            let m1 = getMultiplierSymbol(isWin);
+            let m2 = getMultiplierSymbol(isWin);
+            let m3 = getMultiplierSymbol(isWin);
+            
+            while (m1 === m2 && m2 === m3) { m3 = getMultiplierSymbol(isWin); }
+            grid[3] = [m1, m2, m3];
+            
+            let activeMultVal = parseInt(grid[3][1].split('_')[1].replace('x',''));
+            
+            if (isWin) {
+                res.gemMult *= activeMultVal; 
+                res.mult = res.gemMult;
+                if (res.gemMult > 0) res.winningCoords.push({c: 3, r: 1}); 
+            }
+            return { grid, res };
+        }
+
+        function getSpinCost() {
+            return gameState.extraBetActive ? (gameState.betAmount * 1.5) : gameState.betAmount;
+        }
+
+        function startWinCount(targetAmount, durationSec, elementId, onCompleteCb) {
+            if(winCountObj.active) cancelAnimationFrame(winCountObj.interval);
+            gameState.isCountingWin = true;
+            winCountObj.active = true;
+            winCountObj.targetValue = targetAmount;
+            winCountObj.element = document.getElementById(elementId);
+            winCountObj.onComplete = onCompleteCb;
+            winCountObj.lastSfxValue = 0;
+            
+            const startTime = performance.now();
+            const durationMs = durationSec * 1000;
+            
+            function update(currentTime) {
+                if(!winCountObj.active) return;
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / durationMs, 1);
+                winCountObj.currentValue = 0.1 + (progress * (targetAmount - 0.1));
+                if(winCountObj.currentValue > targetAmount) winCountObj.currentValue = targetAmount;
+                if(targetAmount === 0) winCountObj.currentValue = 0; 
+                if(winCountObj.currentValue - winCountObj.lastSfxValue >= 0.1) {
+                    playSound('coinCounting');
+                    winCountObj.lastSfxValue = winCountObj.currentValue;
+                }
+                if(winCountObj.element) winCountObj.element.innerText = winCountObj.currentValue.toFixed(2);
+                if(progress < 1) winCountObj.interval = requestAnimationFrame(update);
+                else finishWinCount();
+            }
+            winCountObj.interval = requestAnimationFrame(update);
+        }
+
+        function skipWinCount() {
+            if(!winCountObj.active) return;
+            winCountObj.active = false;
+            cancelAnimationFrame(winCountObj.interval);
+            winCountObj.currentValue = winCountObj.targetValue;
+            if(winCountObj.element) winCountObj.element.innerText = winCountObj.currentValue.toFixed(2);
+            gameState.isCountingWin = false;
+            if(winCountObj.onComplete) winCountObj.onComplete();
+        }
+
+        function finishWinCount() {
+            winCountObj.active = false;
+            gameState.isCountingWin = false;
+            if(winCountObj.element) winCountObj.element.innerText = winCountObj.targetValue.toFixed(2);
+            if(winCountObj.onComplete) winCountObj.onComplete();
+        }
+
+        function displayWinSequence(ratio, amount, duration, onCompleteCb) {
+            gameState.isCountingWin = true;
+            let targetElementId = '';
+            const winTitle    = document.getElementById('main-bet-title');
+            const slotTitle   = document.getElementById('slot-win-title');
+            const winOverlay  = document.getElementById('win-display-text');
+
+            if (ratio < 1.9) {
+                winTitle.innerText = "SMALL WIN";
+                winTitle.className = 'total-bet-label win-title-small';
+                document.getElementById('small-win-counter').style.display = "block";
+                targetElementId = 'small-win-counter';
+            } else if (ratio < 5) {
+                winTitle.innerText = "NICE WIN";
+                winTitle.className = 'total-bet-label win-title-nice';
+                document.getElementById('small-win-counter').style.display = "block";
+                targetElementId = 'small-win-counter';
+            } else if (ratio < 10) {
+                slotTitle.innerText = "BIG WIN!";
+                slotTitle.className = 'win-title-big';
+                slotTitle.style.fontSize = '40px';
+                winOverlay.classList.add('show');
+                targetElementId = 'slot-win-counter';
+            } else if (ratio < 20) {
+                slotTitle.innerText = "HUGE WIN!";
+                slotTitle.className = 'win-title-huge';
+                slotTitle.style.fontSize = '44px';
+                winOverlay.classList.add('show');
+                targetElementId = 'slot-win-counter';
+            } else if (ratio < 100) {
+                slotTitle.innerText = "MEGA WIN!";
+                slotTitle.className = 'win-title-mega';
+                slotTitle.style.fontSize = '48px';
+                winOverlay.classList.add('show');
+                targetElementId = 'slot-win-counter';
+            } else {
+                document.getElementById('epic-win-title').innerText = "LEGENDARY WIN";
+                document.getElementById('epic-win-modal').classList.add('show');
+                epicModalState = 'counting';
+                targetElementId = 'epic-win-counter';
+            }
+
+            startWinCount(amount, duration, targetElementId, () => {
+                if (ratio >= 100) {
+                    epicModalState = 'stopped';
+                    clearTimeout(epicModalTimeout);
+                    epicModalTimeout = setTimeout(() => { hideEpicModal(); }, 5000);
+                } else if (ratio >= 5 && ratio < 100) {
+                    setTimeout(() => { if (!gameState.isCountingWin) winOverlay.classList.remove('show'); }, 2000);
+                }
+                if(onCompleteCb) onCompleteCb();
+            });
+        }
+
+        function hideEpicModal() {
+            document.getElementById('epic-win-modal').classList.remove('show');
+            epicModalState = 'hidden';
+            clearTimeout(epicModalTimeout);
+        }
+
+        function playReelStop() {
+            playSound('reelStop', 1.0);
+        }
+
+        async function triggerSpin() {
+            if (gameState.isCountingWin) { skipWinCount(); return; }
+            validateBet();
+            if(gameState.isPlaying) return;
+            if(!gameState.userAuthenticated) { document.getElementById('auth-popup').style.display = 'flex'; stopAutoplay(); return; }
+
+            const totalCost = getSpinCost();
+
+            if(totalCost > gameState.balance) {
+                document.getElementById('insufficient-balance-modal').classList.add('show');
+                stopAutoplay(); return;
+            }
+            
+            document.getElementById('main-bet-title').innerText = "TOTAL BET";
+            document.getElementById('main-bet-title').className = 'total-bet-label';
+            document.getElementById('small-win-counter').style.display = "none";
+            document.getElementById('win-display-text').classList.remove('show');
+            hideEpicModal();
+            document.querySelectorAll('.win-glow').forEach(el => el.classList.remove('win-glow'));
+            document.getElementById('slot-table').classList.remove('near-miss-active');
+
+            gameState.isPlaying = true;
+            gameState.manualStopRequested = false;
+            gameState.currentFinalGrid = null;
+            gameState.currentFinalRes = null;
+            document.querySelector('#spin-btn .spin-text').innerText = 'STOP';
+            setSpinBtnIdle(false); 
+            
+            playSound('spinStart');
+            let pbRate = gameState.isFastSpeed ? 2.0 : 1.0;
+            playSound('spinning', 0.1, { loop: true, loopEnd: 0.1, playbackRate: pbRate });
+            
+            setControlsLock(true);
+
+            reels.forEach((r, idx) => {
+                let html = '';
+                for(let i=0; i<30; i++) {
+                    let sym = idx === 3 ? getMultiplierSymbol(false) : getRandomSymbol();
+                    html += `<div class="symbol-slot">${getSymbolImg(sym)}</div>`;
+                }
+                r.innerHTML = html;
+                r.style.transition = 'none';
+                r.classList.add('reel-spinning-infinite');
+            });
+            
+            const bAfterBet = await updateBalance(-totalCost);
+            gameState.balance = bAfterBet;
+            balanceElement.textContent = bAfterBet.toFixed(2);
+            
+            let finalGrid, finalRes;
+
+            let targetRTP = gameState.globalMode === 'PAYOUT' ? 1.10 : (gameState.globalMode === 'RECOVERY' ? 0.30 : 0.95);
+            let currentRTP = gameState.lifetimeWagered > 50 ? (gameState.lifetimeWon / gameState.lifetimeWagered) : 0.50;
+            let restrictBigWins = currentRTP > targetRTP;
+            let forceDrain = currentRTP > (targetRTP + 0.15);
+            
+            for (let i = 0; i < 300; i++) {
+                let gen = getGridWithMultiplier();
+                finalGrid = gen.grid; finalRes = gen.res;
+                let winAmount = (gameState.betAmount * finalRes.mult) + finalRes.flatWin;
+                let isWin = winAmount > 0; let isBigWin = winAmount > (gameState.betAmount * 5); let isSmallWin = isWin && !isBigWin;
+                if (gameState.spinsSinceLastWin > 7 && isSmallWin && !forceDrain) break;
+                if (forceDrain) { if (!isWin || winAmount <= (gameState.betAmount * 0.5)) break;
+                } else if (restrictBigWins) { if (!isBigWin) break;
+                } else { if (gameState.spinsSinceLastWin > 12 && isWin) break; if (!isWin || Math.random() > 0.3) break; }
+            }
+
+            if (finalRes.mult > 0 || finalRes.flatWin > 0) gameState.spinsSinceLastWin = 0; else gameState.spinsSinceLastWin++;
+            animateSlotReelsStop(finalGrid, finalRes);
+        }
+
+        function manualStop() {
+            if (!gameState.isPlaying || gameState.manualStopRequested) return;
+            gameState.manualStopRequested = true;
+            
+            if (gameState.spinTimeouts && gameState.spinTimeouts.length > 0) {
+                gameState.spinTimeouts.forEach(clearTimeout);
+                gameState.spinTimeouts = [];
+                reels.forEach((r, idx) => {
+                    r.classList.remove('reel-spinning-infinite');
+                    r.style.transition = 'none'; r.style.transform = `translateY(0px)`;
+                    if (gameState.currentFinalGrid) playReelStop();
+                });
+                stopSound('spinning'); stopSound('nearMissSpin');
+                document.querySelector('#spin-btn .spin-text').innerText = 'SPIN';
+                if (gameState.currentFinalRes) resolveSlotWin(gameState.currentFinalRes);
+            }
+        }
+
+        function animateSlotReelsStop(finalGrid, finalRes) {
+            gameState.currentFinalGrid = finalGrid; gameState.currentFinalRes = finalRes;
+            
+            const baseSpinDuration = gameState.isFastSpeed ? 750 : 1500;
+            const staggerDelay = gameState.isFastSpeed ? 250 : 500; 
+            
+            gameState.spinTimeouts.forEach(clearTimeout); gameState.spinTimeouts = [];
+
+            if (gameState.manualStopRequested) {
+                reels.forEach((r, idx) => {
+                    r.classList.remove('reel-spinning-infinite');
+                    let numCycles = 5; let numExtraSymbols = numCycles * 3;
+                    let html = '';
+                    for(let row=0; row<3; row++) html += `<div class="symbol-slot">${getSymbolImg(finalGrid[idx][row])}</div>`;
+                    for(let i=0; i<numExtraSymbols; i++) {
+                        let sym = idx === 3 ? getMultiplierSymbol(false) : getRandomSymbol();
+                        html += `<div class="symbol-slot">${getSymbolImg(sym)}</div>`;
+                    }
+                    r.innerHTML = html; r.style.transition = 'none'; r.style.transform = `translateY(0px)`;
+                    playReelStop();
+                });
+                stopSound('spinning'); stopSound('nearMissSpin'); 
+                document.querySelector('#spin-btn .spin-text').innerText = 'SPIN';
+                resolveSlotWin(finalRes); return;
+            }
+
+            let highValueSymbols = ['gem4', 'gem5', 'gem6', 'gem7', 'wild'];
+            let highValCount = finalGrid.flat().filter(s => highValueSymbols.includes(s)).length;
+            let isType3_NearMissOrBig = (finalRes.mult >= 2) || (highValCount >= 2 && finalRes.mult === 0);
+
+            if (isType3_NearMissOrBig && finalRes.mult === 0) {
+                document.getElementById('slot-table').classList.add('near-miss-active');
+            }
+
+            let spinTimes = [];
+            if (isType3_NearMissOrBig) {
+                let pbRate = gameState.isFastSpeed ? 2.0 : 1.0;
+                playSound('nearMissSpin', 0.15, { loop: true, loopEnd: 0.4, playbackRate: pbRate * 0.7 }); 
+                let syncTime = baseSpinDuration + (gameState.isFastSpeed ? 400 : 800);
+                spinTimes = [syncTime, syncTime, syncTime, syncTime];
+            } else {
+                spinTimes = [baseSpinDuration, baseSpinDuration + staggerDelay, baseSpinDuration + staggerDelay * 2, baseSpinDuration + staggerDelay * 3];
+            }
+
+            reels.forEach((r, idx) => {
+                r.classList.remove('reel-spinning-infinite');
+                
+                let numCycles = Math.floor(Math.random() * (15 - 5 + 1)) + 5; 
+                let numExtraSymbols = numCycles * 3;
+                let html = '';
+                
+                for(let row=0; row<3; row++) html += `<div class="symbol-slot">${getSymbolImg(finalGrid[idx][row])}</div>`;
+                for(let i=0; i<numExtraSymbols; i++) {
+                    let sym = idx === 3 ? getMultiplierSymbol(false) : getRandomSymbol();
+                    html += `<div class="symbol-slot">${getSymbolImg(sym)}</div>`;
+                }
+                
+                r.innerHTML = html;
+                let startOffset = numExtraSymbols * 55; r.style.transition = 'none'; r.style.transform = `translateY(-${startOffset}px)`;
+                void r.offsetHeight; 
+
+                const spinTime = spinTimes[idx];
+                
+                let t1 = setTimeout(() => {
+                    r.style.transition = `transform ${spinTime / 1000}s cubic-bezier(0.15, 0.85, 0.45, 1)`; 
+                    r.style.transform = `translateY(0px)`;
+                }, 20);
+                gameState.spinTimeouts.push(t1);
+
+                let t2 = setTimeout(() => {
+                    playReelStop();
+
+                    if (idx === reels.length - 1) { 
+                        stopSound('spinning'); stopSound('nearMissSpin');
+                        document.querySelector('#spin-btn .spin-text').innerText = 'SPIN'; 
+                        resolveSlotWin(finalRes); 
+                    }
+                }, 20 + spinTime);
+                gameState.spinTimeouts.push(t2);
+            });
+        }
+
+        async function resolveSlotWin(res) {
+            document.querySelector('#spin-btn .spin-text').innerText = 'SPIN';
+            setSpinBtnIdle(true); 
+            document.getElementById('slot-table').classList.remove('near-miss-active');
+            let actualWinnings = 0;
+            
+            if(res.mult > 0 || res.flatWin > 0) {
+                actualWinnings = (gameState.betAmount * res.mult) + res.flatWin;
+                const ratio = actualWinnings / gameState.betAmount;
+
+                if (res.winningCoords && res.winningCoords.length > 0) {
+                    res.winningCoords.forEach(coord => {
+                        let slotEl = reels[coord.c].children[coord.r].querySelector('.slot-icon');
+                        if(slotEl) slotEl.classList.add('win-glow');
+                    });
+                }
+
+                const bAfterWin = await updateBalance(actualWinnings);
+                gameState.balance = bAfterWin;
+                balanceElement.textContent = bAfterWin.toFixed(2);
+                saveToMyBets(getSpinCost(), actualWinnings);
+
+                let duration = 0; let soundKey = 'winTone'; let soundVol = 1.0;
+                if(ratio >= 100)       { duration = 4; soundKey = 'legendaryWin';  soundVol = 1.0; }
+                else if(ratio >= 20)   { duration = 3; soundKey = 'megaWin';       soundVol = 0.9; }
+                else if(ratio >= 10)   { duration = 3; soundKey = 'hugeWin';       soundVol = 0.85; }
+                else if(ratio >= 5)    { duration = 3; soundKey = 'bigWin';        soundVol = 0.8; }
+                else if(ratio >= 1.9)  { duration = 2; soundKey = 'niceWin';       soundVol = 0.75; }
+                else                   { duration = 1; soundKey = 'smallWin';      soundVol = 0.6; }
+
+                playSound(soundKey, soundVol);
+                gameState.isPlaying = false; 
+
+                displayWinSequence(ratio, actualWinnings, duration, () => {
+                    proceedAfterWin(res);
+                });
+                
+            } else {
+                playSound('loseTone');
+                saveToMyBets(getSpinCost(), 0);
+                gameState.isPlaying = false;
+                proceedAfterWin(res);
+            }
+        }
+
+        function proceedAfterWin(res) {
+            if(!gameState.autoplayActive) setControlsLock(false);
+            setSpinBtnIdle(true);
+        }
+
+        function setControlsLock(locked) {
+            document.getElementById('half-btn').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('max-btn').style.pointerEvents  = locked ? 'none' : 'auto';
+            document.getElementById('double-btn').style.pointerEvents = locked ? 'none' : 'auto';
+            document.getElementById('extra-bet-btn').style.pointerEvents = locked ? 'none' : 'auto';
+        }
+
+        function syncBetDisplay() {
+            gameState.betAmount = allowedBets[currentBetIndex];
+            betAmountInput.value = gameState.betAmount.toFixed(2);
+        }
+
+        function validateBet() { syncBetDisplay(); }
+
+        function toggleExtraBet() {
+            if (gameState.isPlaying || gameState.autoplayActive) return;
+            gameState.extraBetActive = !gameState.extraBetActive;
+            const btn = document.getElementById('extra-bet-btn');
+            const statusText = document.getElementById('ex-status-text');
+            if (gameState.extraBetActive) {
+                btn.classList.add('active');
+                statusText.innerText = 'ON';
+                statusText.style.color = '#ffdf00';
+                playSound('betPlus'); 
+            } else {
+                btn.classList.remove('active');
+                statusText.innerText = 'OFF';
+                statusText.style.color = '#aaa';
+                playSound('betMinus');
+            }
+            initReelsVisuals();
+        }
+
+        function setupEventListeners() {
+            const spinStopHandler = (e) => {
+                if (e && e.type === 'touchstart' && e.cancelable) e.preventDefault();
+                playSound('spinClick');
+                const spinText = document.querySelector('#spin-btn .spin-text');
+                if (spinText.innerText === 'STOP') manualStop(); else triggerSpin();
+            };
+
+            const spinBtnEl = document.getElementById('spin-btn');
+            const slotTableEl = document.getElementById('slot-table');
+
+            ['click', 'touchstart', 'mouseenter'].forEach(eventType => {
+                spinBtnEl.addEventListener(eventType, spinStopHandler);
+                slotTableEl.addEventListener(eventType, spinStopHandler);
+            });
+            
+            document.getElementById('max-btn').onclick = (e) => { 
+                e.stopPropagation(); 
+                gameState.isFastSpeed = !gameState.isFastSpeed;
+                if (gameState.isFastSpeed) playSound('fastModeToggle'); else playSound('normalModeToggle');
+                const maxBtn = document.getElementById('max-btn');
+                if (gameState.isFastSpeed) { maxBtn.classList.add('fast-active'); maxBtn.querySelector('span').textContent = "2.0X"; } 
+                else { maxBtn.classList.remove('fast-active'); maxBtn.querySelector('span').textContent = "1.0X"; }
+            };
+            
+            document.getElementById('half-btn').onclick = () => { 
+                if(gameState.isPlaying || gameState.autoplayActive) return; 
+                if(currentBetIndex > 0) { currentBetIndex--; playSound('betMinus'); syncBetDisplay(); }
+            };
+            
+            document.getElementById('double-btn').onclick = () => { 
+                if(gameState.isPlaying || gameState.autoplayActive) return; 
+                if(currentBetIndex < allowedBets.length - 1) { currentBetIndex++; playSound('betPlus'); syncBetDisplay(); }
+            };
+            
+            document.querySelectorAll('.modal-close,.modal-overlay').forEach(el => {
+                el.addEventListener('click', (e) => { 
+                    if(e.target === el || el.classList.contains('modal-close')) { 
+                        if(el.id === 'epic-win-modal') return; 
+                        document.querySelectorAll('.modal-overlay:not(#epic-win-modal)').forEach(m => m.classList.remove('show')); 
+                        playSound('modalClose'); 
+                    }
+                });
+            });
+
+            document.getElementById('epic-win-modal').addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                if (epicModalState === 'counting') {
+                    skipWinCount();
+                    epicModalState = 'stopped';
+                    clearTimeout(epicModalTimeout);
+                    epicModalTimeout = setTimeout(() => { hideEpicModal(); }, 5000);
+                } else if (epicModalState === 'stopped') {
+                    hideEpicModal();
+                }
+            });
+            
+            document.getElementById('main-menu-btn').onclick  = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.add('show'); };
+            document.getElementById('help-open-btn').onclick  = () => { playSound('modalOpen'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('recordsmenu-btn').onclick = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('history-modal').classList.add('show'); loadBetHistory(false); };
+            document.getElementById('how-to-play-menu-btn').onclick = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('how-to-play-modal').classList.add('show'); };
+            document.getElementById('rules-menu-btn').onclick = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('rules-modal').classList.add('show'); };
+            document.getElementById('limits-menu-btn').onclick = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('limits-modal').classList.add('show'); };
+            document.getElementById('fairnessmenu-btn').onclick = () => { playSound('modalOpen'); document.getElementById('menu-modal').classList.remove('show'); document.getElementById('fairness-modal').classList.add('show'); };
+            document.getElementById('closemenu').onclick = () => { playSound('modalClose'); document.getElementById('menu-modal').classList.remove('show'); };
+            document.getElementById('load-more-history-btn').onclick = () => { playSound('modalOpen'); loadBetHistory(true); };
+
+            const soundToggleMenuBtn = document.getElementById('sound-toggle-menu-btn');
+            const soundToggleUI = document.getElementById('sound-toggle-ui');
+            const soundToggleCircle = document.getElementById('sound-toggle-circle');
+            soundToggleMenuBtn.onclick = () => {
+                gameState.soundEnabled = !gameState.soundEnabled;
+                if(gameState.soundEnabled) { soundToggleUI.style.background = '#4caf50'; soundToggleCircle.style.right = '2px'; } 
+                else { soundToggleUI.style.background = '#555'; soundToggleCircle.style.right = '18px'; stopSound('spinning'); }
+            };
+
+            const bgmToggleMenuBtn = document.getElementById('bgm-toggle-menu-btn');
+            bgmToggleMenuBtn.onclick = () => {
+                gameState.bgmEnabled = !gameState.bgmEnabled;
+                localStorage.setItem('bgmEnabled', gameState.bgmEnabled);
+                syncBgmUI();
+            };
+
+            document.getElementById('autoplay-btn').onclick = () => {
+                playSound('autoplayClick');
+                if(gameState.autoplayActive) stopAutoplay();
+                else {
+                    document.getElementById('ap-bet-val-display').innerText = allowedBets[currentBetIndex].toFixed(2);
+                    if(gameState.isFastSpeed) { document.getElementById('ap-speed-1').classList.remove('active'); document.getElementById('ap-speed-2').classList.add('active'); } 
+                    else { document.getElementById('ap-speed-1').classList.add('active'); document.getElementById('ap-speed-2').classList.remove('active'); }
+                    document.getElementById('autoplay-modal').classList.add('show');
+                    playSound('modalOpen');
+                }
+            };
+
+            document.getElementById('ap-speed-1').onclick = () => {
+                playSound('normalModeToggle'); document.getElementById('ap-speed-1').classList.add('active'); document.getElementById('ap-speed-2').classList.remove('active');
+                gameState.isFastSpeed = false; const maxBtn = document.getElementById('max-btn'); maxBtn.classList.remove('fast-active'); maxBtn.querySelector('span').textContent = "1.0X";
+            };
+            document.getElementById('ap-speed-2').onclick = () => {
+                playSound('fastModeToggle'); document.getElementById('ap-speed-2').classList.add('active'); document.getElementById('ap-speed-1').classList.remove('active');
+                gameState.isFastSpeed = true; const maxBtn = document.getElementById('max-btn'); maxBtn.classList.add('fast-active'); maxBtn.querySelector('span').textContent = "FAST";
+            };
+
+            document.querySelectorAll('.auto-btn-val').forEach(btn => {
+                btn.onclick = () => { playSound('autoplayClick'); document.querySelectorAll('.auto-btn-val').forEach(b => b.classList.remove('active')); btn.classList.add('active'); gameState.autoplayTargetRounds = parseInt(btn.dataset.rounds); };
+            });
+
+            document.getElementById('ap-bet-dec').onclick = () => {
+                playSound('betMinus');
+                if(currentBetIndex > 0) { currentBetIndex--; syncBetDisplay(); document.getElementById('ap-bet-val-display').innerText = allowedBets[currentBetIndex].toFixed(2); }
+            };
+            document.getElementById('ap-bet-inc').onclick = () => {
+                playSound('betPlus');
+                if(currentBetIndex < allowedBets.length - 1) { currentBetIndex++; syncBetDisplay(); document.getElementById('ap-bet-val-display').innerText = allowedBets[currentBetIndex].toFixed(2); }
+            };
+
+            document.getElementById('start-auto-btn').onclick = () => {
+                if(!gameState.userAuthenticated) { showMessage('Please Login'); return; }
+                playSound('autoplayStart'); document.getElementById('autoplay-modal').classList.remove('show'); playSound('modalClose');
+                if(!gameState.autoplayTargetRounds || gameState.autoplayTargetRounds < 20) gameState.autoplayTargetRounds = 20; 
+                startAutoplay();
+            };
+        }
+
+        function startAutoplay() {
+            gameState.autoplayActive = true; gameState.autoplayRoundsPlayed = 0; gameState.autoplayInitialBalance = gameState.balance;
+            const stopLossEl = document.getElementById('auto-stop-loss-val'); gameState.stopLossAmount = stopLossEl ? (parseFloat(stopLossEl.value) || 0) : 0;
+            const stopLossTog = document.getElementById('auto-stop-loss-toggle'); gameState.stopLossActive = stopLossTog ? stopLossTog.classList.contains('active') : false;
+            const stopWinEl = document.getElementById('auto-stop-win-val'); gameState.stopWinAmount = stopWinEl ? (parseFloat(stopWinEl.value) || 0) : 0;
+            const stopWinTog = document.getElementById('auto-stop-win-toggle'); gameState.stopWinActive = stopWinTog ? stopWinTog.classList.contains('active') : false;
+            document.getElementById('ap-icon').classList.remove('fa-sync-alt'); document.getElementById('ap-icon').classList.add('fa-stop');
+            setControlsLock(true); runAutoplayLoop();
+        }
+
+        function stopAutoplay() {
+            gameState.autoplayActive = false; clearTimeout(gameState.autoplayTimeout);
+            document.getElementById('ap-icon').classList.add('fa-sync-alt'); document.getElementById('ap-icon').classList.remove('fa-stop');
+            if(!gameState.isPlaying && !gameState.isCountingWin) setControlsLock(false);
+        }
+
+        function runAutoplayLoop() {
+            if(!gameState.autoplayActive || gameState.autoplayRoundsPlayed >= gameState.autoplayTargetRounds) { stopAutoplay(); return; }
+            if(gameState.isPlaying || gameState.isCountingWin) { gameState.autoplayTimeout = setTimeout(() => runAutoplayLoop(), 200); return; }
+            if(gameState.stopLossActive && gameState.stopLossAmount > 0 && (gameState.autoplayInitialBalance - gameState.balance) >= gameState.stopLossAmount) { showMessage("Stop Loss Reached"); stopAutoplay(); return; }
+            triggerSpin();
+            gameState.autoplayRoundsPlayed++;
+            gameState.autoplayTimeout = setTimeout(() => runAutoplayLoop(), gameState.isFastSpeed ? 1200 : 4000); 
+        }
+
+        let currentHistoryLimit = 50; let isHistoryLoading = false;
+        function loadBetHistory(isLoadMore = false) {
+            const uid = localStorage.getItem('uid');
+            const historyList = document.getElementById('history-list');
+            const loadMoreBtn = document.getElementById('load-more-history-btn');
+
+            if (!uid) { historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Please login to view history</div>'; if (loadMoreBtn) loadMoreBtn.style.display = 'none'; return; }
+
+            if (!isLoadMore && _historyCache && _historyCacheUid === uid) {
+                _renderHistoryRecords(_historyCache, loadMoreBtn);
+                return;
+            }
+
+            if (isHistoryLoading) return; isHistoryLoading = true;
+
+            if (!isLoadMore) { currentHistoryLimit = 50; historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">Loading history...</div>'; if (loadMoreBtn) loadMoreBtn.style.display = 'none'; } 
+            else { currentHistoryLimit += 50; historyList.innerHTML += '<div id="history-loading-text" style="text-align:center; padding: 10px; color:#888; font-size: 12px;">Loading more...</div>'; if (loadMoreBtn) loadMoreBtn.style.display = 'none'; }
+
+            database.ref(`appusers/${uid}/betHistory`).orderByChild('gameName').equalTo('Casino Fortune').limitToLast(currentHistoryLimit)
+                .once('value').then(snapshot => {
+                    isHistoryLoading = false;
+                    historyList.innerHTML = '';
+                    if (!snapshot.exists()) { historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#888;">No history found</div>'; if (loadMoreBtn) loadMoreBtn.style.display = 'none'; return; }
+                    const records = [];
+                    snapshot.forEach(child => { records.push({ key: child.key, ...child.val() }); });
+                    _historyCache = records;
+                    _historyCacheUid = uid;
+                    _renderHistoryRecords(records, loadMoreBtn);
+                }).catch(err => { isHistoryLoading = false; historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#e53935;">Error loading history</div>'; });
+        }
+
+        function _renderHistoryRecords(records, loadMoreBtn) {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            if (records.length < currentHistoryLimit) { if (loadMoreBtn) loadMoreBtn.style.display = 'none'; } else { if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block'; }
+            records.slice().reverse().forEach(bet => {
+                const isWin = bet.winAmount > 0;
+                const calcMultiplier = isWin ? (bet.winAmount / bet.betAmount) : 0;
+                const item = document.createElement('div');
+                item.className = `list-row ${isWin ? 'win' : 'lose'}`;
+                item.innerHTML = `<div class="col-date">${bet.time}<br><span>${bet.date}</span></div><div class="col-bet">${bet.betAmount.toFixed(2)}</div><div class="col-x">${isWin ? `<span class="x-pill blue-bg">${calcMultiplier.toFixed(2)}x</span>` : `<span style="color: #4db8ff; font-weight: bold; font-size: 12px;">0.00x</span>`}</div><div class="col-cashout"><span style="flex:1; text-align:right; margin-right: 5px; font-weight: bold;">${isWin ? bet.winAmount.toFixed(2) : ''}</span></div>`;
+                historyList.appendChild(item);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

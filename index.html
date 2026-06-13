@@ -9,13 +9,10 @@
     <meta name="og:type" content="website">
     <meta name="og:site_name" content="KamaaiKendra">
     <meta name="og:title" content="Share and get rewards , become a rich man ">
-    <!--  -->
     <meta id="description" name="og:description" content="1.You can share your own referral link with others
 2.They successfully download game applications from your referral link
 3.If they get rewards and you will get too">
-    <!--  -->
     <meta id="secureurl" property="og: image:secure_url" content="https://cdn.bh2026.com/proRes/upload_f0916c28a109a1cad6952219b6f69113.jpg">
-    <!--  -->
     <meta id="imges" property="og:image" content="https://cdn.bh2026.com/proRes/upload_c95541c8c5d36afa7be7444b9256b964.jpg">
     <title>KamaaiKendra</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,7 +23,6 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-<!-- NEW: Signup Bonus Modal -->
 <div class="signup-bonus-modal" id="signupBonusModal">
   <div class="signup-bonus-container">
     <div class="signup-bonus-icon"></div>
@@ -506,11 +502,14 @@ fab.addEventListener('touchstart', (e) => {
     `;
     document.head.appendChild(loadingStyles);
 
+    let isAuthReady = false;
+    let loadingComplete = false;
+
     // Loading animation logic
     const progressBar = document.getElementById('progressBar');
     const loadingText = document.getElementById('loadingText');
-    const minDuration = 2000; // 1 seconds
-    const maxDuration = 5000; // 3 seconds
+    const minDuration = 2000; // 2 seconds
+    const maxDuration = 5000; // 5 seconds
     const duration = Math.random() * (maxDuration - minDuration) + minDuration;
     const interval = 100;
     const steps = duration / interval;
@@ -523,71 +522,60 @@ fab.addEventListener('touchstart', (e) => {
       "Best value and top Rewards",
       "Timely Returns, Top Investors",
       "24/7 customer Service Support",
-      "India's #1 Trusted Investment platform",
-      "Fair and Responsible Investment app",
-      "#1 Trusted and Easy to use Earning app"
+      "India's #1 Trusted platform",
+      "Fair and Responsible Platform",
+      "#1 Trusted and Easy to use Platform"
     ];
 
-    // NEW: Add a flag to track if loading is complete
-    let loadingComplete = false;
-    
-    // NEW: Improved function to check and redirect signed-in users
     function checkAndRedirectSignedInUser() {
-      if (!loadingComplete) return;
-      
       const user = auth.currentUser;
-      console.log("Checking signed in user:", user ? "User found" : "No user");
       
       if (user) {
-        // For email/password users, check if email is verified
-        if (user.providerData[0].providerId === 'password') {
-          if (user.emailVerified) {
-            console.log("User is signed in and verified, checking signup bonus status");
-            
-            // Check if user has already received signup bonus
+        if (user.providerData[0].providerId === 'password' && !user.emailVerified) {
+            // Unverified User: Hide loading screen to show verification modal
+            document.querySelector('.loading-screen').style.display = 'none';
+            document.getElementById('mainAuthContainer').style.display = 'block';
+            unverifiedUser = user;
+            showVerificationModal(user.email);
+        } else {
+            // User is signed in and verified. Loading screen REMAINS VISIBLE during checks.
             database.ref('appusers/' + user.uid + '/hasReceivedSignupBonus').once('value')
               .then(snapshot => {
                 const hasReceivedSignupBonus = snapshot.exists() ? snapshot.val() : false;
                 
                 if (hasReceivedSignupBonus) {
-                  // User has claimed bonus, redirect to home immediately
-                  console.log("User has claimed signup bonus, redirecting to home");
+                  // Bonus already claimed, Instant Redirect, loading screen stays until page unloads
                   saveToLocalStorage(user, user.providerData[0].providerId);
-                  setTimeout(() => {
-                    window.location.href = REDIRECT_URL;
-                  }, 100);
+                  window.location.replace(REDIRECT_URL);
                 } else {
-                  // User hasn't claimed bonus, check for pending bonus
-                  console.log("User hasn't claimed signup bonus, checking for pending bonus");
                   database.ref('appusers/' + user.uid + '/pendingSignupBonusAmount').once('value')
                     .then(bonusSnapshot => {
                       if (bonusSnapshot.exists() && !hasShownSignupBonusModal) {
                         pendingSignupBonusAmount = bonusSnapshot.val();
-                        console.log("Found pending bonus:", pendingSignupBonusAmount);
-                        showSignupBonusModal(pendingSignupBonusAmount);
+                        
+                        // Handle invalid bonus (< 1.0) instantly behind the scenes
+                        if (pendingSignupBonusAmount < 1) {
+                            database.ref('appusers/' + user.uid).update({
+                                hasReceivedSignupBonus: true,
+                                pendingSignupBonusAmount: null
+                            }).then(() => {
+                                saveToLocalStorage(user, user.providerData[0].providerId);
+                                window.location.replace(REDIRECT_URL); // Instant Redirect
+                            });
+                        } else {
+                            // Valid Bonus: Hide loading screen and show the bonus modal overlay
+                            document.querySelector('.loading-screen').style.display = 'none';
+                            document.getElementById('mainAuthContainer').style.display = 'block';
+                            showSignupBonusModal(pendingSignupBonusAmount);
+                        }
                       } else {
-                        // No pending bonus, redirect to home
-                        console.log("No pending bonus, redirecting to home");
+                        // No pending bonus, Instant Redirect
                         saveToLocalStorage(user, user.providerData[0].providerId);
-                        setTimeout(() => {
-                          window.location.href = REDIRECT_URL;
-                        }, 100);
+                        window.location.replace(REDIRECT_URL);
                       }
                     });
                 }
               });
-          } else {
-            console.log("User not verified, showing verification modal");
-            unverifiedUser = user;
-            showVerificationModal(user.email);
-          }
-        } else {
-          // For other providers (Google, anonymous), redirect immediately
-          console.log("User is signed in (non-email), redirecting to home page");
-          saveToLocalStorage(user, user.providerData[0].providerId);
-          setTimeout(() => {
-            window.location.href = REDIRECT_URL;
-          }, 100);
         }
       }
     }
@@ -600,47 +588,51 @@ fab.addEventListener('touchstart', (e) => {
 
       if (progress >= 100) {
         clearInterval(intervalId);
-        loadingComplete = true;
-        document.querySelector('.loading-screen').style.display = 'none';
         
-        // Check if user is already signed in and redirect
-        checkAndRedirectSignedInUser();
+        // Ensure firebase auth state has fired at least once before making routing decisions
+        const finalizeLoading = () => {
+            if (!isAuthReady) {
+                setTimeout(finalizeLoading, 50);
+                return;
+            }
+            
+            loadingComplete = true;
+            const user = auth.currentUser;
+            
+            if (user) {
+                // If user exists, we do NOT hide the loading screen immediately.
+                // We keep it up as a game loader while verifying background stats.
+                checkAndRedirectSignedInUser();
+            } else {
+                // Not logged in. Hide loading screen and reveal auth forms smoothly.
+                document.querySelector('.loading-screen').style.display = 'none';
+                document.getElementById('mainAuthContainer').style.display = 'block';
+                showDefaultAuth();
+            }
+        };
+        
+        finalizeLoading();
       } else if (count % 10 === 0) {
         const msgIndex = Math.floor(Math.random() * messages.length);
         loadingText.textContent = messages[msgIndex];
       }
     }, interval);
-
-    // Remove loading screen when page is fully loaded
-    window.addEventListener('load', function() {
-      if (progress > 100) {
-        setTimeout(() => {
-          document.querySelector('.loading-screen').style.display = 'none';
-          clearInterval(intervalId);
-          loadingComplete = true;
-          
-          // Check if user is already signed in and redirect
-          checkAndRedirectSignedInUser();
-        }, minDuration - (Date.now() - startTime));
-      }
-    });
-
-    const startTime = Date.now();
+    
+    // Removed the window 'load' listener that prematurely hides the loading screen
+    // This ensures the 100% progress strictly completes every single time.
   </script>
 
-  <div class="auth-container">
+  <div class="auth-container" id="mainAuthContainer" style="display: none;">
     <div class="auth-header">
       <div class="auth-logo"></div>
     </div>
 
     <div class="auth-body">
-      <!-- Default Auth Tabs -->
       <div class="auth-tabs" id="authTabs">
         <div class="auth-tab active" onclick="showTab('login')">Sign In</div>
         <div class="auth-tab" onclick="showTab('signup')">Sign Up</div>
       </div>
 
-      <!-- Login Form -->
       <div id="login" class="auth-form active">
         <div class="spinner" id="loginSpinner"></div>
         <div class="form-group">
@@ -656,7 +648,6 @@ fab.addEventListener('touchstart', (e) => {
           <a href="#" onclick="showPasswordReset()" style="display: block; text-align: center; font-size: 14px; font-family:Segoe UI; margin: 20px; color:white;">Forgot password?</a>
       </div>
 
-      <!-- Signup Form -->
       <div id="signup" class="auth-form">
         <div class="spinner" id="signupSpinner"></div>
         <div class="form-group">
@@ -676,7 +667,6 @@ fab.addEventListener('touchstart', (e) => {
           </div>
         </div>
         
-        <!-- Referral Code Input Field -->
         <div class="form-group">
           <i class="fas fa-user-plus form-icon"></i>
           <input type="text" id="signupReferralCode" class="form-control" placeholder="Enter referral code if any (optional)" maxlength="10">
@@ -685,10 +675,8 @@ fab.addEventListener('touchstart', (e) => {
         <button class="btn btn-primary" onclick="signUp()">Create Account</button>
       </div>
 
-      <!-- Help/Tutorial Button (replaces helperimg) -->
       <button class="help-tutorial-btn" id="helpTutorialBtn">Need Help?</button>
 
-      <!-- Verification Success -->
       <div id="verificationSuccess" style="display: none; text-align: center; padding: 30px;">
         <div style="width: 100px; height: 100px; background: #4CAF50; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px;">
           <i class="fas fa-check" style="font-size: 40px; color: white;"></i>
@@ -709,10 +697,8 @@ fab.addEventListener('touchstart', (e) => {
     </div>
   </div>
 
-  <!-- Verification Modal with Close Button -->
   <div class="verification-modal" id="verificationModal">
     <div class="verification-container">
-      <!-- NEW: Close Button -->
       <button class="modal-close-btn" onclick="closeVerificationModal()">
         <i class="fas fa-times"></i>
       </button>
@@ -728,7 +714,6 @@ fab.addEventListener('touchstart', (e) => {
     </div>
   </div>
 
-  <!-- NEW: Help/Tutorial Modal -->
   <div class="help-modal" id="helpModal">
     <div class="help-modal-content" onclick="event.stopPropagation()">
       <div class="help-modal-body">
@@ -797,7 +782,6 @@ fab.addEventListener('touchstart', (e) => {
     </div>
   </div>
 
-  <!-- Toast Notification -->
   <div id="toast" class="toast">
     <i class="fas fa-check-circle"></i>
     <span id="toast-message">Success message</span>
@@ -816,17 +800,22 @@ const firebaseConfig = {
 
 const REDIRECT_URL = "home.html";
 // UPDATED: Fixed referral rewards
-const NEW_USER_REFERRAL_BONUS = 15; // 15 rupees for new user who uses referral code
-const REFERRER_REWARD = 5; // 5 rupees for referrer
+const NEW_USER_REFERRAL_BONUS = 50; // 50 rupees for new user who uses referral code
+const REFERRER_REWARD = 50; // 50 rupees for referrer
 
 // NEW: Signup bonus range for users WITHOUT referral code
-const SIGNUP_BONUS_MIN = 1; // Minimum signup bonus
-const SIGNUP_BONUS_MAX = 10; // Maximum signup bonus
+const SIGNUP_BONUS_MIN = 5; // Minimum signup bonus
+const SIGNUP_BONUS_MAX = 100; // Maximum signup bonus
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
+
+// Flag auth status initially
+auth.onAuthStateChanged(() => {
+    isAuthReady = true;
+});
 
 // User-friendly error messages
 const errorMessages = {
@@ -966,7 +955,7 @@ window.onload = function() {
         return;
     }
     
-    // Default auth page
+    // Default auth page setup
     showDefaultAuth();
     
     // Check for referral code and prefill if present
@@ -975,35 +964,8 @@ window.onload = function() {
     // Set up auth state listener
     setupAuthStateListener();
     
-    // Check if user has pending signup bonus
-    checkPendingSignupBonus();
+    // Bonus logic check moved entirely behind the loading screen
 };
-
-// Check if user has pending signup bonus
-function checkPendingSignupBonus() {
-    const user = auth.currentUser;
-    if (user && user.emailVerified) {
-        database.ref('appusers/' + user.uid + '/hasReceivedSignupBonus').once('value')
-            .then(snapshot => {
-                if (snapshot.exists() && snapshot.val() === false && !hasShownSignupBonusModal && !isRedirecting) {
-                    // User hasn't received signup bonus yet
-                    database.ref('appusers/' + user.uid + '/pendingSignupBonusAmount').once('value')
-                        .then(bonusSnapshot => {
-                            if (bonusSnapshot.exists()) {
-                                pendingSignupBonusAmount = bonusSnapshot.val();
-                                showSignupBonusModal(pendingSignupBonusAmount);
-                            } else {
-                                // No pending bonus, check if user needs to be redirected
-                                checkAndRedirectToHome(user);
-                            }
-                        });
-                } else if (snapshot.exists() && snapshot.val() === true && !isRedirecting) {
-                    // User already claimed bonus, redirect to home
-                    checkAndRedirectToHome(user);
-                }
-            });
-    }
-}
 
 // Helper function to check and redirect to home
 function checkAndRedirectToHome(user) {
@@ -1020,10 +982,9 @@ function checkAndRedirectToHome(user) {
     }
     
     isRedirecting = true;
-    saveToLocalStorage(user, user.providerData[0].providerId);
-    setTimeout(() => {
-        window.location.href = REDIRECT_URL;
-    }, 100);
+    saveToLocalStorage(user, user.providerData[0] ? user.providerData[0].providerId : "unknown");
+    // Zero Delay Redirection
+    window.location.replace(REDIRECT_URL);
 }
 
 // Show signup bonus modal
@@ -1048,7 +1009,7 @@ function hideSignupBonusModal() {
     confettiElements.forEach(confetti => confetti.remove());
 }
 
-// Claim signup bonus function - UPDATED: Now creates all transactions for the user
+// Claim signup bonus function
 function claimSignupBonus() {
     if (isClaimingBonus) return;
     
@@ -1122,14 +1083,10 @@ function claimSignupBonus() {
             claimBtn.innerHTML = '<i class="fas fa-check"></i> Bonus Claimed!';
             claimBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
             
-            // Wait a moment then redirect
-            setTimeout(() => {
-                hideSignupBonusModal();
-                saveToLocalStorage(user, "email/password");
-                setTimeout(() => {
-                    window.location.href = REDIRECT_URL;
-                }, 50);
-            }, 150);
+            // Zero delay redirect
+            hideSignupBonusModal();
+            saveToLocalStorage(user, "email/password");
+            window.location.replace(REDIRECT_URL);
         })
         .catch(error => {
             console.error("Error claiming signup bonus:", error);
@@ -1140,7 +1097,7 @@ function claimSignupBonus() {
         });
 }
 
-// Set up auth state listener with proper logic - FIXED
+// Set up auth state listener with proper logic UI detachment
 function setupAuthStateListener() {
     if (authStateListener) {
         authStateListener(); // Unsubscribe previous listener
@@ -1148,54 +1105,16 @@ function setupAuthStateListener() {
     
     authStateListener = auth.onAuthStateChanged(user => {
         console.log("Auth state changed, user:", user ? "Logged in" : "Not logged in");
-        
-        if (user) {
-            // User is logged in - check if we should redirect
-            const urlParams = new URLSearchParams(window.location.search);
-            const mode = urlParams.get('mode');
-            
-            // Only redirect if not in verification mode
-            if (!mode || mode !== 'verifyEmail') {
-                // Check if user is verified (for email/password users)
-                if (user.emailVerified || user.providerData[0].providerId !== 'password') {
-                    // Check if user has claimed signup bonus
-                    database.ref('appusers/' + user.uid + '/hasReceivedSignupBonus').once('value')
-                        .then(snapshot => {
-                            const hasReceivedSignupBonus = snapshot.exists() ? snapshot.val() : false;
-                            
-                            if (hasReceivedSignupBonus) {
-                                // User has claimed bonus, redirect to home
-                                console.log("User has claimed signup bonus, redirecting to home");
-                                checkAndRedirectToHome(user);
-                            } else {
-                                // User hasn't claimed bonus, check for pending bonus
-                                console.log("User hasn't claimed signup bonus, checking for pending bonus");
-                                database.ref('appusers/' + user.uid + '/pendingSignupBonusAmount').once('value')
-                                    .then(bonusSnapshot => {
-                                        if (bonusSnapshot.exists() && !hasShownSignupBonusModal && !isRedirecting) {
-                                            pendingSignupBonusAmount = bonusSnapshot.val();
-                                            showSignupBonusModal(pendingSignupBonusAmount);
-                                        } else if (!bonusSnapshot.exists() && !isRedirecting) {
-                                            // No pending bonus, redirect to home
-                                            console.log("No pending bonus, redirecting to home");
-                                            checkAndRedirectToHome(user);
-                                        }
-                                    });
-                            }
-                        });
-                } else {
-                    console.log("User not verified, showing verification modal");
-                    // For unverified email users, show verification modal
-                    unverifiedUser = user;
-                    showVerificationModal(user.email);
-                }
+        isAuthReady = true;
+
+        if (loadingComplete) {
+            // Loading screen is done. If user signs out post-load, show forms.
+            if (!user) {
+                document.getElementById('mainAuthContainer').style.display = 'block';
+                document.querySelector(".auth-body").style.display = "block";
+                document.getElementById("userInfo").style.display = "none";
+                isRedirecting = false;
             }
-        } else {
-            console.log("No user, showing auth forms");
-            document.querySelector(".auth-body").style.display = "block";
-            document.getElementById("userInfo").style.display = "none";
-            // Reset redirect flag
-            isRedirecting = false;
         }
     });
 }
@@ -1223,6 +1142,7 @@ function handleEmailVerification() {
     auth.applyActionCode(oobCode)
         .then(() => {
             // Email verified successfully
+            document.getElementById('mainAuthContainer').style.display = 'block';
             document.getElementById('authTabs').style.display = 'none';
             document.getElementById('login').classList.remove('active');
             document.getElementById('signup').classList.remove('active');
@@ -1243,9 +1163,6 @@ function handleEmailVerification() {
             if (user && pendingSignupData) {
                 // This is a user who just signed up, process their bonus
                 processVerifiedUserAfterEmailVerification(user);
-            } else {
-                // Just a regular verification, check for pending bonus
-                checkPendingSignupBonus();
             }
         })
         .catch(error => {
@@ -1280,8 +1197,18 @@ function processVerifiedUserAfterEmailVerification(user) {
         })
         .then(() => {
             isProcessingVerification = false;
-            // Show signup bonus modal
-            showSignupBonusModal(pendingSignupBonusAmount);
+            // Handle invalid bonus (< 1.0)
+            if (pendingSignupBonusAmount < 1) {
+                database.ref('appusers/' + user.uid).update({
+                    hasReceivedSignupBonus: true,
+                    pendingSignupBonusAmount: null
+                }).then(() => {
+                    checkAndRedirectToHome(user);
+                });
+            } else {
+                // Show signup bonus modal
+                showSignupBonusModal(pendingSignupBonusAmount);
+            }
         })
         .catch(error => {
             isProcessingVerification = false;
@@ -1290,7 +1217,7 @@ function processVerifiedUserAfterEmailVerification(user) {
         });
 }
 
-// Show verification modal - FIXED: Always show when user is not verified
+// Show verification modal
 function showVerificationModal(email) {
     document.getElementById('verificationMessage').textContent = 
         `A verification link has been sent to ${email}. You must verify your email to get started.`;
@@ -1345,7 +1272,7 @@ function resendVerificationEmail() {
     }
 }
 
-// Check if email is verified - UPDATED TO SHOW SIGNUP BONUS MODAL
+// Check if email is verified
 function checkEmailVerification() {
     if (unverifiedUser) {
         unverifiedUser.reload()
@@ -1700,7 +1627,7 @@ function getErrorMessage(error) {
     return errorMessages[code] || errorMessages.default;
 }
 
-// Tab switching - UPDATED to check for referral code when switching to signup tab
+// Tab switching
 function showTab(tabId) {
     document.querySelectorAll('.auth-form').forEach(form => {
         form.classList.remove('active');
@@ -1725,7 +1652,7 @@ function showTab(tabId) {
     }
 }
 
-// Save to localStorage (Updated for better compatibility)
+// Save to localStorage
 function saveToLocalStorage(user, method) {
     if (method === "email/password") {
         if (user.emailVerified) {
@@ -1778,13 +1705,13 @@ function checkPasswordStrength() {
     }
 }
 
-// Validate email - UPDATED TO ONLY ALLOW @gmail.com
+// Validate email
 function validateEmail(email) {
     const re = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     return re.test(email.toLowerCase());
 }
 
-// Validate password (updated: 6-50 characters, any characters allowed)
+// Validate password
 function validatePassword(password) {
     return password.length >= 6 && password.length <= 50;
 }
@@ -1807,7 +1734,7 @@ function showPasswordReset() {
         });
 }
 
-// Redirect after login - FIXED: No signup bonus on login
+// Redirect after login via form
 function redirectAfterLogin(user, method) {
     const spinnerId = method === 'email/password' ? 'loginSpinner' : 'signupSpinner';
     document.getElementById(spinnerId).style.display = 'block';
@@ -1832,8 +1759,18 @@ function redirectAfterLogin(user, method) {
                     .then(bonusSnapshot => {
                         if (bonusSnapshot.exists() && !hasShownSignupBonusModal && !isRedirecting) {
                             pendingSignupBonusAmount = bonusSnapshot.val();
-                            document.getElementById(spinnerId).style.display = 'none';
-                            showSignupBonusModal(pendingSignupBonusAmount);
+                            // Sort out invalid bonus instantly
+                            if (pendingSignupBonusAmount < 1) {
+                                database.ref('appusers/' + user.uid).update({
+                                    hasReceivedSignupBonus: true,
+                                    pendingSignupBonusAmount: null
+                                }).then(() => {
+                                    completeLoginRedirect(user, method, spinnerId);
+                                });
+                            } else {
+                                document.getElementById(spinnerId).style.display = 'none';
+                                showSignupBonusModal(pendingSignupBonusAmount);
+                            }
                         } else if (!bonusSnapshot.exists() && !isRedirecting) {
                             // No pending bonus, proceed with normal login
                             completeLoginRedirect(user, method, spinnerId);
@@ -1852,18 +1789,15 @@ function redirectAfterLogin(user, method) {
         });
 }
 
-// Helper function to complete login redirect
+// Helper function to complete login redirect with Zero Delay
 function completeLoginRedirect(user, method, spinnerId) {
     saveToLocalStorage(user, method);
     
     ensureUserExists(user)
         .then(() => {
             showToast(`Welcome ${user.email || 'Dear Guest'}!`, 'success');
-            
-            // Redirect to home page
-            setTimeout(() => {
-                window.location.href = REDIRECT_URL;
-            }, 1000);
+            // Instant redirect
+            window.location.replace(REDIRECT_URL);
         })
         .catch(error => {
             showToast("Error setting up your account. Please try again.", 'error');
@@ -1872,7 +1806,7 @@ function completeLoginRedirect(user, method, spinnerId) {
         });
 }
 
-// Email/Password Sign Up - STRICT EMAIL VERIFICATION
+// Email/Password Sign Up
 function signUp() {
     const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
@@ -1933,7 +1867,7 @@ function signUp() {
         });
 }
 
-// Email/Password Sign In - STRICT EMAIL VERIFICATION
+// Email/Password Sign In
 function signIn() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
@@ -1970,23 +1904,11 @@ function signIn() {
         });
 }
 
-// Check if user is already logged in via localStorage (legacy check)
+// Check if user is already logged in via localStorage as a quick fallback check
 function checkExistingAuth() {
     const storedUid = localStorage.getItem('uid');
     if (storedUid) {
-        // Check with Firebase if user exists and is verified
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-            if (currentUser.emailVerified || currentUser.providerData[0].providerId !== 'password') {
-                console.log("User already authenticated, redirecting...");
-                setTimeout(() => {
-                    window.location.href = REDIRECT_URL;
-                }, 500);
-            } else {
-                // Clear localStorage if user is not verified
-                localStorage.clear();
-            }
-        }
+        // Firebase handles state validation through onAuthStateChanged
     }
 }
 
